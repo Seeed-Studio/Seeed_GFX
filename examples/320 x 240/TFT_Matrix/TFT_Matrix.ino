@@ -13,20 +13,20 @@
     #########################################################################
 */
 
-#include <TFT_eSPI.h> // Hardware-specific library
+#include <TFT_eSPI.h>         // Hardware-specific library
 #include <SPI.h>
 
-TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
+TFT_eSPI tft = TFT_eSPI();    // Invoke custom library
 
-#define TEXT_HEIGHT 8 // Height of text to be printed and scrolled
-#define BOT_FIXED_AREA 0  // Number of lines in bottom fixed area (lines counted from bottom of screen)
-#define TOP_FIXED_AREA 0  // Number of lines in top fixed area (lines counted from top of screen)
+#define TEXT_HEIGHT     8     // Height of text to be printed and scrolled
+#define BOT_FIXED_AREA  0     // Number of lines in bottom fixed area (lines counted from bottom of screen)
+#define TOP_FIXED_AREA  0     // Number of lines in top fixed area (lines counted from top of screen)
 
 uint16_t yStart = TOP_FIXED_AREA;
-uint16_t yArea = 320 - TOP_FIXED_AREA - BOT_FIXED_AREA;
-uint16_t yDraw = 320 - BOT_FIXED_AREA - TEXT_HEIGHT;
+uint16_t yArea  = 320 - TOP_FIXED_AREA - BOT_FIXED_AREA;
+uint16_t yDraw  = 320 - BOT_FIXED_AREA - TEXT_HEIGHT;
+uint16_t xPos   = 0;
 byte     pos[42];
-uint16_t xPos = 0;
 
 void setup() {
     Serial.begin(115200);
@@ -60,10 +60,10 @@ void loop(void) {
         xPos = 0;
     }
 
-    //tft.setRotation(2);
-    //tft.setTextColor(63 << 5, ILI9341_BLACK);
-    //tft.drawCentreString("MATRIX",120,60,4);
-    //tft.setRotation(0);
+    tft.setRotation(2);
+    tft.setTextColor(63 << 5, ILI9341_BLACK);
+    tft.drawCentreString("Matrix",120,60,4);
+    tft.setRotation(0);
 
     // Now scroll smoothly forever
     while (1) {
@@ -74,6 +74,7 @@ void loop(void) {
 }
 
 void setupScrollArea(uint16_t TFA, uint16_t BFA) {
+    tft.startWrite();
     tft.writecommand(ILI9341_VSCRDEF); // Vertical scroll definition
     tft.writedata(TFA >> 8);
     tft.writedata(TFA);
@@ -81,10 +82,12 @@ void setupScrollArea(uint16_t TFA, uint16_t BFA) {
     tft.writedata(320 - TFA - BFA);
     tft.writedata(BFA >> 8);
     tft.writedata(BFA);
+    tft.endWrite();
 }
 
 int scroll_slow(int lines, int wait) {
     int yTemp = yStart;
+    tft.startWrite();
     for (int i = 0; i < lines; i++) {
         yStart++;
         if (yStart == 320 - BOT_FIXED_AREA) {
@@ -93,13 +96,16 @@ int scroll_slow(int lines, int wait) {
         scrollAddress(yStart);
         delay(wait);
     }
+    tft.endWrite();
     return  yTemp;
 }
 
 void scrollAddress(uint16_t VSP) {
+    tft.startWrite();
     tft.writecommand(ILI9341_VSCRSADD); // Vertical scrolling start address
     tft.writedata(VSP >> 8);
     tft.writedata(VSP);
+    tft.endWrite();
 }
 
 
