@@ -5,21 +5,30 @@
     // graphics are written to the Sprite rather than the TFT.
 ***************************************************************************************/
 
+// pushRotated support - Bitwise truncation of fixed point integer value V scaled by S
+//#define truncateFP(V,S) ((V + (V < 0 ? -1<<(S-1) : 0))>>S)
+#define truncateFP(V,S) ((V + (V < 0 ? -1<<(S-1) : 1<<(S-1)))>>S)
+
 class TFT_eSprite : public TFT_eSPI {
 
   public:
 
     TFT_eSprite(TFT_eSPI* tft);
+    virtual ~TFT_eSprite();
 
     // Create a sprite of width x height pixels, return a pointer to the RAM area
     // Sketch can cast returned value to (uint16_t*) for 16 bit depth if needed
-    // RAM required is 1 byte per pixel for 8 bit colour depth, 2 bytes for 16 bit
+    // RAM required is:
+    //  - 1 bit per pixel for 1 bit colour depth
+    //  - 1 byte per pixel for 8 bit colour
+    //  - 2 bytes per pixel for 16 bit color depth
     void*    createSprite(int16_t width, int16_t height, uint8_t frames = 1);
 
     // Delete the sprite to free up the RAM
     void     deleteSprite(void);
 
-    // Select the frame buffer for graphics
+    // Select the frame buffer for graphics write (for 2 colour ePaper and DMA toggle buffer)
+    // Returns a pointer to the Sprite frame buffer
     void*    frameBuffer(int8_t f);
 
     // Set or get the colour depth to 8 or 16 bits. Can be used to change depth an existing
@@ -36,9 +45,11 @@ class TFT_eSprite : public TFT_eSPI {
              fillSprite(uint32_t color),
 
              // Define a window to push 16 bit colour pixels into in a raster order
-             // Colours are converted to 8 bit if depth is set to 8
+             // Colours are converted to the set Sprite colour bit depth
              setWindow(int32_t x0, int32_t y0, int32_t x1, int32_t y1),
+             // Push a color (aka singe pixel) to the screen
              pushColor(uint32_t color),
+             // Push len colors (pixels) to the screen
              pushColor(uint32_t color, uint16_t len),
              // Push a pixel preformatted as a 8 or 16 bit colour (avoids conversion overhead)
              writeColor(uint16_t color),
@@ -51,10 +62,12 @@ class TFT_eSprite : public TFT_eSPI {
              // The sprite coordinate frame does not move because pixels are moved
              scroll(int16_t dx, int16_t dy = 0),
 
+             // Draw lines
              drawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, uint32_t color),
              drawFastVLine(int32_t x, int32_t y, int32_t h, uint32_t color),
              drawFastHLine(int32_t x, int32_t y, int32_t w, uint32_t color),
 
+             // Fill a rectangular area with a color (aka draw a filled rectangle)
              fillRect(int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color);
 
     // Set the sprite text cursor position for print class (does not change the TFT screen cursor)
@@ -124,8 +137,8 @@ class TFT_eSprite : public TFT_eSPI {
     uint8_t*  _img8_1; // pointer to  frame 1
     uint8_t*  _img8_2; // pointer to  frame 2
 
-    int16_t _xpivot;   // x pivot point coordinate
-    int16_t _ypivot;   // y pivot point coordinate
+    int16_t  _xpivot;   // x pivot point coordinate
+    int16_t  _ypivot;   // y pivot point coordinate
 
     bool     _created;    // A Sprite has been created and memory reserved
     bool     _gFont = false;

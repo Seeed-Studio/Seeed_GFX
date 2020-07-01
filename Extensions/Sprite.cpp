@@ -92,6 +92,16 @@ void* TFT_eSprite::createSprite(int16_t w, int16_t h, uint8_t frames) {
 
 
 /***************************************************************************************
+** Function name:           ~TFT_eSprite
+** Description:             Class destructor
+*************************************************************************************x*/
+TFT_eSprite::~TFT_eSprite()
+{
+  deleteSprite();
+}
+
+
+/***************************************************************************************
 ** Function name:           callocSprite
 ** Description:             Allocate a memory area for the Sprite and return pointer
 *************************************************************************************x*/
@@ -126,9 +136,8 @@ void* TFT_eSprite::callocSprite(int16_t w, int16_t h, uint8_t frames) {
             frames = 1;
         }
         #if defined (ESP32) && defined (CONFIG_SPIRAM_SUPPORT)
-        if (psramFound()) {
-            ptr8 = (uint8_t*) ps_calloc(frames * (w >> 3) * h + frames, sizeof(uint8_t));
-        } else
+        if (psramFound()) {ptr8 = (uint8_t*) ps_calloc(frames * (w >> 3) * h + frames, sizeof(uint8_t));} 
+        else
         #endif
             ptr8 = (uint8_t*) calloc(frames * (w >> 3) * h + frames, sizeof(uint8_t));
     }
@@ -264,9 +273,10 @@ int16_t TFT_eSprite::getPivotY(void) {
 
 
 /***************************************************************************************
-** Function name:           pushRotated
-** Description:             Push a rotated copy of the Sprite to TFT screen
+** Function name:           pushRotated - Fast fixed point integer maths version
+** Description:             Push rotated Sprite to TFT screen
 *************************************************************************************x*/
+#define FP_SCALE 10
 bool TFT_eSprite::pushRotated(int16_t angle, int32_t transp) {
     if (!_created) {
         return false;
@@ -274,8 +284,11 @@ bool TFT_eSprite::pushRotated(int16_t angle, int32_t transp) {
 
     // Trig values for the rotation
     float radAngle = -angle * 0.0174532925; // Convert degrees to radians
-    float sinra = sin(radAngle);
-    float cosra = cos(radAngle);
+    float sinraf = sin(radAngle);
+    float cosraf = cos(radAngle);
+
+    int32_t sinra = sinraf * (1<<FP_SCALE);
+    int32_t cosra = cosraf * (1<<FP_SCALE);
 
     // Bounding box parameters
     int16_t min_x;
@@ -323,32 +336,84 @@ bool TFT_eSprite::pushRotated(int16_t angle, int32_t transp) {
         max_y = _tft->height();
     }
 
+    uint16_t sline_buffer[max_y - min_y + 1];
+
+    int32_t xt = min_x - _tft->_xpivot;
+    int32_t yt = min_y - _tft->_ypivot;
+
+    // Keep multiply out of the loop
+    int32_t cxt = cosra * xt + (_xpivot<<FP_SCALE);
+    int32_t sxt = sinra * xt + (_ypivot<<FP_SCALE);
+    int32_t init_cyt = cosra * yt;
+    int32_t init_syt = sinra * yt;
+
     _tft->startWrite(); // ESP32: avoid transaction overhead for every tft pixel
 
-    // Scan destination bounding box and fetch transformed pixels from source Sprite
+//     // Scan destination bounding box and fetch transformed pixels from source Sprite
+//     for (int32_t x = min_x; x <= max_x; x++) {
+//         int32_t xt = x - _tft->_xpivot;
+//         float cxt = cosra * xt + _xpivot;
+//         float sxt = sinra * xt + _ypivot;
+//         bool column_drawn = false;
+//         for (int32_t y = min_y; y <= max_y; y++) {
+//             int32_t yt = y - _tft->_ypivot;
+//             int32_t xs = (int32_t)round(cxt - sinra * yt);
+//             // Do not calculate ys unless xs is in bounds
+//             if (xs >= 0 && xs < width()) {
+//                 int32_t ys = (int32_t)round(sxt + cosra * yt);
+//                 // Check if ys is in bounds
+//                 if (ys >= 0 && ys < height()) {
+//                     int32_t rp = readPixel(xs, ys);
+//                     if (rp != transp) {
+//                         _tft->drawPixel(x, y, rp);
+//                     }
+//                     column_drawn = true;
+//                 }
+//             } else if (column_drawn) {
+//                 y = max_y;    // Skip remaining column pixels
+//             }
+//         }
+//     }
+
+//     _tft->endWrite(); // ESP32: end transaction
+
+//     return true;
+// }
+
+// Scan destination bounding box and fetch transformed pixels from source Sprite
     for (int32_t x = min_x; x <= max_x; x++) {
-        int32_t xt = x - _tft->_xpivot;
-        float cxt = cosra * xt + _xpivot;
-        float sxt = sinra * xt + _ypivot;
+        cxt += cosra;
+        sxt += sinra;
         bool column_drawn = false;
+        uint32_t pixel_count = 0;
+        int32_t y_start = 0;
+        int32_t xs = cxt - init_syt;
+        int32_t cyt = init_cyt;
         for (int32_t y = min_y; y <= max_y; y++) {
-            int32_t yt = y - _tft->_ypivot;
-            int32_t xs = (int32_t)round(cxt - sinra * yt);
-            // Do not calculate ys unless xs is in bounds
-            if (xs >= 0 && xs < width()) {
-                int32_t ys = (int32_t)round(sxt + cosra * yt);
-                // Check if ys is in bounds
-                if (ys >= 0 && ys < height()) {
-                    int32_t rp = readPixel(xs, ys);
-                    if (rp != transp) {
-                        _tft->drawPixel(x, y, rp);
+            cyt += cosra;
+            xs  -= sinra;
+            // Do not calculate yp unless xp is in bounds
+            int32_t xp = truncateFP(xs, FP_SCALE);
+            if ((xp >= 0) && (xp < _iwidth)){
+                int32_t yp = truncateFP(sxt + cyt, FP_SCALE);
+                // Check if yp is in bounds
+                if ((yp >= 0) && (yp < _iheight)) {
+                    uint32_t rp;
+                    if (_bpp == 16) {rp = _img[xp + yp * _iwidth]; rp = rp>>8 | rp<<8; }
+                    else rp = readPixel(xp, yp);
+                    if (transp >= 0 ) {
+                        if (rp != transp) _tft->drawPixel(x, y, rp);
+                    }
+                    else {
+                        if (!column_drawn) y_start = y;
+                        sline_buffer[pixel_count++] = rp>>8 | rp<<8;
                     }
                     column_drawn = true;
                 }
-            } else if (column_drawn) {
-                y = max_y;    // Skip remaining column pixels
             }
+            else if (column_drawn) y = max_y; // Skip remaining column pixels
         }
+        if (pixel_count) _tft->pushImage(x, y_start, 1, pixel_count, sline_buffer);
     }
 
     _tft->endWrite(); // ESP32: end transaction
@@ -358,7 +423,7 @@ bool TFT_eSprite::pushRotated(int16_t angle, int32_t transp) {
 
 
 /***************************************************************************************
-** Function name:           pushRotated
+** Function name:           pushRotated - Fast fixed point integer maths version
 ** Description:             Push a rotated copy of the Sprite to another Sprite
 *************************************************************************************x*/
 bool TFT_eSprite::pushRotated(TFT_eSprite* spr, int16_t angle, int32_t transp) {
@@ -371,8 +436,11 @@ bool TFT_eSprite::pushRotated(TFT_eSprite* spr, int16_t angle, int32_t transp) {
 
     // Trig values for the rotation
     float radAngle = -angle * 0.0174532925; // Convert degrees to radians
-    float sinra = sin(radAngle);
-    float cosra = cos(radAngle);
+    float sinraf = sin(radAngle);
+    float cosraf = cos(radAngle);
+
+    int32_t sinra = sinraf * (1<<FP_SCALE);
+    int32_t cosra = cosraf * (1<<FP_SCALE);
 
     // Bounding box parameters
     int16_t min_x;
@@ -421,33 +489,67 @@ bool TFT_eSprite::pushRotated(TFT_eSprite* spr, int16_t angle, int32_t transp) {
         max_y = spr->height();
     }
 
-    // Scan destination bounding box and fetch transformed pixels from source Sprite
-    for (int32_t x = min_x; x <= max_x; x++) {
+//     // Scan destination bounding box and fetch transformed pixels from source Sprite
+//     for (int32_t x = min_x; x <= max_x; x++) {
+//         int32_t xt = x - spr->_xpivot;
+//         float cxt = cosra * xt + _xpivot;
+//         float sxt = sinra * xt + _ypivot;
+//         bool column_drawn = false;
+//         for (int32_t y = min_y; y <= max_y; y++) {
+//             int32_t yt = y - spr->_ypivot;
+//             int32_t xs = (int32_t)round(cxt - sinra * yt);
+//             // Do not calculate ys unless xs is in bounds
+//             if (xs >= 0 && xs < width()) {
+//                 int32_t ys = (int32_t)round(sxt + cosra * yt);
+//                 // Check if ys is in bounds
+//                 if (ys >= 0 && ys < height()) {
+//                     int32_t rp = readPixel(xs, ys);
+//                     if (rp != transp) {
+//                         spr->drawPixel(x, y, rp);
+//                     }
+//                     column_drawn = true;
+//                 }
+//             } else if (column_drawn) {
+//                 y = max_y;    // Skip the remaining pixels below the Sprite
+//             }
+//         }
+//     }
+
+//     return true;
+// }
+
+  // Scan destination bounding box and fetch transformed pixels from source Sprite
+    for (int32_t x = min_x; x <= max_x; x++)
+    {
         int32_t xt = x - spr->_xpivot;
-        float cxt = cosra * xt + _xpivot;
-        float sxt = sinra * xt + _ypivot;
+        float cxt = cosra * xt + (_xpivot<<FP_SCALE);
+        float sxt = sinra * xt + (_ypivot<<FP_SCALE);
         bool column_drawn = false;
-        for (int32_t y = min_y; y <= max_y; y++) {
+        for (int32_t y = min_y; y <= max_y; y++)
+        {
             int32_t yt = y - spr->_ypivot;
-            int32_t xs = (int32_t)round(cxt - sinra * yt);
-            // Do not calculate ys unless xs is in bounds
-            if (xs >= 0 && xs < width()) {
-                int32_t ys = (int32_t)round(sxt + cosra * yt);
+            int32_t xs = cxt - sinra * yt;
+            // Do not calculate yp unless xp is in bounds
+            int32_t xp = truncateFP(xs, FP_SCALE);
+            if (xp >= 0 && xp < _iwidth)
+            {
+                int32_t ys = sxt + cosra * yt;
                 // Check if ys is in bounds
-                if (ys >= 0 && ys < height()) {
-                    int32_t rp = readPixel(xs, ys);
-                    if (rp != transp) {
-                        spr->drawPixel(x, y, rp);
-                    }
+                int32_t yp = truncateFP(ys, FP_SCALE);
+                if (yp >= 0 && yp < _iheight)
+                {
+                    uint32_t rp;
+                    if (_bpp == 16) {rp = _img[xp + yp * _iwidth]; rp = rp>>8 | rp<<8; }
+                    else rp = readPixel(xp, yp);
+                    if (rp != transp) spr->drawPixel(x, y, rp);
                     column_drawn = true;
                 }
-            } else if (column_drawn) {
-                y = max_y;    // Skip the remaining pixels below the Sprite
             }
-        }
+            else if (column_drawn) y = max_y; // Skip the remaining pixels below the Sprite
+            }
     }
 
-    return true;
+  return true;
 }
 
 
@@ -606,7 +708,9 @@ uint16_t TFT_eSprite::readPixel(int32_t x, int32_t y) {
 
     uint16_t color = (_img8[(x + y * _bitwidth) >> 3] << (x & 0x7)) & 0x80;
 
-    return color >> 7;
+    //return color >> 7;
+    if (color >> 7) return _tft->bitmap_fg;
+    else            return _tft->bitmap_bg;
 }
 
 
@@ -628,8 +732,8 @@ void  TFT_eSprite::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_
     int32_t  xs = x;
     int32_t  ys = y;
 
-    uint32_t ws = w;
-    uint32_t hs = h;
+    int32_t ws = w;
+    int32_t hs = h;
 
     if (x < 0) {
         xo = -x;
@@ -642,17 +746,17 @@ void  TFT_eSprite::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_
         ys = 0;
     }
 
-    if (xs + ws >= _iwidth) {
+    if (xs + ws >= (int32_t)_iwidth) {
         ws = _iwidth  - xs;
     }
-    if (ys + hs >= _iheight) {
+    if (ys + hs >= (int32_t)_iheight) {
         hs = _iheight - ys;
     }
 
     if (_bpp == 16) { // Plot a 16 bpp image into a 16 bpp Sprite
-        for (uint32_t yp = yo; yp < yo + hs; yp++) {
+        for (int32_t yp = yo; yp < yo + hs; yp++) {
             x = xs;
-            for (uint32_t xp = xo; xp < xo + ws; xp++) {
+            for (int32_t xp = xo; xp < xo + ws; xp++) {
                 uint16_t color =  data[xp + yp * w];
                 if (!_iswapBytes) {
                     color = color << 8 | color >> 8;
@@ -663,9 +767,9 @@ void  TFT_eSprite::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_
             ys++;
         }
     } else if (_bpp == 8) { // Plot a 16 bpp image into a 8 bpp Sprite
-        for (uint32_t yp = yo; yp < yo + hs; yp++) {
+        for (int32_t yp = yo; yp < yo + hs; yp++) {
             x = xs;
-            for (uint32_t xp = xo; xp < xo + ws; xp++) {
+            for (int32_t xp = xo; xp < xo + ws; xp++) {
                 uint16_t color = data[xp + yp * w];
                 if (_iswapBytes) {
                     color = color << 8 | color >> 8;
@@ -728,8 +832,8 @@ void  TFT_eSprite::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const u
     int32_t  xs = x;
     int32_t  ys = y;
 
-    uint32_t ws = w;
-    uint32_t hs = h;
+    int32_t ws = w;
+    int32_t hs = h;
 
     if (x < 0) {
         xo = -x;
@@ -742,17 +846,17 @@ void  TFT_eSprite::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const u
         ys = 0;
     }
 
-    if (xs + ws >= _iwidth) {
+    if (xs + ws >= (int32_t)_iwidth) {
         ws = _iwidth  - xs;
     }
-    if (ys + hs >= _iheight) {
+    if (ys + hs >= (int32_t)_iheight) {
         hs = _iheight - ys;
     }
 
     if (_bpp == 16) { // Plot a 16 bpp image into a 16 bpp Sprite
-        for (uint32_t yp = yo; yp < yo + hs; yp++) {
+        for (int32_t yp = yo; yp < yo + hs; yp++) {
             x = xs;
-            for (uint32_t xp = xo; xp < xo + ws; xp++) {
+            for (int32_t xp = xo; xp < xo + ws; xp++) {
                 uint16_t color = pgm_read_word(data + xp + yp * w);
                 if (!_iswapBytes) {
                     color = color << 8 | color >> 8;
@@ -765,9 +869,9 @@ void  TFT_eSprite::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const u
     }
 
     else if (_bpp == 8) { // Plot a 16 bpp image into a 8 bpp Sprite
-        for (uint32_t yp = yo; yp < yo + hs; yp++) {
+        for (int32_t yp = yo; yp < yo + hs; yp++) {
             x = xs;
-            for (uint32_t xp = xo; xp < xo + ws; xp++) {
+            for (int32_t xp = xo; xp < xo + ws; xp++) {
                 uint16_t color = pgm_read_word(data + xp + yp * w);
                 if (_iswapBytes) {
                     color = color << 8 | color >> 8;

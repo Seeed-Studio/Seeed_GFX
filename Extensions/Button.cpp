@@ -3,7 +3,10 @@
 ** Grabbed from Adafruit_GFX library and enhanced to handle any label font
 ***************************************************************************************/
 TFT_eSPI_Button::TFT_eSPI_Button(void) {
-    _gfx = 0;
+  _gfx       = 0;
+  _xd        = 0;
+  _yd        = 0;
+  _textdatum = MC_DATUM;
 }
 
 // Classic initButton() function: pass center & size
@@ -50,13 +53,21 @@ void TFT_eSPI_Button::drawButton(boolean inverted) {
     _gfx->fillRoundRect(_x1, _y1, _w, _h, r, fill);
     _gfx->drawRoundRect(_x1, _y1, _w, _h, r, outline);
 
-    _gfx->setTextColor(text);
+    _gfx->setTextColor(text, fill);
     _gfx->setTextSize(_textsize);
 
     uint8_t tempdatum = _gfx->getTextDatum();
     _gfx->setTextDatum(MC_DATUM);
     _gfx->drawString(_label, _x1 + (_w / 2), _y1 + (_h / 2));
     _gfx->setTextDatum(tempdatum);
+}
+
+// Adjust text datum and x, y deltas
+void TFT_eSPI_Button::setLabelDatum(int16_t x_delta, int16_t y_delta, uint8_t datum)
+{
+  _xd        = x_delta;
+  _yd        = y_delta;
+  _textdatum = datum;
 }
 
 boolean TFT_eSPI_Button::contains(int16_t x, int16_t y) {

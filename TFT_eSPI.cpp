@@ -2473,6 +2473,14 @@ void TFT_eSPI::setWindow(int32_t x0, int32_t y0, int32_t x1, int32_t y1) {
     y1 += rowstart;
     #endif
 
+    #ifdef MULTI_TFT_SUPPORT
+    // No optimisation to permit multiple screens
+    DC_C; tft_Write_8(TFT_CASET);
+    DC_D; tft_Write_32C(x0, x1);
+    DC_C; tft_Write_8(TFT_PASET);
+    DC_D; tft_Write_32C(y0, y1);
+    #endif
+
     DC_C;
 
     writecommand(TFT_CASET);

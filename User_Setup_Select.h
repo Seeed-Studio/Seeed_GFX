@@ -51,6 +51,9 @@
     //#include <User_Setups/Setup24_ST7789.h>            // Setup file configured for ST7789 240 x 240
     //#include <User_Setups/Setup25_TTGO_T_Display.h>    // Setup file for ESP32 and TTGO T-Display ST7789V SPI bus TFT
 
+    //#include <User_Setups/Setup27_RPi_ST7796_ESP32.h>    // ESP32   RPi MHS-4.0 inch Display-B
+    //#include <User_Setups/Setup28_RPi_ST7796_ESP8266.h>  // ESP8266 RPi MHS-4.0 inch Display-B
+
     //#include <User_Setups/Setup43_ST7735.h>            // Setup file configured for my ST7735S 80x160
 
     //#include <User_Setups/Setup135_ST7789.h>           // Setup file for ESP8266 and ST7789 125 x 240 TFT
@@ -88,6 +91,9 @@
 #elif defined (S6D02A1_DRIVER)
     #include <TFT_Drivers/S6D02A1_Defines.h>
     #define  TFT_DRIVER 0x6D02
+#elif defined (ST7796_DRIVER)
+	#include "TFT_Drivers/ST7796_Defines.h"
+	#define  TFT_DRIVER 0x7796
 #elif defined (RPI_ILI9486_DRIVER)
     #include <TFT_Drivers/ILI9486_Defines.h>
     #define  TFT_DRIVER 0x9486

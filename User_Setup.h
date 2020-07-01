@@ -15,6 +15,9 @@
 //
 // ##################################################################################
 
+// Display type -  only define if RPi display
+//#define RPI_DRIVER
+
 // Only define one driver, the other ones must be commented out
 #define ILI9341_DRIVER
 //#define ST7735_DRIVER      // Define additional parameters below for this display
@@ -28,6 +31,7 @@
 //#define ST7789_DRIVER      // Full configuration option, define additional parameters below for this display
 //#define ST7789_2_DRIVER    // Minimal configuration option, define additional parameters below for this display
 //#define R61581_DRIVER
+//#define ST7796_DRIVER
 
 // Some displays support SPI reads via the MISO pin, other displays have a single
 // bi-directional SDA pin and the library will try to read this via the MOSI line.

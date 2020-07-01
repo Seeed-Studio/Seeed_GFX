@@ -77,7 +77,7 @@ void TFT_eSPI::loadFont(String fontName, bool flash) {
         // |   +     x..@@@@@@@..x     |   x marks the corner pixels of the bitmap
         // |                           |
         // +---------------------------+   yAdvance is y delta for the next line, font size or (ascent + descent)
-        //                                  some fonts can overlay in y direction so may need a user adjust value
+        //                                 some fonts can overlay in y direction so may need a user adjust value
 
     */
 

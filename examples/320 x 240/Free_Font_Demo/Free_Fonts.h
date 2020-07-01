@@ -264,6 +264,8 @@
     #define FONT7 7
     #define FONT8 8
 
+    #define TT1 1
+    
     #define FF0 1
     #define FF1 1
     #define FF2 1
