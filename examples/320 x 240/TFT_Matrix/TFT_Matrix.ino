@@ -13,6 +13,7 @@
     #########################################################################
 */
 
+<<<<<<< HEAD
 #include <TFT_eSPI.h>         // Hardware-specific library
 #include <SPI.h>
 
@@ -26,6 +27,21 @@ uint16_t yStart = TOP_FIXED_AREA;
 uint16_t yArea  = 320 - TOP_FIXED_AREA - BOT_FIXED_AREA;
 uint16_t yDraw  = 320 - BOT_FIXED_AREA - TEXT_HEIGHT;
 uint16_t xPos   = 0;
+=======
+#include <TFT_eSPI.h>       // Hardware-specific library
+#include <SPI.h>
+
+TFT_eSPI tft = TFT_eSPI();  // Invoke custom library
+
+#define TEXT_HEIGHT    8    // Height of text to be printed and scrolled
+#define BOT_FIXED_AREA 0    // Number of lines in bottom fixed area (lines counted from bottom of screen)
+#define TOP_FIXED_AREA 0    // Number of lines in top fixed area (lines counted from top of screen)
+
+uint16_t yStart = TOP_FIXED_AREA;
+uint16_t yArea = 320 - TOP_FIXED_AREA - BOT_FIXED_AREA;
+uint16_t yDraw = 320 - BOT_FIXED_AREA - TEXT_HEIGHT;
+uint16_t xPos  = 0;
+>>>>>>> 54cd5a4c0ba43fade388cb9848fc674addee45e1
 byte     pos[42];
 
 void setup() {
@@ -107,6 +123,3 @@ void scrollAddress(uint16_t VSP) {
     tft.writedata(VSP);
     tft.endWrite();
 }
-
-
-
