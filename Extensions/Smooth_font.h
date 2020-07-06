@@ -45,5 +45,5 @@ private:
 void     loadMetrics(uint16_t gCount);
 uint32_t readInt32(void);
 
-fs::FS&   fontFS = SPIFFS;
-bool     spiffs = true;
+fs::FS   &fontFS = SD;
+bool     spiffs = false; 

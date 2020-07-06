@@ -90,6 +90,58 @@ void* TFT_eSprite::createSprite(int16_t w, int16_t h, uint8_t frames) {
     return NULL;
 }
 
+/***************************************************************************************
+** Function name:           createSprite
+** Description:             Create a sprite (bitmap) of alloc by outer
+*************************************************************************************x*/
+// cast returned value to (uint8_t*) for 8 bit or (uint16_t*) for 16 bit colours
+void* TFT_eSprite::createSprite(int16_t w, int16_t h, uint8_t* data, uint8_t frames) {
+
+    if (_created) {
+        return _img8_1;
+    }
+
+    if (w < 1 || h < 1) {
+        return NULL;
+    }
+
+    _iwidth  = _dwidth  = _bitwidth = w;
+    _iheight = _dheight = h;
+
+    this->cursor_x = 0;
+    this->cursor_y = 0;
+
+    // Default scroll rectangle and gap fill colour
+    _sx = 0;
+    _sy = 0;
+    _sw = w;
+    _sh = h;
+    _scolor = TFT_BLACK;
+
+    _xpivot = w / 2;
+    _ypivot = h / 2;
+
+    _img8   = (uint8_t*) data;
+    _img8_1 = _img8;
+    _img8_2 = _img8;
+    _img    = (uint16_t*) _img8;
+
+    // This is to make it clear what pointer size is expected to be used
+    // but casting in the user sketch is needed due to the use of void*
+    if (_bpp == 1) {
+        w = (w + 7) & 0xFFF8;
+        _img8_2 = _img8 + ((w >> 3) * h + 1);
+    }
+
+    if (_img8) {
+        _created = true;
+        return _img8;
+    }
+
+    return NULL;
+}
+
+
 
 /***************************************************************************************
 ** Function name:           ~TFT_eSprite
