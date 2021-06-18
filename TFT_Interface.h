@@ -26,9 +26,10 @@
 
 #include <Arduino.h>
 #include <User_Setup.h>
+#include "lcd_interface.h"
 
-// interface if you want to use this library with you protocol, you neeed to realize them
-extern void interface_begin();
+// interface if you want to use this library with your protocol, you neeed to realize them
+extern void interface_begin(const uint32_t addr);
 extern uint8_t interface_transfer(uint8_t data);
 extern uint16_t interface_transfer16(uint16_t data);
 extern void interface_transfer(void* data, uint32_t count);
@@ -81,6 +82,7 @@ class TFT_Interface {
     #endif
     ~TFT_Interface();
     void begin();
+    void begin(uint32_t addr);
     void end();
     void writeCommand(uint8_t c);
     void writeData(uint8_t d);

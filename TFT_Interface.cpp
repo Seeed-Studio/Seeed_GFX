@@ -44,7 +44,17 @@ void TFT_Interface::begin() {
     #ifdef HASSPI
     this->_SPI->begin();
     #else
-    interface_begin();
+    interface_begin(0x90000000);
+    #endif
+    return;
+}
+
+void TFT_Interface::begin(uint32_t addr)
+{
+    #ifdef HASSPI
+    this->_SPI->begin();
+    #else
+    interface_begin(addr);
     #endif
     return;
 }
