@@ -260,7 +260,7 @@ TFT_eSPI::TFT_eSPI(int16_t w, int16_t h) {
 ** Function name:           begin
 ** Description:             Included for backwards compatibility
 ***************************************************************************************/
-void TFT_eSPI::begin(uint8_t tc) {
+void TFT_eSPI::begin(uint32_t tc) {
     init(tc);
 }
 
@@ -269,10 +269,15 @@ void TFT_eSPI::begin(uint8_t tc) {
 ** Function name:           init (tc is tab colour for ST7735 displays only)
 ** Description:             Reset, then initialise the TFT display registers
 ***************************************************************************************/
-void TFT_eSPI::init(uint8_t tc) {
+void TFT_eSPI::init(uint32_t tc) {
     if (_booted) {
 
-        _com.begin(); // This will set HMISO to input
+        #ifdef SEEEDUINO_H7AI
+            buf_address = tc;
+            _com.begin(tc); //This will set the RGBLCD buffer address
+        #elif
+            _com.begin(); // This will set HMISO to input
+        #endif
 
         inTransaction = false;
         locked = true;
@@ -732,7 +737,16 @@ void TFT_eSPI::pushRect(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t* da
 ** Description:             plot 16 bit colour sprite or image onto TFT
 ***************************************************************************************/
 void TFT_eSPI::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t* data) {
-
+    #ifdef SEEEDUINO_H7AI
+    for(int32_t j = y; j < j + h;j ++)
+    {
+        for(int32_t i = x; i < x + w;i ++)
+        {
+            drawPixel(i,j,*data);
+            data ++;
+        }
+    }
+    #elif
     if ((x >= _width) || (y >= _height)) {
         return;
     }
@@ -778,6 +792,7 @@ void TFT_eSPI::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t* d
 
     inTransaction = false;
     com_end();
+    #endif
 }
 
 /***************************************************************************************
@@ -1648,7 +1663,11 @@ void TFT_eSPI::fillEllipse(int16_t x0, int16_t y0, int32_t rx, int32_t ry, uint1
 ** Description:             Clear the screen to defined colour
 ***************************************************************************************/
 void TFT_eSPI::fillScreen(uint32_t color) {
+    #ifdef SEEEDUINO_H7AI
+    setWindow(0,0,800,480,color);
+    #else
     fillRect(0, 0, _width, _height, color);
+    #endif
 }
 
 
@@ -1658,6 +1677,13 @@ void TFT_eSPI::fillScreen(uint32_t color) {
 ***************************************************************************************/
 // Draw a rectangle
 void TFT_eSPI::drawRect(int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color) {
+    
+    #ifdef SEEEDUINO_H7AI
+    drawLine(x,y,x+w,y,color);
+    drawLine(x,y,x,y+h,color);
+    drawLine(x+w,y+h,x+w,y,color);
+    drawLine(x+w,y+h,x,y+h,color);
+    #else
     //com_begin();          // Sprite class can use this function, avoiding com_begin()
     inTransaction = true;
 
@@ -1669,6 +1695,7 @@ void TFT_eSPI::drawRect(int32_t x, int32_t y, int32_t w, int32_t h, uint32_t col
 
     inTransaction = false;
     com_end();              // Does nothing if Sprite class uses this function
+    #endif
 }
 
 
@@ -1944,8 +1971,13 @@ int16_t TFT_eSPI::getCursorY(void) {
 ** Description:             Set the text size multiplier
 ***************************************************************************************/
 void TFT_eSPI::setTextSize(uint8_t s) {
-    if (s > 7) {
-        s = 7;    // Limit the maximum size multiplier so byte variables can be used for rendering
+    #ifdef SEEEDUINO_H7AI
+    #define MAX_SIZE    4
+    #else
+    #define MAX_SIZE    7
+    #endif
+    if (s > MAX_SIZE) {
+        s = MAX_SIZE;       // Limit the maximum size multiplier so byte variables can be used for rendering
     }
     textsize = (s > 0) ? s : 1; // Don't allow font size 0
 }
@@ -2477,9 +2509,15 @@ void TFT_eSPI::setAddrWindow(int32_t x0, int32_t y0, int32_t w, int32_t h) {
 ** Description:             define an area to receive a stream of pixels
 ***************************************************************************************/
 // Chip select stays low, call com_begin first. Use setAddrWindow() from sketches
-void TFT_eSPI::setWindow(int32_t x0, int32_t y0, int32_t x1, int32_t y1) {
+void TFT_eSPI::setWindow(int32_t x0, int32_t y0, int32_t x1, int32_t y1 ,uint32_t color) {
+#ifdef SEEEDUINO_H7AI
+    if(x0 > 800 || x1 > 800 || y0 > 480 || y1 > 480)    
+        return;
+    for(int j = y0 ; j < y1 ; j ++)
+        for(int i = x0 ; i <= x1 ; i ++)
+            drawPixel(i,j,color);
+#else
     //com_begin(); // Must be called before setWimdow
-
     addr_col = 0xFFFF;
     addr_row = 0xFFFF;
 
@@ -2525,6 +2563,7 @@ void TFT_eSPI::setWindow(int32_t x0, int32_t y0, int32_t x1, int32_t y1) {
     DC_D;
 
     //com_end();
+#endif
 }
 
 
@@ -2582,7 +2621,10 @@ void TFT_eSPI::drawPixel(int32_t x, int32_t y, uint32_t color) {
     if ((x < 0) || (y < 0) || (x >= _width) || (y >= _height)) {
         return;
     }
-
+    #ifdef SEEEDUINO_H7AI
+    __IO uint16_t* addr = (__IO uint16_t*)(buf_address + (y*800 + x)*2 );
+    *addr = (uint16_t)(color & 0xffff);
+    #else
     com_begin();
 
     #ifdef CGRAM_OFFSET
@@ -2638,6 +2680,7 @@ void TFT_eSPI::drawPixel(int32_t x, int32_t y, uint32_t color) {
     tft_Write_16(color);
 
     com_end();
+    #endif
 }
 
 /***************************************************************************************
@@ -2807,6 +2850,46 @@ void TFT_eSPI::pushColors(uint16_t* data, uint32_t len, bool swap) {
 // Bresenham's algorithm - thx wikipedia - speed enhanced by Bodmer to use
 // an efficient FastH/V Line draw routine for line segments of 2 pixels or more
 void TFT_eSPI::drawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, uint32_t color) {
+    #ifdef SEEEDUINO_H7AI
+    if(x0 > 800 || x1 > 800 || y0 > 480 || y1 > 480)    
+        return;
+
+ 	uint16_t t; 
+	int xerr = 0,yerr = 0,delta_x,delta_y,distance; 
+	int incx,incy,uRow,uCol; 
+	delta_x = x1 - x0;              //Calculate the increment of X
+	delta_y = y1 - y0;              //Calculate the increment of Y
+	uRow = x0; 
+	uCol = y0; 
+
+	if(delta_x > 0) incx = 1;               //the increment of X is positive 
+	else if(delta_x == 0) incx = 0;         //Vertical line
+	else {incx = -1; delta_x = -delta_x;}   //the increment of X is negative
+	if(delta_y > 0)incy=1; 
+	else if(delta_y == 0) incy = 0;         //horizontal line 
+	else{incy = -1;delta_y = -delta_y;}     //the increment of Y is negative
+
+	if( delta_x > delta_y) distance = delta_x;  //choose increment of coord
+	else distance = delta_y; 
+
+	for(t = 0;t <= distance+1;t ++) 
+	{  
+		drawPixel(uRow,uCol,color); 
+		xerr    +=  delta_x ; 
+		yerr    +=  delta_y ; 
+		if(xerr > distance) 
+		{ 
+			xerr -= distance; 
+			uRow += incx; 
+		} 
+		if(yerr > distance) 
+		{ 
+			yerr -= distance; 
+			uCol += incy; 
+		} 
+	}  
+
+    #else
     //com_begin();          // Sprite class can use this function, avoiding com_begin()
     inTransaction = true;
     boolean steep = abs(y1 - y0) > abs(x1 - x0);
@@ -2866,6 +2949,7 @@ void TFT_eSPI::drawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, uint32_t
     }
     inTransaction = false;
     com_end();
+    #endif
 }
 
 
@@ -3178,6 +3262,32 @@ uint16_t TFT_eSPI::decodeUTF8(uint8_t* buf, uint16_t* index, uint16_t remaining)
 ** Description:             draw characters piped through serial stream
 ***************************************************************************************/
 size_t TFT_eSPI::write(uint8_t utf8) {
+    #ifdef SEEEDUINO_H7AI
+    uint8_t size = 0;
+    switch (textsize)
+    {
+        case 1: size = 12; break;
+        case 2: size = 16; break;
+        case 3: size = 24; break;
+        case 4: size = 32; break;
+        default:size = 12; break;
+    }
+
+    if (utf8 == '\r') {
+        return 1;
+    }
+    if(utf8 == '\n')
+    {
+        cursor_x = 0;
+        cursor_y = cursor_y + size;
+        return 1; 
+    }
+
+    drawChar( cursor_x, cursor_y,utf8,size,0,textbgcolor,textcolor);
+    cursor_x = cursor_x + size/2;
+    
+    #else
+
     if (utf8 == '\r') {
         return 1;
     }
@@ -3328,7 +3438,7 @@ size_t TFT_eSPI::write(uint8_t utf8) {
     }
         #endif // LOAD_GFXFF
     //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
+    #endif
     return 1;
 }
 
@@ -3633,6 +3743,65 @@ int16_t TFT_eSPI::drawChar(uint16_t uniCode, int32_t x, int32_t y, uint8_t font)
     // End of RLE font rendering
     #endif
     return width * textsize;    // x +
+}
+
+
+/***************************************************************************************
+** Function name:           drawChar
+** Description:             draw a char onto RGBLCD
+** default :                The Background is white , The Char is black
+***************************************************************************************/
+void TFT_eSPI::drawChar(uint16_t x,uint16_t y,uint8_t ch,uint8_t size,uint8_t mode,uint16_t BG_Color,uint16_t CH_Color)
+{
+    uint8_t temp,t1,t;
+	uint16_t y0=y;
+	uint8_t csize=(size/8+((size%8)?1:0))*(size/2);
+	ch = ch - ' ';
+	for(t=0;t<csize;t++)
+	{
+		if(size==12)temp=asc2_1206[ch][t];
+		else if(size==16)temp=asc2_1608[ch][t];
+		else if(size==24)temp=asc2_2412[ch][t];
+		else if(size==32)temp=asc2_3216[ch][t];
+		else return;
+		for(t1=0;t1<8;t1++)
+		{
+			if(temp&0x80)		drawPixel(x,y,CH_Color);
+			else if(mode==0) 	drawPixel(x,y,BG_Color);
+			temp<<=1;
+		    y++;
+			if(y>=_height)return;
+			if((y-y0)==size)
+			{					
+                y=y0;
+				x++;
+				if(x>=_width)return;
+				break;
+			}
+		}
+	}
+}
+
+
+
+/***************************************************************************************
+** Function name:           drawString 
+** Description :            draw string for RGBLCD
+** default :                The Background is white , The string is black
+***************************************************************************************/
+void TFT_eSPI::drawString(uint16_t x,uint16_t y,const char *p,uint16_t width,uint16_t height,uint8_t size,uint8_t mode,uint16_t BG_Color,uint16_t CH_Color)
+{
+    uint8_t x0=x;
+	width+=x;
+	height+=y;
+    while((*p<='~')&&(*p>=' '))
+    {
+        if(x>=width){x=x0;y+=size;}
+        if(y>=height)break;
+        drawChar(x,y,*p,size,0,BG_Color,CH_Color);
+        x+=size/2;
+        p++;
+    }
 }
 
 

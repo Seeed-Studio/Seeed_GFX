@@ -96,6 +96,10 @@
 #endif
 #endif
 
+#ifdef LOAD_FONT_RGBLCD
+#include <Fonts/FontRGBLCD.h>
+#endif
+
 #include <Arduino.h>
 #include <Print.h>
 
@@ -423,8 +427,8 @@ class TFT_eSPI : public Print
 public:
     TFT_eSPI(int16_t _W = TFT_WIDTH, int16_t _H = TFT_HEIGHT);
 
-    void init(uint8_t tc = TAB_COLOUR),
-         begin(uint8_t tc = TAB_COLOUR); // Same - begin included for backwards compatibility
+    void init(uint32_t tc = TAB_COLOUR),
+         begin(uint32_t tc = TAB_COLOUR); // Same - begin included for backwards compatibility
 #if defined(TFT_BL)
     void setBacklight(uint32_t backlight);
     uint32_t backlight();
@@ -443,8 +447,10 @@ public:
         height(void),
         width(void);
 
+     virtual void drawChar(uint16_t x,uint16_t y,uint8_t ch,uint8_t size = 16,uint8_t mode = 0,uint16_t BG_Color = 0,uint16_t CH_Color = 0xffff); 
+
     // The TFT_eSprite class inherits the following functions
-    void setWindow(int32_t xs, int32_t ys, int32_t xe, int32_t ye),
+    void setWindow(int32_t xs, int32_t ys, int32_t xe, int32_t ye, uint32_t color = 0xffff),
         pushColor(uint16_t color),
         pushColor(uint16_t color, uint32_t len),
         pushColors(uint16_t *data, uint32_t len, bool swap = true), // With byte swap option
@@ -568,6 +574,9 @@ public:
         drawRightString(const String &string, int32_t dX, int32_t poY,
                         uint8_t font); // Deprecated, use setTextDatum() and drawString()
 
+        //HAndle char arrays
+        virtual void drawString(uint16_t x,uint16_t y,const char *p,uint16_t width,uint16_t height,uint8_t size = 16,uint8_t mode = 0,uint16_t BG_Color = 0,uint16_t CH_Color = 0xffff);
+
     int16_t textWidth(const char *string, uint8_t font),
         textWidth(const char *string),
         textWidth(const String &string, uint8_t font),
@@ -617,6 +626,9 @@ public:
 
     uint8_t decoderState = 0; // UTF8 decoder state
     uint16_t decoderBuffer;   // Unicode code-point buffer
+    #ifdef SEEEDUINO_H7AI
+    uint32_t buf_address;
+    #endif
 
 private:
     inline void com_begin() __attribute__((always_inline));
