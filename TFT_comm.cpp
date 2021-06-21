@@ -4,7 +4,6 @@
 
 LCDClass RGB565LCD(LTDC_BUFFER_ADDRESS);
 enum LCD_STATE _state;
-static uint16_t border[4];
 
 void interface_begin()
 {
@@ -48,8 +47,8 @@ uint8_t interface_transfer(uint8_t data)
                     temp_border[1] = temp_border[1] >= TFT_WIDTH ? TFT_WIDTH : temp_border[1];
                 }
                 RGB565LCD.set_x_border(temp_border[0],temp_border[1]);
-                border[0] = temp_border[0];
-                border[1] = temp_border[1];              
+                RGB565LCD.x_border_left  = temp_border[0];
+                RGB565LCD.x_border_right = temp_border[1];              
                 FLAG = 0;
             }
         break;
@@ -72,8 +71,8 @@ uint8_t interface_transfer(uint8_t data)
                     temp_border[1] = temp_border[1] >= TFT_WIDTH ? TFT_WIDTH : temp_border[1];
                 }
                 RGB565LCD.set_y_border(temp_border[0],temp_border[1]);
-                border[2] = temp_border[0];
-                border[3] = temp_border[1];     
+                RGB565LCD.y_border_left  = temp_border[0];
+                RGB565LCD.y_border_right = temp_border[1];     
                 FLAG = 0;
             }
         break;
@@ -123,7 +122,7 @@ uint16_t interface_transfer16(uint16_t data)
             temp_border[0] ++;
             if(temp_border[0] > temp_border[1])
             {
-                temp_border[0] = border[0];
+                temp_border[0] = RGB565LCD.x_border_left;
                 temp_border[2] ++;
             }
             RGB565LCD.set_x_border(temp_border[0],temp_border[1]); 
@@ -137,7 +136,26 @@ uint16_t interface_transfer16(uint16_t data)
 
 void interface_transfer(void *data, uint32_t count)
 { 
-
+    uint16_t temp_border[4];
+    volatile uint16_t *p = (volatile uint16_t *)data;
+    for(uint32_t i = 0; i < count; i ++)
+    {
+        RGB565LCD.set_color(*p);
+        RGB565LCD.get_x_border(&temp_border[0],&temp_border[1]);
+        RGB565LCD.get_y_border(&temp_border[2],&temp_border[3]);
+        RGB565LCD.set_x(temp_border[0]);
+        RGB565LCD.set_y(temp_border[2]);
+        RGB565LCD.draw_pixel();    
+        temp_border[0] ++;
+        if(temp_border[0] > temp_border[1])
+        {
+            temp_border[0] = RGB565LCD.x_border_left;
+            temp_border[2] ++;
+        }
+        RGB565LCD.set_x_border(temp_border[0],temp_border[1]); 
+        RGB565LCD.set_y_border(temp_border[2],temp_border[3]);     
+        p ++;
+    } 
 }
 
 void interface_end()

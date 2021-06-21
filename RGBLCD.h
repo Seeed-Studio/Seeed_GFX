@@ -39,6 +39,11 @@ private:
     volatile enum LCD_STATE     state;
     volatile enum LCD_ROTATION  rotation;
 public:
+    volatile uint16_t x_border_left;
+    volatile uint16_t x_border_right;
+    volatile uint16_t y_border_left;
+    volatile uint16_t y_border_right;
+
     LCDClass(uint32_t addr);
     ~LCDClass();
     void begin(void);

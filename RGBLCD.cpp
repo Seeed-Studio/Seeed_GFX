@@ -13,6 +13,8 @@ LCDClass::LCDClass(uint32_t addr)
     x_end   = TFT_WIDTH;
     y_start = 0;
     y_end   = TFT_HEIGHT;
+    x_border_left = x_border_right = 0;
+    y_border_left = y_border_right = 0;
     /*direction*/
     rotation = ROTATION_UP;
     /*start point*/
