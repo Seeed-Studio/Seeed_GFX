@@ -105,7 +105,7 @@ void LCDClass::draw_pixel(void)
     switch(rotation)
     {
       case ROTATION_UP:
-      *(volatile uint16_t *)((uint32_t)DataBuffer + ( (TFT_WIDTH*y) + x ) * 2 ) = (uint16_t)(color & 0xffff);   
+      *(volatile uint16_t *)((uint32_t)DataBuffer + ( (TFT_WIDTH * y) + x ) * 2 ) = (uint16_t)(color & 0xffff);   
       break;
       case ROTATION_LEFT:   
       *(volatile uint16_t *)((uint32_t)DataBuffer + ( ( TFT_WIDTH * x ) + TFT_WIDTH - y - 1) * 2 ) = (uint16_t)(color & 0xffff);

@@ -5,27 +5,27 @@ switch (m)
 {
     case 0:
         tft_Write_8(TFT_ROTATION_UP);
-        _width  = 800;
-        _height = 480;
+        _width  = TFT_WIDTH;
+        _height = TFT_HEIGHT;
     break;
     case 1:
         tft_Write_8(TFT_ROTATION_LEFT);
-        _width  = 480;
-        _height = 800;
+        _width  = TFT_HEIGHT;
+        _height = TFT_WIDTH;
     break;
     case 2:
         tft_Write_8(TFT_ROTATION_RIGHT);
-        _width  = 480;
-        _height = 800;
+        _width  = TFT_HEIGHT;
+        _height = TFT_WIDTH;
     break;
     case 3:
         tft_Write_8(TFT_ROTATION_DOWN);
-        _width  = 800;
-        _height = 480;
+        _width  = TFT_WIDTH;
+        _height = TFT_HEIGHT;
     break;
     default:
         tft_Write_8(TFT_ROTATION_UP);
-        _width  = 800;
-        _height = 480;
+        _width  = TFT_WIDTH;
+        _height = TFT_HEIGHT;
     break;
 }
