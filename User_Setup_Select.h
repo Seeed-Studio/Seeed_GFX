@@ -118,7 +118,7 @@
 #elif defined (RM68140_DRIVER)
     #include "TFT_Drivers/RM68140_Defines.h"
     #define  TFT_DRIVER 0x6814
-#elif defined (LTDC_SUPPORT)
+#elif defined (LTDC_DRIVER)
     #include "TFT_Drivers/LTDC_Defines.h"
     #define  TFT_DRIVER 0x0000
 #elif defined (XYZZY_DRIVER)  // <<<<<<<<<<<<<<<<<<<<<<<< ADD NEW DRIVER HERE

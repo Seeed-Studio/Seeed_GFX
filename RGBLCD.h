@@ -1,7 +1,10 @@
 #ifndef __RGBLCD_H_
 #define __RGBLCD_H_
 
-#ifdef LTDC_SUPPORT
+#include "Arduino.h"
+
+#ifdef HAL_LTDC_MODULE_ENABLED
+#include "User_Setup.h"
 #include "stm32h7xx_hal.h"
 #include "TFT_Drivers/LTDC_Defines.h"
 

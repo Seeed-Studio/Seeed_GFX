@@ -8,7 +8,6 @@
 //   run without the need to make any more changes for a particular hardware setup!
 //   Note that some sketches are designed for a particular TFT pixel width/height
 
-
 // ##################################################################################
 //
 // Section 1. Call up the right driver file and any options for it
@@ -28,7 +27,6 @@
 //#define ST7789_DRIVER      // Full configuration option, define additional parameters below for this display
 //#define ST7789_2_DRIVER    // Minimal configuration option, define additional parameters below for this display
 //#define R61581_DRIVER
-
 
 // Some displays support SPI reads via the MISO pin, other displays have a single
 // bi-directional SDA pin and the library will try to read this via the MOSI line.
@@ -121,7 +119,6 @@
 // If 5V is not available at a pin you can use 3.3V but backlight brightness
 // will be lower.
 
-
 // ###### EDIT THE PIN NUMBERS IN THE LINES FOLLOWING TO SUIT YOUR BOARD SETUP ######
 
 // For seeed samd21
@@ -140,27 +137,32 @@
 //#define TFT_RST  -1    // Set TFT_RST to -1 if the display RESET is connected to RST or 3.3V
 
 //For seeed GroveUI - u
-#if  defined(ARDUINO_ARCH_SAMD) && defined(SEEED_GROVE_UI_WIRELESS)
+#if defined(ARDUINO_ARCH_SAMD) && defined(SEEED_GROVE_UI_WIRELESS)
+#define ILI9341_DRIVER
 #define HASSPI 1
-#define SPICOM   LCD_SPI
-#define TFT_CS   LCD_SS_PIN
-#define TFT_DC   LCD_DC
-#define TFT_RST  LCD_RESET  //Set TFT_RST to -1 if the display RESET is connected to RST or 3.3V
-#define TFT_BL   LCD_BACKLIGHT
+#define SPICOM LCD_SPI
+#define TFT_CS LCD_SS_PIN
+#define TFT_DC LCD_DC
+#define TFT_RST LCD_RESET //Set TFT_RST to -1 if the display RESET is connected to RST or 3.3V
+#define TFT_BL LCD_BACKLIGHT
 #define TFT_BACKLIGHT_ON HIGH
 #define TFT_BACKLINGT_V 2000
 #elif defined(ARDUINO_ARCH_SAMD)
+#define ILI9341_DRIVER
 #define HASSPI 1
 #define SPICOM SPI
-#define TFT_CS   5
-#define TFT_DC   6
-#define TFT_RST  -1    // Set TFT_RST to -1 if the display RESET is connected to RST or 3.3V
-#elif defined(LTDC_SUPPORT)
-
+#define TFT_CS 5
+#define TFT_DC 6
+#define TFT_RST -1 // Set TFT_RST to -1 if the display RESET is connected to RST or 3.3V
+#elif defined(WIO_LITE_AI)
+#define LTDC_DRIVER
+#define LTDC_BUFFER_ADDRESS 0x90000000
+#define LCD_BL LCD_BACKGROUND_ENABLE
+#define LCD_RST LCD_RESET
+#define TFT_BACKLIGHT_ON HIGH
 #else
-    #error "you need to config in USer_Setup.h"
+#error "you need to config in USer_Setup.h"
 #endif
-
 
 //For GD32
 // #define TFT_RST PE1
@@ -190,8 +192,6 @@
 // #define XPT_CLK PE0
 // #define XPT_PENIRQ PE4
 
-
-
 // ##################################################################################
 //
 // Section 4. Define the fonts that are to be used here
@@ -203,19 +203,18 @@
 // normally necessary. If all fonts are loaded the extra FLASH space required is
 // about 17Kbytes. To save FLASH space only enable the fonts you need!
 
-#define LOAD_GLCD   // Font 1. Original Adafruit 8 pixel font needs ~1820 bytes in FLASH
-#define LOAD_FONT2  // Font 2. Small 16 pixel high font, needs ~3534 bytes in FLASH, 96 characters
-#define LOAD_FONT4  // Font 4. Medium 26 pixel high font, needs ~5848 bytes in FLASH, 96 characters
-#define LOAD_FONT6  // Font 6. Large 48 pixel font, needs ~2666 bytes in FLASH, only characters 1234567890:-.apm
-#define LOAD_FONT7  // Font 7. 7 segment 48 pixel font, needs ~2438 bytes in FLASH, only characters 1234567890:-.
-#define LOAD_FONT8  // Font 8. Large 75 pixel font needs ~3256 bytes in FLASH, only characters 1234567890:-.
+#define LOAD_GLCD  // Font 1. Original Adafruit 8 pixel font needs ~1820 bytes in FLASH
+#define LOAD_FONT2 // Font 2. Small 16 pixel high font, needs ~3534 bytes in FLASH, 96 characters
+#define LOAD_FONT4 // Font 4. Medium 26 pixel high font, needs ~5848 bytes in FLASH, 96 characters
+#define LOAD_FONT6 // Font 6. Large 48 pixel font, needs ~2666 bytes in FLASH, only characters 1234567890:-.apm
+#define LOAD_FONT7 // Font 7. 7 segment 48 pixel font, needs ~2438 bytes in FLASH, only characters 1234567890:-.
+#define LOAD_FONT8 // Font 8. Large 75 pixel font needs ~3256 bytes in FLASH, only characters 1234567890:-.
 //#define LOAD_FONT8N // Font 8. Alternative to Font 8 above, slightly narrower, so 3 digits fit a 160 pixel TFT
-#define LOAD_GFXFF  // FreeFonts. Include access to the 48 Adafruit_GFX free fonts FF1 to FF48 and custom fonts
+#define LOAD_GFXFF // FreeFonts. Include access to the 48 Adafruit_GFX free fonts FF1 to FF48 and custom fonts
 
 // Comment out the #define below to stop the SPIFFS filing system and smooth font code being loaded
 // this will save ~20kbytes of FLASH
 //#define SMOOTH_FONT
-
 
 // ##################################################################################
 //
@@ -230,37 +229,9 @@
 // With an ILI9163 display 27 MHz works OK.
 // The RPi typically only works at 20MHz maximum.
 
-// #define SPI_FREQUENCY   1000000
-// #define SPI_FREQUENCY   5000000
-// #define SPI_FREQUENCY  10000000
-// #define SPI_FREQUENCY  20000000
-#define SPI_FREQUENCY  50000000 // Actually sets it to 26.67MHz = 80/3
-// #define SPI_FREQUENCY  40000000 // Maximum to use SPIFFS
-// #define SPI_FREQUENCY  80000000
+#define SPI_FREQUENCY 50000000 // Actually sets it to 26.67MHz = 80/3
 
 // Optional reduced SPI frequency for reading TFT
-#define SPI_READ_FREQUENCY  20000000
-
-// The XPT2046 requires a lower SPI clock rate of 2.5MHz so we define that here:
-#define SPI_TOUCH_FREQUENCY  2500000
-
-// The ESP32 has 2 free SPI ports i.e. VSPI and HSPI, the VSPI is the default.
-// If the VSPI port is in use and pins are not accessible (e.g. TTGO T-Beam)
-// then uncomment the following line:
-//#define USE_HSPI_PORT
-
-// Comment out the following #define if "SPI Transactions" do not need to be
-// supported. When commented out the code size will be smaller and sketches will
-// run slightly faster, so leave it commented out unless you need it!
-
-// Transaction support is needed to work with SD library but not needed with TFT_SdFat
-// Transaction support is required if other SPI devices are connected.
-
-// Transactions are automatically enabled by the library for an ESP32 (to use HAL mutex)
-// so changing it here has no effect
+#define SPI_READ_FREQUENCY 20000000
 
 #define SUPPORT_TRANSACTIONS
-
-
-
-

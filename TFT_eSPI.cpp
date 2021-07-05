@@ -455,7 +455,7 @@ void TFT_eSPI::setRotation(uint8_t m) {
     #elif defined (ST7789_2_DRIVER)
 #include "TFT_Drivers/ST7789_2_Rotation.h"
 
-    #elif defined (LTDC_SUPPORT)
+    #elif defined (LTDC_DRIVER)
 #include "TFT_Drivers/LTDC_Rotation.h"
     #endif
 

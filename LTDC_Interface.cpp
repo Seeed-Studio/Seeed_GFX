@@ -1,20 +1,15 @@
+
 #include <Arduino.h>
 #include "RGBLCD.h"
 
+#ifdef HAL_LTDC_MODULE_ENABLED
 
 LCDClass RGB565LCD(LTDC_BUFFER_ADDRESS);
+
 enum LCD_STATE _state;
 
 void interface_begin()
 {
-    pinMode(LED_RED, OUTPUT);
-    for(int i = 0;i < 6; i++)
-    {
-        digitalWrite(LED_RED, HIGH);
-        delay(100);
-        digitalWrite(LED_RED, LOW);
-        delay(100);
-    }
     RGB565LCD.begin();
 }
 
@@ -194,3 +189,5 @@ void interface_writeData(uint8_t d)
 {
 
 }
+
+#endif

@@ -33,10 +33,3 @@
 #define TFT_ROTATION_LEFT   0x82
 #define TFT_ROTATION_RIGHT  0x83
 #define TFT_ROTATION_DOWN   0x84
-
-/*addr*/
-#define LTDC_BUFFER_ADDRESS 0x90000000
-
-/*pin*/
-#define LCD_BL              LCD_BACKGROUND_ENABLE
-#define LCD_RST             LCD_RESET
