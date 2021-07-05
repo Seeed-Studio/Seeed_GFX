@@ -16,7 +16,7 @@
 // ##################################################################################
 
 // Only define one driver, the other ones must be commented out
-#define ILI9341_DRIVER
+//#define ILI9341_DRIVER
 //#define ST7735_DRIVER      // Define additional parameters below for this display
 //#define ILI9163_DRIVER     // Define additional parameters below for this display
 //#define S6D02A1_DRIVER
@@ -28,6 +28,7 @@
 //#define ST7789_DRIVER      // Full configuration option, define additional parameters below for this display
 //#define ST7789_2_DRIVER    // Minimal configuration option, define additional parameters below for this display
 //#define R61581_DRIVER
+
 
 // Some displays support SPI reads via the MISO pin, other displays have a single
 // bi-directional SDA pin and the library will try to read this via the MOSI line.
@@ -154,6 +155,8 @@
 #define TFT_CS   5
 #define TFT_DC   6
 #define TFT_RST  -1    // Set TFT_RST to -1 if the display RESET is connected to RST or 3.3V
+#elif defined(SEEEDUINO_H7AI)
+
 #else
     #error "you need to config in USer_Setup.h"
 #endif

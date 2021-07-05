@@ -455,6 +455,8 @@ void TFT_eSPI::setRotation(uint8_t m) {
     #elif defined (ST7789_2_DRIVER)
 #include "TFT_Drivers/ST7789_2_Rotation.h"
 
+    #elif defined (SEEEDUINO_H7AI)
+#include "TFT_Drivers/LTDC_Rotation.h"
     #endif
 
     delayMicroseconds(10);
@@ -2230,6 +2232,7 @@ void TFT_eSPI::drawChar(int32_t x, int32_t y, uint16_t c, uint32_t color, uint32
     if (c < 32) {
         return;
     }
+
     #ifdef LOAD_GLCD
     //>>>>>>>>>>>>>>>>>>
     #ifdef LOAD_GFXFF
@@ -4147,6 +4150,7 @@ void writeBlock(uint16_t color, uint32_t repeat) {
         tft_Write_32(r2) repet -= 3
     };
 }
+
 #else
 
 void writeBlock(uint16_t color, uint32_t repeat) {
