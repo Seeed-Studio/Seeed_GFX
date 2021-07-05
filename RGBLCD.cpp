@@ -1,3 +1,4 @@
+#ifdef LTDC_SUPPORT
 #include <Arduino.h>
 #include <User_Setup.h>
 #include "RGBLCD.h"
@@ -385,3 +386,4 @@ void HAL_LTDC_MspDeInit(LTDC_HandleTypeDef* ltdcHandle)
   /* USER CODE END LTDC_MspDeInit 1 */
   }
 }
+#endif

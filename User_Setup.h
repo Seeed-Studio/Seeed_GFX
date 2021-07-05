@@ -155,7 +155,7 @@
 #define TFT_CS   5
 #define TFT_DC   6
 #define TFT_RST  -1    // Set TFT_RST to -1 if the display RESET is connected to RST or 3.3V
-#elif defined(SEEEDUINO_H7AI)
+#elif defined(LTDC_SUPPORT)
 
 #else
     #error "you need to config in USer_Setup.h"

@@ -1,10 +1,10 @@
 #ifndef __RGBLCD_H_
 #define __RGBLCD_H_
 
-#ifdef SEEEDUINO_H7AI
+#ifdef LTDC_SUPPORT
 #include "stm32h7xx_hal.h"
 #include "TFT_Drivers/LTDC_Defines.h"
-#endif
+
 
 enum LCD_STATE 
 {
@@ -67,3 +67,4 @@ public:
 
 #endif
 
+#endif
