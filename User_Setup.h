@@ -157,9 +157,6 @@
 #elif defined(WIO_LITE_AI)
 #define LTDC_DRIVER
 #define LTDC_BUFFER_ADDRESS 0x90000000
-#define TFT_BL LCD_BACKGROUND_ENABLE
-#define TFT_RST LCD_RESET
-#define TFT_BACKLIGHT_ON HIGH
 #else
 #error "you need to config in USer_Setup.h"
 #endif

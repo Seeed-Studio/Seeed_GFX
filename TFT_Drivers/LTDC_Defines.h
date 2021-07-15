@@ -1,5 +1,5 @@
-#define TFT_WIDTH  800
-#define TFT_HEIGHT 480
+#define TFT_WIDTH  240
+#define TFT_HEIGHT 320
 
 #define TFT_INIT_DELAY 0
 

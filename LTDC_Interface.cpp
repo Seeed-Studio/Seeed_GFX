@@ -33,13 +33,13 @@ uint8_t interface_transfer(uint8_t data)
                 temp_border[1] = (uint16_t)(temp_data[2]<<8 | temp_data[3]);
                 if(_rotation == ROTATION_LEFT || _rotation == ROTATION_RIGHT)
                 {
-                    temp_border[0] = temp_border[0] >= TFT_HEIGHT ? TFT_HEIGHT : temp_border[0];
-                    temp_border[1] = temp_border[1] >= TFT_HEIGHT ? TFT_HEIGHT : temp_border[1];
+                    temp_border[0] = temp_border[0] >= TFT_HEIGHT ? TFT_HEIGHT-1 : temp_border[0];
+                    temp_border[1] = temp_border[1] >= TFT_HEIGHT ? TFT_HEIGHT-1 : temp_border[1];
                 }   
                 else
                 {
-                    temp_border[0] = temp_border[0] >= TFT_WIDTH ? TFT_WIDTH : temp_border[0];
-                    temp_border[1] = temp_border[1] >= TFT_WIDTH ? TFT_WIDTH : temp_border[1];
+                    temp_border[0] = temp_border[0] >= TFT_WIDTH ? TFT_WIDTH-1 : temp_border[0];
+                    temp_border[1] = temp_border[1] >= TFT_WIDTH ? TFT_WIDTH-1 : temp_border[1];
                 }
                 RGB565LCD.set_x_border(temp_border[0],temp_border[1]);
                 RGB565LCD.x_border_left  = temp_border[0];
@@ -189,5 +189,6 @@ void interface_writeData(uint8_t d)
 {
 
 }
+
 
 #endif
