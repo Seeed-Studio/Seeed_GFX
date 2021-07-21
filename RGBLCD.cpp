@@ -1,6 +1,6 @@
 #include <Arduino.h>
-#include <User_Setup.h>
 #include "RGBLCD.h"
+#include <User_Setup.h>
 
 #ifdef HAL_LTDC_MODULE_ENABLED
 
@@ -8,277 +8,299 @@ void MX_LTDC_Init(const uint32_t addr);
 
 LCDClass::LCDClass(uint32_t addr)
 {
-    DataBuffer = (volatile uint16_t*)addr;
-    /*border*/
-    x_start = 0;
-    x_end   = TFT_WIDTH;
-    y_start = 0;
-    y_end   = TFT_HEIGHT;
-    x_border_left = x_border_right = 0;
-    y_border_left = y_border_right = 0;
-    /*direction*/
-    rotation = ROTATION_UP;
-    /*start point*/
-    x = 0;
-    y = 0;
+  DataBuffer = (volatile uint16_t *)addr;
+  /*current x_cur, y_cur*/
+  x_cur = 0;
+  y_cur = 0;
+  /*windows*/
+  x_start = 0;
+  x_end = TFT_WIDTH;
+  y_start = 0;
+  y_end = TFT_HEIGHT;
+  /*direction*/
+  rotation = ROTATION_UP;
 }
 
 LCDClass::~LCDClass()
 {
-
 }
 
-void LCDClass::begin(void)
+void LCDClass::begin()
 {
-    MX_LTDC_Init((uint32_t)DataBuffer);
+  MX_LTDC_Init((uint32_t)DataBuffer);
 }
 
-void LCDClass::set_state(enum LCD_STATE _state)
+void LCDClass::command(uint8_t cmd)
 {
-    state = _state;
+  index = 0;
+  switch (cmd)
+  {
+  case TFT_CASET:
+    state_cur = SET_WINDOW_X;
+    x_start = 0;
+    x_end = 0;
+    break;
+  case TFT_PASET:
+    state_cur = SET_WINDOW_Y;
+    y_start = 0;
+    y_end = 0;
+    break;
+  case TFT_RAMWR:
+    x_cur = x_start;
+    y_cur = y_start;
+    state_cur = DEFAULT_STATE;
+    break;
+  case TFT_SET_ROTATION:
+    state_cur = SET_ROTATION;
+    break;
+  default:
+    break;
+  }
 }
 
-enum LCD_STATE LCDClass::get_state(void)
+void LCDClass::write(uint8_t data)
 {
-    return state;
-}
-
-void LCDClass::set_x(uint16_t _x)
-{
-    x = _x;
-}
-
-void LCDClass::set_x_border(uint16_t _x_s , uint16_t _x_e)
-{
-    x_start = _x_s;
-    x_end   = _x_e;
-}
-
-void LCDClass::get_x_border(uint16_t* _x_s , uint16_t* _x_e)
-{
-    *_x_s = x_start;
-    *_x_e = x_end;
-}
-
-uint16_t LCDClass::get_x(void)
-{
-    return x;
-}
-void LCDClass::set_y(uint16_t _y)
-{
-    y = _y;
-}
-
-void LCDClass::set_y_border(uint16_t _y_s , uint16_t _y_e)
-{
-    y_start = _y_s;
-    y_end   = _y_e;
-}
-
-void LCDClass::get_y_border(uint16_t* _y_s , uint16_t* _y_e)
-{
-    *_y_s = y_start;
-    *_y_e = y_end;
-}
-
-uint16_t LCDClass::get_y(void)
-{
-    return y;
-}
-
-void LCDClass::set_color(uint32_t _color)
-{
-    color = _color;
-}
-
-void LCDClass::set_rotation(enum LCD_ROTATION  _rotation)
-{
-  rotation = _rotation;
-}
-
-enum LCD_ROTATION LCDClass::get_rotation(void)
-{
-  return rotation;
-}
-
-void LCDClass::draw_pixel(void)
-{
-    switch(rotation)
+  switch (state_cur)
+  {
+  case SET_WINDOW_X:
+    if (index < 2)
     {
-      case ROTATION_UP:
-      *(volatile uint16_t *)((uint32_t)DataBuffer + ( (TFT_WIDTH * y) + x ) * 2 ) = (uint16_t)(color & 0xffff);   
+      x_start |= data << ((1 - index) * 8);
+    }
+    else
+    {
+      x_end |= data << ((3 - index) * 8);
+    }
+    index++;
+    break;
+  case SET_WINDOW_Y:
+    if (index < 2)
+    {
+      y_start |= data << ((1 - index) * 8);
+    }
+    else
+    {
+      y_end |= data << ((3 - index) * 8);
+    }
+    index++;
+    break;
+  case SET_ROTATION:
+    switch (data)
+    {
+    case TFT_ROTATION_UP:
+      rotation = ROTATION_UP;
       break;
-      case ROTATION_LEFT:   
-      *(volatile uint16_t *)((uint32_t)DataBuffer + ( ( TFT_WIDTH * x ) + TFT_WIDTH - y - 1) * 2 ) = (uint16_t)(color & 0xffff);
-      
+    case TFT_ROTATION_DOWN:
+      rotation = ROTATION_DOWN;
       break;
-      case ROTATION_RIGHT:   
-      *(volatile uint16_t *)((uint32_t)DataBuffer + ( ( TFT_WIDTH * (TFT_HEIGHT - x - 1) ) + y ) * 2 ) = (uint16_t)(color & 0xffff);
+    case TFT_ROTATION_LEFT:
+      rotation = ROTATION_LEFT;
       break;
-      case ROTATION_DOWN:   
-      *(volatile uint16_t *)((uint32_t)DataBuffer + ( (TFT_WIDTH * (TFT_HEIGHT - y - 1) ) + TFT_WIDTH - x - 1) * 2 ) = (uint16_t)(color & 0xffff);
+    case TFT_ROTATION_RIGHT:
+      rotation = ROTATION_RIGHT;
       break;
-      default:
+    default:
+      rotation = ROTATION_UP;
       break;
     }
+    break;
+  default:
+
+    break;
+  }
+}
+void LCDClass::write(uint16_t data)
+{
+  switch (rotation)
+  {
+  case ROTATION_UP:
+    *(volatile uint16_t *)((uint32_t)DataBuffer + ((TFT_WIDTH * y_cur) + x_cur) * 2) = (uint16_t)(data);
+    break;
+  case ROTATION_LEFT:
+    *(volatile uint16_t *)((uint32_t)DataBuffer + ((TFT_WIDTH * x_cur) + TFT_WIDTH - y_cur - 1) * 2) = (uint16_t)(data);
+    break;
+  case ROTATION_RIGHT:
+    *(volatile uint16_t *)((uint32_t)DataBuffer + ((TFT_WIDTH * (TFT_HEIGHT - x_cur - 1)) + y_cur) * 2) = (uint16_t)(data);
+    break;
+  case ROTATION_DOWN:
+    *(volatile uint16_t *)((uint32_t)DataBuffer + ((TFT_WIDTH * (TFT_HEIGHT - y_cur - 1)) + TFT_WIDTH - x_cur - 1) * 2) = (uint16_t)(data);
+    break;
+  default:
+    break;
+  }
+
+  x_cur++;
+
+  if (x_cur > x_end)
+  {
+    x_cur = x_start;
+    y_cur++;
+    if (y_cur > y_end)
+      y_cur = y_start;
+  }
+}
+void LCDClass::write(void *buf, size_t count)
+{
+ 
 }
 
 static inline void wait(uint32_t us)
 {
-		for(int j = 0; j < 55; j++)
-		{
-			 asm volatile("nop");
-		}
-
+  for (int j = 0; j < 55; j++)
+  {
+    asm volatile("nop");
+  }
 }
 
 void SPI_WriteComm(uint8_t val)
 {
-	digitalWrite(PA1,  LOW); // CS
-    
-	for (uint8_t bit = 0u; bit < 9u; bit++)
-	{
-	   if(bit == 0)
-	   {
-		   digitalWrite(PH2,  LOW);
-	   }else{
-		  digitalWrite(PH2, (val & (1 << (8 - bit)))?HIGH:LOW);
-	   }
-	   wait(1);
-	   digitalWrite(PH3, LOW);
-	   wait(1);
-	   digitalWrite(PH3, HIGH);
-	}
-	digitalWrite(PH2,  LOW); // SDO
-	digitalWrite(PH3, LOW); // CLK
+  digitalWrite(PA1, LOW); // CS
 
-	digitalWrite(PA1,  HIGH); // CS
+  for (uint8_t bit = 0u; bit < 9u; bit++)
+  {
+    if (bit == 0)
+    {
+      digitalWrite(PH2, LOW);
+    }
+    else
+    {
+      digitalWrite(PH2, (val & (1 << (8 - bit))) ? HIGH : LOW);
+    }
+    wait(1);
+    digitalWrite(PH3, LOW);
+    wait(1);
+    digitalWrite(PH3, HIGH);
+  }
+  digitalWrite(PH2, LOW); // SDO
+  digitalWrite(PH3, LOW); // CLK
+
+  digitalWrite(PA1, HIGH); // CS
 }
 
 void SPI_WriteData(uint8_t val)
 {
 
-	digitalWrite(PA1,  LOW); // CS
+  digitalWrite(PA1, LOW); // CS
 
-	for (uint8_t bit = 0u; bit < 9u; bit++)
-	{
-	   if(bit == 0)
-	   {
-		    digitalWrite(PH2,  HIGH);
-	   }else{
-	  		digitalWrite(PH2, (val & (1 << (8 - bit)))?HIGH:LOW);
-	   }
-		wait(1);
-	    digitalWrite(PH3, LOW);
-	    wait(1);
-		digitalWrite(PH3, HIGH);
-	}
-	digitalWrite(PH2,  LOW); // SDO
-	HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, GPIO_PIN_RESET); // CLK
+  for (uint8_t bit = 0u; bit < 9u; bit++)
+  {
+    if (bit == 0)
+    {
+      digitalWrite(PH2, HIGH);
+    }
+    else
+    {
+      digitalWrite(PH2, (val & (1 << (8 - bit))) ? HIGH : LOW);
+    }
+    wait(1);
+    digitalWrite(PH3, LOW);
+    wait(1);
+    digitalWrite(PH3, HIGH);
+  }
+  digitalWrite(PH2, LOW);                               // SDO
+  HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, GPIO_PIN_RESET); // CLK
 
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET); // CS
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET); // CS
 }
 
 void ST7789V_Init()
 {
-    pinMode(PH2, OUTPUT);
-    pinMode(PH3, OUTPUT);
-    pinMode(PA1, OUTPUT);
+  pinMode(PH2, OUTPUT);
+  pinMode(PH3, OUTPUT);
+  pinMode(PA1, OUTPUT);
 
-    digitalWrite(PA1, HIGH); // CS
+  digitalWrite(PA1, HIGH); // CS
 
-    delay(1);
-	//----------------Star Initial Sequence-------//
-	SPI_WriteComm(0x11);
-	delay(120); //Delay 120ms
+  delay(1);
+  //----------------Star Initial Sequence-------//
+  SPI_WriteComm(0x11);
+  delay(120); //Delay 120ms
 
-	SPI_WriteComm(0xB0);
-	SPI_WriteData(0x11);
-	SPI_WriteData(0xf0);//RGB interface		 //00
+  SPI_WriteComm(0xB0);
+  SPI_WriteData(0x11);
+  SPI_WriteData(0xf0); //RGB interface		 //00
 
-	SPI_WriteComm(0xB1);
-	SPI_WriteData(0xC0);//40=RGB-DE-mode/60=RGB HV MODE
-	SPI_WriteData(0x02);//VBP	  //02
-	SPI_WriteData(0x14);//HBP	  //14
+  SPI_WriteComm(0xB1);
+  SPI_WriteData(0x40); //40=RGB-DE-mode/60=RGB HV MODE
+  SPI_WriteData(0x02); //VBP	  //02
+  SPI_WriteData(0x14); //HBP	  //14
 
-	SPI_WriteComm(0xB2);
-	SPI_WriteData(0x0C);
-	SPI_WriteData(0x0C);
-	SPI_WriteData(0x00);
-	SPI_WriteData(0x33);
-	SPI_WriteData(0x33);
+  SPI_WriteComm(0xB2);
+  SPI_WriteData(0x0C);
+  SPI_WriteData(0x0C);
+  SPI_WriteData(0x00);
+  SPI_WriteData(0x33);
+  SPI_WriteData(0x33);
 
-	SPI_WriteComm(0xB7);
-	SPI_WriteData(0x35);
+  SPI_WriteComm(0xB7);
+  SPI_WriteData(0x35);
 
-	SPI_WriteComm(0xBB);
-	SPI_WriteData(0x28);//VCOM	   //28
+  SPI_WriteComm(0xBB);
+  SPI_WriteData(0x28); //VCOM	   //28
 
-	SPI_WriteComm(0xC0);
-	SPI_WriteData(0x2C);
+  SPI_WriteComm(0xC0);
+  SPI_WriteData(0x2C);
 
-	SPI_WriteComm(0xC2);
-	SPI_WriteData(0x01);
+  SPI_WriteComm(0xC2);
+  SPI_WriteData(0x01);
 
-	SPI_WriteComm(0xc3);
-	SPI_WriteData(0x0B);//GVDD/GVCL
+  SPI_WriteComm(0xc3);
+  SPI_WriteData(0x0B); //GVDD/GVCL
 
-	//SPI_Write_index(0xc5);
-	//SPI_Write_data(0x28);//VCOM 
+  //SPI_Write_index(0xc5);
+  //SPI_Write_data(0x28);//VCOM
 
-	SPI_WriteComm(0xC4);
-	SPI_WriteData(0x20);
+  SPI_WriteComm(0xC4);
+  SPI_WriteData(0x20);
 
-	SPI_WriteComm(0xC6);
-	SPI_WriteData(0x0F);
+  SPI_WriteComm(0xC6);
+  SPI_WriteData(0x0F);
 
-	SPI_WriteComm(0xD0);
-	SPI_WriteData(0xA4);
-	SPI_WriteData(0xA1);
-	////////////////////////////////////GAMMA
-	SPI_WriteComm(0xE0);
-	SPI_WriteData(0xD0);
-	SPI_WriteData(0x01);
-	SPI_WriteData(0x08);
-	SPI_WriteData(0x0F);
-	SPI_WriteData(0x11);
-	SPI_WriteData(0x2A);
-	SPI_WriteData(0x36);
-	SPI_WriteData(0x55);
-	SPI_WriteData(0x44);
-	SPI_WriteData(0x3A);
-	SPI_WriteData(0x0B);
-	SPI_WriteData(0x06);
-	SPI_WriteData(0x11);
-	SPI_WriteData(0x20);
+  SPI_WriteComm(0xD0);
+  SPI_WriteData(0xA4);
+  SPI_WriteData(0xA1);
+  ////////////////////////////////////GAMMA
+  SPI_WriteComm(0xE0);
+  SPI_WriteData(0xD0);
+  SPI_WriteData(0x01);
+  SPI_WriteData(0x08);
+  SPI_WriteData(0x0F);
+  SPI_WriteData(0x11);
+  SPI_WriteData(0x2A);
+  SPI_WriteData(0x36);
+  SPI_WriteData(0x55);
+  SPI_WriteData(0x44);
+  SPI_WriteData(0x3A);
+  SPI_WriteData(0x0B);
+  SPI_WriteData(0x06);
+  SPI_WriteData(0x11);
+  SPI_WriteData(0x20);
 
-	SPI_WriteComm(0xE1);
-	SPI_WriteData(0xD0);
-	SPI_WriteData(0x02);
-	SPI_WriteData(0x07);
-	SPI_WriteData(0x0A);
-	SPI_WriteData(0x0B);
-	SPI_WriteData(0x18);
-	SPI_WriteData(0x34);
-	SPI_WriteData(0x43);
-	SPI_WriteData(0x4A);
-	SPI_WriteData(0x2B);
-	SPI_WriteData(0x1B);
-	SPI_WriteData(0x1C);
-	SPI_WriteData(0x22);
-	SPI_WriteData(0x1F);
-	/////////////////////////////////////
+  SPI_WriteComm(0xE1);
+  SPI_WriteData(0xD0);
+  SPI_WriteData(0x02);
+  SPI_WriteData(0x07);
+  SPI_WriteData(0x0A);
+  SPI_WriteData(0x0B);
+  SPI_WriteData(0x18);
+  SPI_WriteData(0x34);
+  SPI_WriteData(0x43);
+  SPI_WriteData(0x4A);
+  SPI_WriteData(0x2B);
+  SPI_WriteData(0x1B);
+  SPI_WriteData(0x1C);
+  SPI_WriteData(0x22);
+  SPI_WriteData(0x1F);
+  /////////////////////////////////////
 
-	SPI_WriteComm(0x3A);
-	SPI_WriteData(0x55);//16-Bit RGB/65k
+  SPI_WriteComm(0x3A);
+  SPI_WriteData(0x55); //16-Bit RGB/65k
 
-	SPI_WriteComm(0x36);
-	SPI_WriteData(0x00);
+  SPI_WriteComm(0x36);
+  SPI_WriteData(0x00);
 
-
-	SPI_WriteComm(0x29);//display on
-	delay(50);
-
+  SPI_WriteComm(0x29); //display on
+  delay(50);
 }
 
 /* USER CODE END 0 */
@@ -289,17 +311,16 @@ void MX_LTDC_Init(uint32_t addr)
 {
 
   /* USER CODE BEGIN LTDC_Init 0 */
-   /* USER CODE BEGIN LTDC_Init 0 */
-    pinMode(PG5,OUTPUT);
-    pinMode(PF5,OUTPUT);
-    delay(10);
-    digitalWrite(PG5, LOW);         //reset operate
-    delay(10);
-    digitalWrite(PG5, HIGH);
-    delay(10);
-    digitalWrite(PF5, HIGH);         //backlight enable
+  /* USER CODE BEGIN LTDC_Init 0 */
+  pinMode(PG5, OUTPUT);
+  pinMode(PF5, OUTPUT);
+  delay(10);
+  digitalWrite(PG5, LOW); //reset operate
+  delay(10);
+  digitalWrite(PG5, HIGH);
+  delay(10);
+  digitalWrite(PF5, HIGH); //backlight enable
 
-  Serial.println("I am here\n\r");
   ST7789V_Init();
 
   /* USER CODE END LTDC_Init 0 */
@@ -351,26 +372,25 @@ void MX_LTDC_Init(uint32_t addr)
   /* USER CODE BEGIN LTDC_Init 2 */
 
   /* USER CODE END LTDC_Init 2 */
-
 }
 
-void HAL_LTDC_MspInit(LTDC_HandleTypeDef* ltdcHandle)
+void HAL_LTDC_MspInit(LTDC_HandleTypeDef *ltdcHandle)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
-  if(ltdcHandle->Instance==LTDC)
+  if (ltdcHandle->Instance == LTDC)
   {
-  /* USER CODE BEGIN LTDC_MspInit 0 */
+    /* USER CODE BEGIN LTDC_MspInit 0 */
 
-  /* USER CODE END LTDC_MspInit 0 */
-  /** Initializes the peripherals clock
+    /* USER CODE END LTDC_MspInit 0 */
+    /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
     PeriphClkInitStruct.PLL3.PLL3M = 5;
     PeriphClkInitStruct.PLL3.PLL3N = 48;
     PeriphClkInitStruct.PLL3.PLL3P = 2;
     PeriphClkInitStruct.PLL3.PLL3Q = 5;
-    PeriphClkInitStruct.PLL3.PLL3R = 20;
+    PeriphClkInitStruct.PLL3.PLL3R = 40;
     PeriphClkInitStruct.PLL3.PLL3RGE = RCC_PLL3VCIRANGE_2;
     PeriphClkInitStruct.PLL3.PLL3VCOSEL = RCC_PLL3VCOWIDE;
     PeriphClkInitStruct.PLL3.PLL3FRACN = 0;
@@ -411,15 +431,14 @@ void HAL_LTDC_MspInit(LTDC_HandleTypeDef* ltdcHandle)
     PE11     ------> LTDC_G3
     PE15     ------> LTDC_R7
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11
-                          |GPIO_PIN_15;
+    GPIO_InitStruct.Pin = GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_15;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF14_LTDC;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_11;
+    GPIO_InitStruct.Pin = GPIO_PIN_13 | GPIO_PIN_11;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -433,14 +452,14 @@ void HAL_LTDC_MspInit(LTDC_HandleTypeDef* ltdcHandle)
     GPIO_InitStruct.Alternate = GPIO_AF9_LTDC;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_7|GPIO_PIN_5|GPIO_PIN_3;
+    GPIO_InitStruct.Pin = GPIO_PIN_8 | GPIO_PIN_7 | GPIO_PIN_5 | GPIO_PIN_3;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF14_LTDC;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_5;
+    GPIO_InitStruct.Pin = GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_5;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -461,7 +480,7 @@ void HAL_LTDC_MspInit(LTDC_HandleTypeDef* ltdcHandle)
     GPIO_InitStruct.Alternate = GPIO_AF14_LTDC;
     HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_11|GPIO_PIN_15;
+    GPIO_InitStruct.Pin = GPIO_PIN_12 | GPIO_PIN_11 | GPIO_PIN_15;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -471,20 +490,20 @@ void HAL_LTDC_MspInit(LTDC_HandleTypeDef* ltdcHandle)
     /* LTDC interrupt Init */
     HAL_NVIC_SetPriority(LTDC_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(LTDC_IRQn);
-  /* USER CODE BEGIN LTDC_MspInit 1 */
+    /* USER CODE BEGIN LTDC_MspInit 1 */
 
-  /* USER CODE END LTDC_MspInit 1 */
+    /* USER CODE END LTDC_MspInit 1 */
   }
 }
 
-void HAL_LTDC_MspDeInit(LTDC_HandleTypeDef* ltdcHandle)
+void HAL_LTDC_MspDeInit(LTDC_HandleTypeDef *ltdcHandle)
 {
 
-  if(ltdcHandle->Instance==LTDC)
+  if (ltdcHandle->Instance == LTDC)
   {
-  /* USER CODE BEGIN LTDC_MspDeInit 0 */
+    /* USER CODE BEGIN LTDC_MspDeInit 0 */
 
-  /* USER CODE END LTDC_MspDeInit 0 */
+    /* USER CODE END LTDC_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_LTDC_CLK_DISABLE();
 
@@ -510,27 +529,25 @@ void HAL_LTDC_MspDeInit(LTDC_HandleTypeDef* ltdcHandle)
     PE11     ------> LTDC_G3
     PE15     ------> LTDC_R7
     */
-    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11
-                          |GPIO_PIN_15);
+    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_15);
 
-    HAL_GPIO_DeInit(GPIOH, GPIO_PIN_13|GPIO_PIN_11);
+    HAL_GPIO_DeInit(GPIOH, GPIO_PIN_13 | GPIO_PIN_11);
 
-    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_15|GPIO_PIN_8|GPIO_PIN_7|GPIO_PIN_5
-                          |GPIO_PIN_3);
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_15 | GPIO_PIN_8 | GPIO_PIN_7 | GPIO_PIN_5 | GPIO_PIN_3);
 
-    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_5);
+    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_5);
 
     HAL_GPIO_DeInit(GPIOG, GPIO_PIN_7);
 
     HAL_GPIO_DeInit(GPIOD, GPIO_PIN_10);
 
-    HAL_GPIO_DeInit(GPIOE, GPIO_PIN_12|GPIO_PIN_11|GPIO_PIN_15);
+    HAL_GPIO_DeInit(GPIOE, GPIO_PIN_12 | GPIO_PIN_11 | GPIO_PIN_15);
 
     /* LTDC interrupt Deinit */
     HAL_NVIC_DisableIRQ(LTDC_IRQn);
-  /* USER CODE BEGIN LTDC_MspDeInit 1 */
+    /* USER CODE BEGIN LTDC_MspDeInit 1 */
 
-  /* USER CODE END LTDC_MspDeInit 1 */
+    /* USER CODE END LTDC_MspDeInit 1 */
   }
 }
 

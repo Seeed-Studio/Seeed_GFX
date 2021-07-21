@@ -165,7 +165,7 @@
     _com.transfer(C >> 24);              \
     _com.transfer((C & 0xFFFFFF) >> 16); \
     _com.transfer((C & 0xFFFF) >> 8);    \
-    _com.transfer(C & 0xFF)
+    _com.transfer(C & 0xFF);
 #endif
 
 #define tft_Read_8() _com.transfer(0)
