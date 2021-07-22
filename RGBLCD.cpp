@@ -141,7 +141,12 @@ void LCDClass::write(uint16_t data)
 }
 void LCDClass::write(void *buf, size_t count)
 {
- 
+  volatile uint16_t *temp = (uint16_t *)buf;
+
+  for (size_t i = 0; i < count/2; i++)
+  {
+    write(*temp++);
+  }
 }
 
 static inline void wait(uint32_t us)
