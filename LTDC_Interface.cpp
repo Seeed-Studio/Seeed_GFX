@@ -4,7 +4,7 @@
 
 #ifdef HAL_LTDC_MODULE_ENABLED
 
-__attribute__((__section__(".psram.bss")))  uint8_t videobuffer[TFT_WIDTH * TFT_HEIGHT * 2];
+__attribute__((__section__(".psram.bss"))) uint8_t videobuffer[TFT_WIDTH * TFT_HEIGHT * 2];
 
 LCDClass RGB565LCD((uint32_t)videobuffer);
 

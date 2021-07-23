@@ -5,6 +5,8 @@
 #ifdef HAL_LTDC_MODULE_ENABLED
 
 void MX_LTDC_Init(const uint32_t addr);
+void MX_DMA2D_Init();
+void LCD_Draw_DMA2D_RG565(uint32_t LayerIndex, void *pDst, void *pSrc);
 
 LCDClass::LCDClass(uint32_t addr)
 {
@@ -28,6 +30,7 @@ LCDClass::~LCDClass()
 void LCDClass::begin()
 {
   MX_LTDC_Init((uint32_t)DataBuffer);
+  MX_DMA2D_Init();
 }
 
 void LCDClass::command(uint8_t cmd)
@@ -135,8 +138,9 @@ void LCDClass::write(uint16_t data)
   {
     x_cur = x_start;
     y_cur++;
-    if (y_cur > y_end)
+    if (y_cur > y_end){
       y_cur = y_start;
+    }
   }
 }
 void LCDClass::write(void *buf, size_t count)
@@ -554,6 +558,95 @@ void HAL_LTDC_MspDeInit(LTDC_HandleTypeDef *ltdcHandle)
 
     /* USER CODE END LTDC_MspDeInit 1 */
   }
+}
+
+DMA2D_HandleTypeDef hdma2d;
+
+/* DMA2D init function */
+void MX_DMA2D_Init(void)
+{
+
+  /* USER CODE BEGIN DMA2D_Init 0 */
+
+  /* USER CODE END DMA2D_Init 0 */
+
+  /* USER CODE BEGIN DMA2D_Init 1 */
+
+  /* USER CODE END DMA2D_Init 1 */
+  hdma2d.Instance = DMA2D;
+  hdma2d.Init.Mode = DMA2D_M2M;
+  hdma2d.Init.ColorMode = DMA2D_OUTPUT_RGB565;
+  hdma2d.Init.OutputOffset = 0;
+  hdma2d.LayerCfg[1].InputOffset = 0;
+  hdma2d.LayerCfg[1].InputColorMode = DMA2D_INPUT_RGB565;
+  hdma2d.LayerCfg[1].AlphaMode = DMA2D_NO_MODIF_ALPHA;
+  hdma2d.LayerCfg[1].InputAlpha = 0;
+  hdma2d.LayerCfg[1].AlphaInverted = DMA2D_REGULAR_ALPHA;
+  hdma2d.LayerCfg[1].RedBlueSwap = DMA2D_RB_REGULAR;
+  hdma2d.LayerCfg[1].ChromaSubSampling = DMA2D_NO_CSS;
+  if (HAL_DMA2D_Init(&hdma2d) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_DMA2D_ConfigLayer(&hdma2d, 1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN DMA2D_Init 2 */
+
+  /* USER CODE END DMA2D_Init 2 */
+
+}
+
+void HAL_DMA2D_MspInit(DMA2D_HandleTypeDef* dma2dHandle)
+{
+
+  if(dma2dHandle->Instance==DMA2D)
+  {
+  /* USER CODE BEGIN DMA2D_MspInit 0 */
+
+  /* USER CODE END DMA2D_MspInit 0 */
+    /* DMA2D clock enable */
+    __HAL_RCC_DMA2D_CLK_ENABLE();
+  /* USER CODE BEGIN DMA2D_MspInit 1 */
+
+  /* USER CODE END DMA2D_MspInit 1 */
+  }
+}
+
+void HAL_DMA2D_MspDeInit(DMA2D_HandleTypeDef* dma2dHandle)
+{
+
+  if(dma2dHandle->Instance==DMA2D)
+  {
+  /* USER CODE BEGIN DMA2D_MspDeInit 0 */
+
+  /* USER CODE END DMA2D_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_DMA2D_CLK_DISABLE();
+  /* USER CODE BEGIN DMA2D_MspDeInit 1 */
+
+  /* USER CODE END DMA2D_MspDeInit 1 */
+  }
+}
+
+void LCD_Draw_DMA2D_RG565(uint32_t LayerIndex, void *pDst, void *pSrc)
+{
+	hdma2d.Init.Mode = DMA2D_M2M;
+	hdma2d.Init.ColorMode = DMA2D_OUTPUT_RGB565;
+	hdma2d.Init.OutputOffset = 0;
+	hdma2d.Instance = DMA2D;
+
+	if (HAL_DMA2D_Init(&hdma2d) == HAL_OK)
+	{
+		if (HAL_DMA2D_ConfigLayer(&hdma2d, LayerIndex) == HAL_OK)
+		{
+			if (HAL_DMA2D_Start(&hdma2d,  (uint32_t)pSrc, (uint32_t) pDst, TFT_WIDTH,TFT_HEIGHT) == HAL_OK)
+			{
+					HAL_DMA2D_PollForTransfer(&hdma2d, 1);
+			}
+		}
+	}
 }
 
 #endif
