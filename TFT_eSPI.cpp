@@ -2754,7 +2754,7 @@ void TFT_eSPI::pushColors(uint8_t* data, uint32_t len) {
         _com.transfer(data, len);
     }
     #else
-    #if defined (__SAMD51__)
+    #if defined (__SAMD55__)
     _com.transfer(data, NULL, len, true);
     #else
     _com.transfer(data, len);
@@ -2783,7 +2783,7 @@ void TFT_eSPI::pushColors(uint16_t* data, uint32_t len, bool swap) {
             data++;
         }
     #else
-    #if defined (__SAMD51__)
+    #if defined (__SAMD55__)
     if (swap) {
         _com.transfer((void*)data, NULL, len << 1, true);
     } else {

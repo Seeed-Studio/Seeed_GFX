@@ -81,7 +81,7 @@ void TFT_Interface::transfer(void* buf, size_t count) {
     return interface_transfer(buf, count);
     #endif
 }
-#if defined (__SAMD51__)
+#if defined (__SAMD55__)
 void TFT_Interface::transfer(const void* txbuf, void* rxbuf, size_t count, bool block) {
     #ifdef HASSPI
     return this->_SPI->transfer(txbuf, rxbuf, count, block);

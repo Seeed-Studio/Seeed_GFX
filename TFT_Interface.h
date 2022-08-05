@@ -94,7 +94,7 @@ class TFT_Interface {
     byte transfer(uint8_t data);
     uint16_t transfer16(uint16_t data);
     void transfer(void* buf, size_t count);
-    #if defined (__SAMD51__)
+    #if defined (__SAMD55__)
     void transfer(const void* txbuf, void* rxbuf, size_t count, bool block = true);
     #endif
   private:
