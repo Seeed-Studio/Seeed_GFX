@@ -28,6 +28,15 @@ int value[6] = {0, 0, 0, 0, 0, 0};
 int old_value[6] = { -1, -1, -1, -1, -1, -1};
 int d = 0;
 
+
+#if defined(NRF52840_XXAA)
+char *dtostrf(double val, int width, int prec, char *s) {
+    sprintf(s, "%*.*f", width, prec, val);
+    return s;
+}
+#endif
+
+
 void setup(void) {
     Serial.begin(57600); // For debug
     tft.init();

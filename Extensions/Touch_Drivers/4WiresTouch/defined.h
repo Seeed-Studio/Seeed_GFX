@@ -6,7 +6,7 @@
 
 #include "User_Setup.h"
 
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(ARDUINO_ARCH_AVR) || defined(ESP32) || defined(CONFIG_IDF_TARGET_ESP32C6)
     #include <pgmspace.h>
 #else
     #include <avr/pgmspace.h>

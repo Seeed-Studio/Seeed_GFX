@@ -38,6 +38,9 @@
     #########################################################################
 */
 
+
+
+
 #include "Free_Fonts.h" // Include the header file attached to this sketch
 
 #include "SPI.h"
@@ -49,7 +52,8 @@ TFT_eSPI tft = TFT_eSPI();
 unsigned long drawTime = 0;
 
 void setup(void) {
-
+    Serial.begin(115200);
+    Serial.println("lets begin");
     tft.begin();
 
     tft.setRotation(1);
@@ -57,7 +61,7 @@ void setup(void) {
 }
 
 void loop() {
-
+    Serial.println("loop ....");
     int xpos =  0;
     int ypos = 40;
 

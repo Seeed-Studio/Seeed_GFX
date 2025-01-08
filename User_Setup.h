@@ -15,7 +15,7 @@
 // ##################################################################################
 
 // Only define one driver, the other ones must be commented out
-//#define ILI9341_DRIVER
+// #define ILI9341_DRIVER
 //#define ST7735_DRIVER      // Define additional parameters below for this display
 //#define ILI9163_DRIVER     // Define additional parameters below for this display
 //#define S6D02A1_DRIVER
@@ -138,6 +138,7 @@
 
 //For seeed GroveUI - u
 #if defined(ARDUINO_ARCH_SAMD) && defined(SEEED_GROVE_UI_WIRELESS)
+
 #define ILI9341_DRIVER
 #define HASSPI 1
 #define SPICOM LCD_SPI
@@ -147,16 +148,36 @@
 #define TFT_BL LCD_BACKLIGHT
 #define TFT_BACKLIGHT_ON HIGH
 #define TFT_BACKLINGT_V 2000
+#pragma message("ARDUINO_ARCH_SAMD && SEEED_GROVE_UI_WIRELESS")
+
+#elif defined(ESP32) || defined(CONFIG_IDF_TARGET_ESP32C6) || defined(ARDUINO_XIAO_RA4M1) || defined(ARDUINO_ARCH_RP2040) || defined(ARDUINO_ARCH_RP2350) || defined(NRF52840_XXAA) || defined(SEEED_XIAO_M0)
+
+#define ILI9341_DRIVER
+#define HASSPI 1
+#define SPICOM SPI
+#define TFT_CS D5
+#define TFT_DC D4
+#define TFT_RST -1 // Set TFT_RST to -1 if the display RESET is connected to RST or 3.3V
+#pragma message("xiao or ESP32")
+
+
 #elif defined(ARDUINO_ARCH_SAMD)
+
 #define ILI9341_DRIVER
 #define HASSPI 1
 #define SPICOM SPI
 #define TFT_CS 5
 #define TFT_DC 6
 #define TFT_RST -1 // Set TFT_RST to -1 if the display RESET is connected to RST or 3.3V
+#pragma message("ARDUINO_ARCH_SAMD")
+
 #elif defined(WIO_LITE_AI)
+
 #define LTDC_DRIVER
 #define LTDC_BUFFER_ADDRESS 0x90000000
+#pragma message("WIO_LITE_AI")
+
+
 #else
 #error "you need to config in USer_Setup.h"
 #endif
@@ -172,14 +193,19 @@
 //
 // ##################################################################################
 
-// #define TOUCH
+#define TOUCH
 
 //for four wire touch
-//#define FOURWIRETOUCH
-//#define YP A2   // must be an analog pin, use "An" notation!
-//#define XM A1   // must be an analog pin, use "An" notation!
-//#define XP A3   // can be a digital pin,
+#define FOURWIRETOUCH
+// #define YP A2   // must be an analog pin, use "An" notation!
+// #define XM A1   // must be an analog pin, use "An" notation!
+// #define XP A3   // can be a digital pin,
+// #define YM A0   
 
+#define YP D2   
+#define XM D1   
+#define XP D3  
+#define YM D0   
 //for adx
 
 // #define XPT2046TOUCH
@@ -211,7 +237,7 @@
 
 // Comment out the #define below to stop the SPIFFS filing system and smooth font code being loaded
 // this will save ~20kbytes of FLASH
-//#define SMOOTH_FONT
+// #define SMOOTH_FONT
 
 // ##################################################################################
 //

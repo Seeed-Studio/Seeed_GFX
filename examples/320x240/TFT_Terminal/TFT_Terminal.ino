@@ -24,8 +24,11 @@ int sy = 1;
 int horizontal = -1;
 int scrollMode = 1;
 
-#define WRAP_PIN    BCM18
-#define HORIZ_PIN   BCM23
+// #define WRAP_PIN    BCM18
+// #define HORIZ_PIN   BCM23
+// you can set it 
+#define WRAP_PIN    D5
+#define HORIZ_PIN   D6
 //#define TFT_CS      PA4                  
 //#define TFT_DC      PA12              
 //#define TFT_RST     PA11 

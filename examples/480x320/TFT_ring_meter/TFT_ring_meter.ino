@@ -29,6 +29,15 @@ int d = 0; // Variable used for the sinewave test waveform
 boolean range_error = 0;
 int8_t ramp = 1;
 
+
+#if defined(NRF52840_XXAA)
+char *dtostrf(double val, int width, int prec, char *s) {
+    sprintf(s, "%*.*f", width, prec, val);
+    return s;
+}
+#endif
+
+
 void setup(void) {
     tft.begin();
     //Serial.begin(9600);

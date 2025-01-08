@@ -3,9 +3,12 @@
 #if defined(ARDUINO_ARCH_AVR)
   #error If using AVR-Board, please use this library instead: https: github.com/Seeed-Studio/TFT_Touch_Shield_V2
   #include <pgmspace.h>
+#elif defined(ESP32) || defined(CONFIG_IDF_TARGET_ESP32C6)
+  #include <pgmspace.h>
 #else
   #include <avr/pgmspace.h>
 #endif
+
 
 // Width has been increased by 1 pixel so pixel lengths are calculated correctly
 // for the displayed string

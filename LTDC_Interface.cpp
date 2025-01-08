@@ -1,7 +1,13 @@
 
 #include <Arduino.h>
 #include "RGBLCD.h"
-#include <avr/pgmspace.h>
+
+#if defined(CONFIG_IDF_TARGET_ESP32S3) || defined(CONFIG_IDF_TARGET_ESP32C6) || defined(CONFIG_IDF_TARGET_ESP32C3)
+  #include <pgmspace.h>
+#else
+  #include <avr/pgmspace.h>
+#endif
+
 #ifdef HAL_LTDC_MODULE_ENABLED
 
 EXTMEM uint8_t videobuffer[TFT_WIDTH * TFT_HEIGHT * 2];

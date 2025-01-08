@@ -14,7 +14,7 @@ TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
 // Maximum number of generations until the screen is refreshed
 #define MAX_GEN_COUNT 500
 
-// The ESP8266 has plenty of memory so we can create a large array
+// The ESP8266 has plenty of memory so we c:\Users\seeed\Documents\Arduino\libraries\Seeed_Arduino_LCD\User_Setup.hcan create a large array
 // 2 x 2 pixel cells, array size = 5120 bytes per array, runs fast
 #define GRIDX 80
 #define GRIDY 64

@@ -103,7 +103,11 @@
 #include <avr/pgmspace.h>
 #include <SPIClass.h>
 #else
+#if defined(CONFIG_IDF_TARGET_ESP32S3) || defined(CONFIG_IDF_TARGET_ESP32C6) || defined(CONFIG_IDF_TARGET_ESP32C3)
+#include <pgmspace.h>
+#else
 #include <avr/pgmspace.h>
+#endif
 #include <SPI.h>
 #endif
 

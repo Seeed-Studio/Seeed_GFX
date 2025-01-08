@@ -33,14 +33,24 @@ void loop() {
 
     uint16_t x, y;
 
-    tft.getTouchRaw(&x, &y);
+#ifdef ARDUINO_XIAO_RA4M1
+    char buffer[100];
+    sprintf(buffer, "x: %i", x);
+    Serial.println(buffer);
 
+    sprintf(buffer, "y: %i", y);
+    Serial.println(buffer);
+
+    sprintf(buffer, "z: %i", tft.getTouchRawZ());
+    Serial.println(buffer);
+
+#else
     Serial.printf("x: %i     ", x);
 
     Serial.printf("y: %i     ", y);
 
     Serial.printf("z: %i \n", tft.getTouchRawZ());
-
+#endif
     delay(250);
 
 }

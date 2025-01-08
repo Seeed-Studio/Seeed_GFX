@@ -84,6 +84,7 @@ int fillArc(int x, int y, int start_angle, int seg_count, int rx, int ry, int w,
         tft.fillTriangle(x0, y0, x1, y1, x2, y2, colour);
         tft.fillTriangle(x1, y1, x2, y2, x3, y3, colour);
     }
+    return 0;
 }
 
 // #########################################################################

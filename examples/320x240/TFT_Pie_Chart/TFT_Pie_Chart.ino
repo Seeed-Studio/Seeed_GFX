@@ -65,6 +65,7 @@ int fillSegment(int x, int y, int start_angle, int sub_angle, int r, unsigned in
         x1 = x2;
         y1 = y2;
     }
+    return 0;
 }
 
 
