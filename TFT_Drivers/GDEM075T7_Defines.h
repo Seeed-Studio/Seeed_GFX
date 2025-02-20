@@ -125,3 +125,4 @@
             writedata(colors[i]);           \
         }                                   \
     } while (0)
+    
