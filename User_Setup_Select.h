@@ -165,7 +165,6 @@
 // #include <User_Setups/Setup504_Seeed_XIAO_EPaper_2inch9.h>    // Setup file for Seeed XIAO with 2.9inch ePaper     
 // #include <User_Setups/Setup505_Seeed_XIAO_EPaper_1inch54.h>   // Setup file for Seeed XIAO with 1.54inch ePaper
 
-
 #endif // USER_SETUP_LOADED
 
 // Compatible with some examples 

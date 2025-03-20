@@ -18,6 +18,7 @@
  */
 
 #include <SPI.h>
+#define SEEED_XIAO_EPAPER_7INCH5
 #include <TFT_eSPI.h> // Hardware-specific library
 
 #ifdef EPAPER_ENABLE // Only compile this code if the EPAPER_ENABLE is defined in User_Setup.h
