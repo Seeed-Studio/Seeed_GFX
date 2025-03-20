@@ -18,8 +18,9 @@
  */
 
 #include <SPI.h>
-#define SEEED_XIAO_EPAPER_7INCH5
 #include <TFT_eSPI.h> // Hardware-specific library
+
+#ifdef EPAPER_ENABLE // Only compile this code if the EPAPER_ENABLE is defined in User_Setup.h
 
 EPaper epaper = EPaper(); // Invoke custom library
 
@@ -154,3 +155,4 @@ static uint8_t conv2d(const char *p)
     v = *p - '0';
   return 10 * v + *++p - '0';
 }
+#endif
