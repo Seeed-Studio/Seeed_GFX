@@ -160,13 +160,13 @@
 #include <User_Setups/Setup666_XIAO_ILI9341.h>                // Default Setup file for Seeed XIAO 
 // #include <User_Setups/Setup500_Seeed_Wio_Terminal.h>          // Setup file for Seeed Wio Terimal with SPI ILI9341 320x240
 // #include <User_Setups/Setup501_Seeed_XIAO_Round_Display.h>    // Setup file for Seeed XIAO ROUND with GC9A01 240 x 240
+// #include <User_Setups/Setup520_Seeed_reTerminal_E1001.h>      // Setup file for Seeed reTerminal E1001 with 7.5inch ePaper
 
-/************************************* EPAPER *************************************/
+/************************************ Seeed XIAO EPAPER *************************************/
 #define ENABLE_EPAPER_BOARD_PIN_SETUPS    // Enable this macro to enable the following board pin presets
 
 // #define USE_XIAO_EPAPER_DRIVER_BOARD   // Uncomment to enable ePaper Driver Board for Seeed Studio XIAO pin presets
 // #define USE_XIAO_EPAPER_DISPLAY_BOARD  // Uncomment to enable XIAO ePaper Monitor Kit pin presets
-// #define USE_RETERMINAL_E1001_BOARD     // Uncomment to enable reTerminal E1001 pin presets
 
 // #include <User_Setups/Setup502_Seeed_XIAO_EPaper_7inch5.h>    // Setup file for Seeed XIAO with 7.5inch ePaper
 // #include <User_Setups/Setup503_Seeed_XIAO_EPaper_5inch83.h>   // Setup file for Seeed XIAO with 5.83inch ePaper
@@ -175,6 +175,7 @@
 // #include <User_Setups/Setup506_Seeed_XIAO_EPaper_4inch26.h>   // Setup file for Seeed XIAO with 4.26inch ePaper
 // #include <User_Setups/Setup507_Seeed_XIAO_EPaper_4inch2.h>    // Setup file for Seeed XIAO with 4.2inch ePaper     
 // #include <User_Setups/Setup508_Seeed_XIAO_EPaper_2inch13.h>   // Setup file for Seeed XIAO with 2.13inch ePaper
+
 
 #endif // USER_SETUP_LOADED
 

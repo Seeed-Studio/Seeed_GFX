@@ -15,12 +15,4 @@
 #define TFT_DC 10  // D16
 #define TFT_BUSY 4 // D3
 #define TFT_RST 38 // D11
-#elif defined(USE_RETERMINAL_E1001_BOARD)
-#define TFT_SCLK D8
-#define TFT_MISO -1
-#define TFT_MOSI D10
-#define TFT_CS 10   // D16
-#define TFT_DC 11   // D19
-#define TFT_BUSY 13 // D17
-#define TFT_RST 12  // D18
 #endif
