@@ -541,10 +541,10 @@ SPI3_HOST = 2
   #define tft_Write_32D(C) TFT_WRITE_BITS((uint16_t)((C)<<8 | (C)>>8)<<16 | (uint16_t)((C)<<8 | (C)>>8), 32)
 //*/
 //* Replacement slimmer macros
-  #define TFT_WRITE_BITS(D, B) *_spi_mosi_dlen = B-1;    \
-                               *_spi_w = D;             \
-                               *_spi_cmd = SPI_USR;      \
-                        while (*_spi_cmd & SPI_USR);
+  #define TFT_WRITE_BITS(D, B) *_spi_mosi_dlen = B-1;     \
+                               *_spi_w = D;               \
+                               *_spi_cmd = SPI_USR;       \
+                               while (*_spi_cmd & SPI_USR);
 
   // Write 8 bits
   #define tft_Write_8(C) TFT_WRITE_BITS(C, 8)
