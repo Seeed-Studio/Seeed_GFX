@@ -85,18 +85,12 @@ To simplify the hardware setup, we provide an online tool that helps you quickly
 
 
 ### How to Use
-
-1.  **Open the Tool**: Click the link above to open the tool in your browser.
-2.  **Select Your Hardware**:
-      * From the "Step 1" dropdown menu, select your hardware combination.
-      * If you select an ePaper screen, an additional "Step 2" option will appear. Choose your driver board type ("Seeed ePaper Driver Board" or "XIAO ePaper Monitor Kit").
-3.  **Generate the Code**: The required configuration code is automatically generated in the "Step 3" box.
-4.  **Copy and Paste**:
-      * Copy the entire generated code.
-      * In the library folder, find and open `User_Setup_Select.h`.
-      * Ensure the following line is active and not commented out: `#include <User_Custom_config.h>`
-      * Create a new file named `User_Custom_config.h` in the same directory and paste the copied code into it.
-5.  **Compile and Upload**: Save the file, then recompile and upload your sketch.
+1.  **Open the Configuration Tool**: Click the link above to open the online tool in your browser.
+2.  **Select Your Hardware**: Choose your board and display combination from the dropdown menus. If an ePaper screen is selected, choose your driver board as well.
+3.  **Generate and Copy Code**: Copy the entire configuration code generated in the text box.
+4.  **Create a Custom Config File**: In your Arduino **sketch folder** (the same folder where your `.ino` file is located), create a new file named `Custom_config.h`.
+5.  **Paste the Code**: Paste the code you copied in step 3 into the `Custom_config.h` file and save it.
+6.  **Compile and Upload**: You can now compile and upload your sketch. The library will automatically detect and apply your custom configuration.
 
 
 ## Documentation
