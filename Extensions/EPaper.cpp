@@ -48,7 +48,10 @@ void EPaper::update(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t *da
     // only support x, y multiple of 8 (floor)
     x = (x / 8) * 8;
     y = (y / 8) * 8;
-    pushImage(x, y, w, h, (uint16_t *)p);
+    if(_bpp = 8)
+     pushImage(x, y, w, h / 2 , (uint16_t *)p);
+    else
+     pushImage(x, y, w, h , (uint16_t *)p);
     EPD_SET_WINDOW(x, y, (x + w - 1), (y + h - 1));
 #ifdef EPD_HORIZONTAL_MIRROR
     EPD_PUSH_NEW_COLORS_FLIP(w, h, p);

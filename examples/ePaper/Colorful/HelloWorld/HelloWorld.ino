@@ -10,13 +10,12 @@ void setup()
     epaper.begin();
     epaper.fillScreen(TFT_WHITE);
 
-    epaper.fillCircle(25, 25, 15, TFT_BLUE);
-    epaper.fillRect(epaper.width() - 40,  10, 30, 30, TFT_GREEN);
+    epaper.fillCircle(25, 25, 15, TFT_BLACK);
+    epaper.fillRect(epaper.width() - 40,  10, 30, 30, TFT_BLACK);
     
     for (int i = 0; i < epaper.height() / 80; i++)
     {
         epaper.setTextSize(i + 1);
-        epaper.setTextColor(TFT_RED);
         epaper.drawLine(10, 70 + 60 * i, epaper.width() - 10, 70 + 60 * i, TFT_BLACK);
         epaper.drawString("Hello ePaper", 10, 80 + 60 * i);
     }
