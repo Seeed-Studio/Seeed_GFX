@@ -1,180 +1,19 @@
-// This header file contains a list of user setup files and defines which one the
-// compiler uses when the IDE performs a Verify/Compile or Upload.
-//
-// Users can create configurations for different boards and TFT displays.
-// This makes selecting between hardware setups easy by "uncommenting" one line.
+#ifndef USER_SETUP_LOADED // Lets PlatformIO users define settings in platformio.ini
 
-// The advantage of this hardware configuration method is that the examples provided
-// with the library should work with immediately without any other changes being
-// needed. It also improves the portability of users sketches to other hardware
-// configurations and compatible libraries.
-//
-// Create a shortcut to this file on your desktop to permit quick access for editing.
-// Re-compile and upload after making and saving any changes to this file.
+// The Arduino build system adds the sketch folder to the compiler's include path.
+// This allows us to directly include the user's configuration file without knowing
+// the specific path to their project.
+// We use __has_include for safety, so compilation won't fail if the file is missing.
+// The error will be handled gracefully inside Dynamic_Setup.h.
+#if __has_include("Custom_config.h")
+  #include "Custom_config.h"
+#endif
 
-// Example User_Setup files are stored in the "User_Setups" folder. These can be used
-// unmodified or adapted for a particular hardware configuration.
+#define ENABLE_EPAPER_BOARD_PIN_SETUPS
 
-#ifndef USER_SETUP_LOADED //  Lets PlatformIO users define settings in
-                          //  platformio.ini, see notes in "Tools" folder.
-
-///////////////////////////////////////////////////////
-//   User configuration selection lines are below    //
-///////////////////////////////////////////////////////
-
-// Only ONE line below should be uncommented to define your setup.  Add extra lines and files as needed.
-
-// #include <User_Setup.h>           // Default setup is root library folder
-
-//#include <User_Setups/Setup1_ILI9341.h>  // Setup file for ESP8266 configured for my ILI9341
-//#include <User_Setups/Setup2_ST7735.h>   // Setup file for ESP8266 configured for my ST7735
-//#include <User_Setups/Setup3_ILI9163.h>  // Setup file for ESP8266 configured for my ILI9163
-//#include <User_Setups/Setup4_S6D02A1.h>  // Setup file for ESP8266 configured for my S6D02A1
-//#include <User_Setups/Setup5_RPi_ILI9486.h>        // Setup file for ESP8266 configured for my stock RPi TFT
-//#include <User_Setups/Setup6_RPi_Wr_ILI9486.h>     // Setup file for ESP8266 configured for my modified RPi TFT
-//#include <User_Setups/Setup7_ST7735_128x128.h>     // Setup file for ESP8266 configured for my ST7735 128x128 display
-//#include <User_Setups/Setup8_ILI9163_128x128.h>    // Setup file for ESP8266 configured for my ILI9163 128x128 display
-//#include <User_Setups/Setup9_ST7735_Overlap.h>     // Setup file for ESP8266 configured for my ST7735
-//#include <User_Setups/Setup10_RPi_touch_ILI9486.h> // Setup file for ESP8266 configured for ESP8266 and RPi TFT with touch
-
-//#include <User_Setups/Setup11_RPi_touch_ILI9486.h> // Setup file configured for ESP32 and RPi TFT with touch
-//#include <User_Setups/Setup12_M5Stack_Basic_Core.h>// Setup file for the ESP32 based M5Stack (Basic Core only)
-//#include <User_Setups/Setup13_ILI9481_Parallel.h>  // Setup file for the ESP32 with parallel bus TFT
-//#include <User_Setups/Setup14_ILI9341_Parallel.h>  // Setup file for the ESP32 with parallel bus TFT
-//#include <User_Setups/Setup15_HX8357D.h>           // Setup file for ESP8266 configured for HX8357D
-//#include <User_Setups/Setup16_ILI9488_Parallel.h>  // Setup file for the ESP32 with parallel bus TFT
-//#include <User_Setups/Setup17_ePaper.h>            // Setup file for ESP8266 and any Waveshare ePaper display
-//#include <User_Setups/Setup18_ST7789.h>            // Setup file for ESP8266 configured for ST7789
-
-//#include <User_Setups/Setup19_RM68140_Parallel.h>	 // Setup file configured for RM68140 with parallel bus
-
-//#include <User_Setups/Setup20_ILI9488.h>           // Setup file for ESP8266 and ILI9488 SPI bus TFT
-//#include <User_Setups/Setup21_ILI9488.h>           // Setup file for ESP32 and ILI9488 SPI bus TFT
-
-//#include <User_Setups/Setup22_TTGO_T4.h>           // Setup file for ESP32 and TTGO T4 version 1.2
-//#include <User_Setups/Setup22_TTGO_T4_v1.3.h>      // Setup file for ESP32 and TTGO T4 version 1.3
-//#include <User_Setups/Setup23_TTGO_TM.h>           // Setup file for ESP32 and TTGO TM ST7789 SPI bus TFT
-//#include <User_Setups/Setup24_ST7789.h>            // Setup file for DSTIKE/ESP32/ESP8266 configured for ST7789 240 x 240
-//#include <User_Setups/Setup25_TTGO_T_Display.h>    // Setup file for ESP32 and TTGO T-Display ST7789V SPI bus TFT
-//#include <User_Setups/Setup26_TTGO_T_Wristband.h>  // Setup file for ESP32 and TTGO T-Wristband ST7735 SPI bus TFT
-
-//#include <User_Setups/Setup27_RPi_ST7796_ESP32.h>    // ESP32   RPi MHS-4.0 inch Display-B
-//#include <User_Setups/Setup28_RPi_ST7796_ESP8266.h>  // ESP8266 RPi MHS-4.0 inch Display-B
-
-//#include <User_Setups/Setup29_ILI9341_STM32.h>          // Setup for Nucleo board
-//#include <User_Setups/Setup30_ILI9341_Parallel_STM32.h> // Setup for Nucleo board and parallel display
-//#include <User_Setups/Setup31_ST7796_Parallel_STM32.h>  // Setup for Nucleo board and parallel display
-//#include <User_Setups/Setup32_ILI9341_STM32F103.h>      // Setup for "Blue/Black Pill"
-
-//#include <User_Setups/Setup33_RPi_ILI9486_STM32.h>      // Setup for Nucleo board
-
-//#include <User_Setups/Setup34_ILI9481_Parallel_STM32.h> // Setup for Nucleo board and parallel display
-//#include <User_Setups/Setup35_ILI9341_STM32_Port_Bus.h> // Setup for STM32 port A parallel display
-
-//#include <User_Setups/Setup36_RPi_touch_ST7796.h>      // Setup file configured for ESP32 and RPi ST7796 TFT with touch
-
-//#include <User_Setups/Setup42_ILI9341_ESP32.h>           // Setup file for ESP32 and SPI ILI9341 240x320
-//#include <User_Setups/Setup43_ST7735.h>            // Setup file for ESP8266 & ESP32 configured for my ST7735S 80x160
-//#include <User_Setups/Setup44_TTGO_CameraPlus.h>   // Setup file for ESP32 and TTGO T-CameraPlus ST7789 SPI bus TFT    240x240
-//#include <User_Setups/Setup45_TTGO_T_Watch.h>      // Setup file for ESP32 and TTGO T-Watch ST7789 SPI bus TFT  240x240
-//#include <User_Setups/Setup46_GC9A01_ESP32.h>      // Setup file for ESP32 and GC9A01 SPI bus TFT  240x240
-
-//#include <User_Setups/Setup47_ST7735.h>            // Setup file for ESP32 configured for ST7735 128 x 128 animated eyes
-
-//#include <User_Setups/Setup50_SSD1963_Parallel.h>  // Setup file for ESP32 and SSD1963 TFT display
-
-//#include <User_Setups/Setup51_LilyPi_ILI9481.h>    // Setup file for LilyGo LilyPi with ILI9481 display
-//#include <User_Setups/Setup52_LilyPi_ST7796.h>     // Setup file for LilyGo LilyPi with ST7796 display
-
-//#include <User_Setups/Setup60_RP2040_ILI9341.h>              // Setup file for RP2040 with SPI ILI9341
-//#include <User_Setups/Setup61_RP2040_ILI9341_PIO_SPI.h>      // Setup file for RP2040 with PIO SPI ILI9341
-//#include <User_Setups/Setup62_RP2040_Nano_Connect_ILI9341.h> // Setup file for RP2040 with SPI ILI9341
-
-//#include <User_Setups/Setup66_Seeed_XIAO_Round.h>     // Setup file for Seeed XIAO with GC9A01 240x240
-
-//#include <User_Setups/Setup70_ESP32_S2_ILI9341.h>     // Setup file for ESP32 S2 with SPI ILI9341
-//#include <User_Setups/Setup70b_ESP32_S3_ILI9341.h>    // Setup file for ESP32 S3 with SPI ILI9341
-//#include <User_Setups/Setup70c_ESP32_C3_ILI9341.h>    // Setup file for ESP32 C3 with SPI ILI9341
-//#include <User_Setups/Setup70d_ILI9488_S3_Parallel.h> // Setup file for ESP32 S3 with SPI ILI9488
-
-//#include <User_Setups/Setup71_ESP32_S2_ST7789.h>       // Setup file for ESP32 S2 with ST7789
-//#include <User_Setups/Setup72_ESP32_ST7789_172x320.h>  // Setup file for ESP32 with ST7789 1.47" 172x320
-
-//#include <User_Setups/Setup100_RP2040_ILI9488_parallel.h> // Setup file for Pico/RP2040 with 8-bit parallel ILI9488
-//#include <User_Setups/Setup101_RP2040_ILI9481_parallel.h> // Setup file for Pico/RP2040 with 8-bit parallel ILI9481
-//#include <User_Setups/Setup102_RP2040_ILI9341_parallel.h> // Setup file for Pico/RP2040 with 8-bit parallel ILI9341
-//#include <User_Setups/Setup103_RP2040_ILI9486_parallel.h> // Setup file for Pico/RP2040 with 8-bit parallel ILI9486
-//#include <User_Setups/Setup104_RP2040_ST7796_parallel.h>  // Setup file for Pico/RP2040 with 8-bit parallel ST7796
-
-//#include <User_Setups/Setup105_RP2040_ST7796_16bit_parallel.h>  // Setup file for RP2040 16-bit parallel display
-//#include <User_Setups/Setup106_RP2040_ILI9481_16bit_parallel.h> // Setup file for RP2040 16-bit parallel display
-//#include <User_Setups/Setup107_RP2040_ILI9341_16bit_parallel.h> // Setup file for RP2040 16-bit parallel display
-//#include <User_Setups/Setup108_RP2040_ST7735.h> // Setup file for Waveshare RP2040 board with onboard ST7735 0.96" 160x80 display
-
-//#include <User_Setups/Setup135_ST7789.h>           // Setup file for ESP8266 and ST7789 135 x 240 TFT
-
-//#include <User_Setups/Setup136_LilyGo_TTV.h>       // Setup file for ESP32 and Lilygo TTV ST7789 SPI bus TFT  135x240
-//#include <User_Setups/Setup137_LilyGo_TDisplay_RP2040.h>  // Setup file for Lilygo T-Display RP2040 (ST7789 on SPI bus with 135x240 TFT)
-
-//#include <User_Setups/Setup138_Pico_Explorer_Base_RP2040_ST7789.h> // Setup file for Pico Explorer Base by Pimoroni for RP2040 (ST7789 on SPI bus with 240x240 TFT)
-
-//#include <User_Setups/Setup200_GC9A01.h>           // Setup file for ESP32 and GC9A01 240 x 240 TFT
-
-//#include <User_Setups/Setup201_WT32_SC01.h>        // Setup file for ESP32 based WT32_SC01 from Seeed
-
-//#include <User_Setups/Setup202_SSD1351_128.h>      // Setup file for ESP32/ESP8266 based SSD1351 128x128 1.5inch OLED display
-
-//#include <User_Setups/Setup203_ST7789.h>     // Setup file for ESP32/ESP8266 based ST7789 240X280 1.69inch TFT 
-
-//#include <User_Setups/Setup204_ESP32_TouchDown.h>     // Setup file for the ESP32 TouchDown based on ILI9488 480 x 320 TFT 
-
-//#include <User_Setups/Setup205_ESP32_TouchDown_S3.h>     // Setup file for the ESP32 TouchDown S3 based on ILI9488 480 x 320 TFT 
-
-//#include <User_Setups/Setup206_LilyGo_T_Display_S3.h>     // For the LilyGo T-Display S3 based ESP32S3 with ST7789 170 x 320 TFT
-//#include <User_Setups/Setup207_LilyGo_T_HMI.h>            // For the LilyGo T-HMI S3 based ESP32S3 with ST7789 240 x 320 TFT
-//#include <User_Setups/Setup209_LilyGo_T_Dongle_S3.h>      // For the LilyGo T-Dongle S3 based ESP32 with ST7735 80 x 160 TFT
-//#include <User_Setups/Setup210_LilyGo_T_Embed_S3.h>         // For the LilyGo T-Embed S3 based ESP32S3 with ST7789 170 x 320 TFT
-//#include <User_Setups/Setup211_LilyGo_T_QT_Pro_S3.h>         // For the LilyGo T-QT Pro S3 based ESP32S3 with GC9A01 128 x 128 TFT
-// #include <User_Setups/Setup212_LilyGo_T_PicoPro.h>         // For the LilyGo T-PICO-Pro with ST7796 222 x 480 TFT
-// #include <User_Setups/Setup213_LilyGo_T_Beam_Shield.h>         // For the LilyGo T-BEAM V1.x with ST7796 222 x 480 TFT
-
-//#include <User_Setups/Setup250_ESP32_S3_Box_Lite.h>      // For the ESP32 S3 Box Lite
-//#include <User_Setups/Setup251_ESP32_S3_Box.h>            // For the ESP32 S3 Box
-
-//#include <User_Setups/Setup301_BW16_ST7735.h>            // Setup file for Bw16-based boards with ST7735 160 x 80 TFT
-//#include <User_Setups/Setup302_Waveshare_ESP32S3_GC9A01.h>            // Setup file for Waveshare ESP32-S3-Touch-LCD-1.28 board with GC9A01 240*240 TFT
-
-//#include <User_Setups/SetupX_Template.h>     // Template file for a setup
-
-
-//#include <User_Setups/Dustin_ILI9488.h>          // Setup file for Dustin Watts PCB with ILI9488
-//#include <User_Setups/Dustin_ST7796.h>           // Setup file for Dustin Watts PCB with ST7796
-//#include <User_Setups/Dustin_ILI9488_Pico.h>     // Setup file for Dustin Watts Pico PCB with ST7796
-//#include <User_Setups/Dustin_ST7789_Pico.h>      // Setup file for Dustin Watts PCB with ST7789 240 x 240 on 3.3V adapter board
-//#include <User_Setups/Dustin_GC9A01_Pico.h>      // Setup file for Dustin Watts PCB wcon 3.3V adapter board
-//#include <User_Setups/Dustin_GC9A01_ESP32.h>     // Setup file for Dustin Watts PCB with GC9A01 240 x 240 on 3.3V adapter board
-//#include <User_Setups/Dustin_STT7789_ESP32.h>    // Setup file for Dustin Watts PCB with ST7789 240 x 240 on 3.3V adapter board
-//#include <User_Setups/Dustin_ILI9341_ESP32.h>    // Setup file for Dustin Watts PCB with ILI9341
-//#include <User_Setups/ILI9225.h>
-
-#include <User_Setups/Setup666_XIAO_ILI9341.h>                // Default Setup file for Seeed XIAO 
-// #include <User_Setups/Setup500_Seeed_Wio_Terminal.h>          // Setup file for Seeed Wio Terimal with SPI ILI9341 320x240
-// #include <User_Setups/Setup501_Seeed_XIAO_Round_Display.h>    // Setup file for Seeed XIAO ROUND with GC9A01 240 x 240
-// #include <User_Setups/Setup520_Seeed_reTerminal_E1001.h>      // Setup file for Seeed reTerminal E1001 with 7.5inch ePaper
-
-/************************************ Seeed XIAO EPAPER *************************************/
-#define ENABLE_EPAPER_BOARD_PIN_SETUPS    // Enable this macro to enable the following board pin presets
-
-// #define USE_XIAO_EPAPER_DRIVER_BOARD   // Uncomment to enable ePaper Driver Board for Seeed Studio XIAO pin presets
-// #define USE_XIAO_EPAPER_DISPLAY_BOARD  // Uncomment to enable XIAO ePaper Monitor Kit pin presets
-
-// #include <User_Setups/Setup502_Seeed_XIAO_EPaper_7inch5.h>    // Setup file for Seeed XIAO with 7.5inch ePaper
-// #include <User_Setups/Setup503_Seeed_XIAO_EPaper_5inch83.h>   // Setup file for Seeed XIAO with 5.83inch ePaper
-// #include <User_Setups/Setup504_Seeed_XIAO_EPaper_2inch9.h>    // Setup file for Seeed XIAO with 2.9inch ePaper     
-// #include <User_Setups/Setup505_Seeed_XIAO_EPaper_1inch54.h>   // Setup file for Seeed XIAO with 1.54inch ePaper
-// #include <User_Setups/Setup506_Seeed_XIAO_EPaper_4inch26.h>   // Setup file for Seeed XIAO with 4.26inch ePaper
-// #include <User_Setups/Setup507_Seeed_XIAO_EPaper_4inch2.h>    // Setup file for Seeed XIAO with 4.2inch ePaper     
-// #include <User_Setups/Setup508_Seeed_XIAO_EPaper_2inch13.h>   // Setup file for Seeed XIAO with 2.13inch ePaper
+// Now, include the central configuration hub which uses the macros defined above
+// to set up the correct pins, drivers, and settings.
+#include <User_Setups/Dynamic_Setup.h>
 
 
 #endif // USER_SETUP_LOADED

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seeed Arduino Display - Online Configuration Generator</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+            background-color: #f9f9f9;
+            position: relative;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+        pre {
+            background-color: #2d3436;
+            color: #dfe6e9;
+            padding: 20px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 16px;
+            min-height: 40px;
+        }
+        code {
+            display: block;
+        }
+        .instructions {
+            background-color: #eaf5ff;
+            border-left: 5px solid #3498db;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+        .epaper-options {
+            background-color: #fffbe6;
+            border: 1px solid #ffe58f;
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        .epaper-options label {
+            display: block;
+            margin-bottom: 8px;
+        }
+        .lang-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 14px;
+        }
+        .lang-switcher a {
+            color: #3498db;
+            text-decoration: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+        .lang-switcher a.active {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lang-switcher">
+        <a id="lang-en" onclick="switchLanguage('en')" class="active">English</a> |
+        <a id="lang-zh" onclick="switchLanguage('zh')">中文</a>
+    </div>
+
+    <div class="container">
+        <h1 data-lang-key="main_title">Online Configuration Generator</h1>
+
+        <div class="instructions">
+            <p><strong data-lang-key="instructions_title">How to use:</strong></p>
+            <ol>
+                <li data-lang-key="instructions_step1">Select your hardware combination from the "Step 1" dropdown below.</li>
+                <li data-lang-key="instructions_step2"><strong>If an ePaper screen is selected</strong>, an additional "Step 2" option will appear. Please choose your driver board type.</li>
+                <li data-lang-key="instructions_step3">The required configuration code will be automatically generated in the "Step 3" box.</li>
+                <li data-lang-key="instructions_step4">Copy the entire generated code and paste it into your <code>Custom_config.h</code> file.</li>
+            </ol>
+        </div>
+
+        <h2 data-lang-key="step1_title">Step 1: Select Your Hardware</h2>
+        <select id="boardSelector" onchange="handleSelectionChange()">
+            </select>
+        
+        <div id="ePaperOptions" style="display: none;">
+            <h3 data-lang-key="step2_title">Step 2: (ePaper Only) Select Your Driver Board Type</h3>
+            <div class="epaper-options">
+                <!-- <label>
+                    <input type="radio" name="driverBoard" value="none" onchange="generateConfig()">
+                    <span data-lang-key="epaper_option_none">Default / No Specific Driver Board</span>
+                </label> -->
+                <label>
+                    <input type="radio" name="driverBoard" value="driver" onchange="generateConfig()" checked>
+                    <span data-lang-key="epaper_option_driver">Seeed ePaper Driver Board</span>
+                </label>
+                <label>
+                    <input type="radio" name="driverBoard" value="monitor" onchange="generateConfig()">
+                    <span data-lang-key="epaper_option_monitor">XIAO ePaper Monitor Kit</span>
+                </label>
+            </div>
+        </div>
+
+        <h3 data-lang-key="step3_title">Step 3: Copy the Generated Code</h3>
+        <pre><code id="outputCode"></code></pre>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                title: "Seeed Arduino Display - Online Configuration Generator",
+                main_title: "Seeed Arduino Display - Online Configuration Generator",
+                instructions_title: "How to use:",
+                instructions_step1: "Select your hardware combination from the 'Step 1' dropdown below.",
+                instructions_step2: "<strong>If an ePaper screen is selected</strong>, an additional 'Step 2' option will appear. Please choose your driver board type.",
+                instructions_step3: "The required configuration code will be automatically generated in the 'Step 3' box.",
+                instructions_step4: "Copy the entire generated code and paste it into your <code>Custom_config.h</code> file.",
+                step1_title: "Step 1: Select Your Hardware",
+                step2_title: "Step 2: (ePaper Only) Select Your Driver Board Type",
+                step3_title: "Step 3: Copy the Generated Code",
+                epaper_option_none: "Default / No Specific Driver Board",
+                epaper_option_driver: "Seeed ePaper Driver Board",
+                epaper_option_monitor: "XIAO ePaper Monitor Kit",
+                output_placeholder: "// Please select a hardware configuration from the dropdown menu above.",
+                select_placeholder: "-- Please select your hardware configuration --"
+            },
+            zh: {
+                title: "Seeed Arduino Display - 在线配置生成器 (Online Configuration Generator)",
+                main_title: "Seeed Arduino Display - 在线配置生成器",
+                instructions_title: "如何使用：",
+                instructions_step1: "从下方的“步骤1”下拉菜单中选择您的硬件组合。",
+                instructions_step2: "<strong>如果选择了ePaper屏幕</strong>，一个“步骤2”的附加选项将会出现，请选择您的驱动板类型。",
+                instructions_step3: "“步骤3”的方框内会自动生成您需要的配置代码。",
+                instructions_step4: "将生成的代码完整复制，并粘贴到您的 <code>Custom_config.h</code> 文件中。",
+                step1_title: "步骤 1: 选择您的硬件",
+                step2_title: "步骤 2: (仅ePaper) 选择您的驱动板类型",
+                step3_title: "步骤 3: 复制生成的代码",
+                epaper_option_none: "默认 / 无特定驱动板",
+                epaper_option_driver: "Seeed ePaper Driver Board",
+                epaper_option_monitor: "XIAO ePaper Monitor Kit",
+                output_placeholder: "// 请从上方的下拉菜单中选择一个硬件配置。",
+                select_placeholder: "-- 请从这里选择您的硬件配置 --"
+            }
+        };
+
+        const boardOptions = [
+            { value: "", text: "select_placeholder" },
+            { value: "66", text: "Setup 66: Seeed XIAO Round Display (GC9A01)" },
+            { value: "500", text: "Setup 500: Seeed Wio Terminal" },
+            { value: "501", text: "Setup 501: Seeed XIAO Round Display" },
+            { value: "502", text: "Setup 502: Seeed XIAO 7.5\" ePaper" },
+            { value: "503", text: "Setup 503: Seeed XIAO 5.83\" ePaper" },
+            { value: "504", text: "Setup 504: Seeed XIAO 2.9\" ePaper" },
+            { value: "505", text: "Setup 505: Seeed XIAO 1.54\" ePaper" },
+            { value: "506", text: "Setup 506: Seeed XIAO 4.26\" ePaper" },
+            { value: "507", text: "Setup 507: Seeed XIAO 4.2\" ePaper" },
+            { value: "508", text: "Setup 508: Seeed XIAO 2.13\" ePaper" },
+            { value: "520", text: "Setup 520: Seeed reTerminal 7.5\" ePaper" },
+            { value: "666", text: "Setup 666: Seeed XIAO Default (ILI9341)" },
+        ];
+
+        function switchLanguage(lang) {
+            document.documentElement.lang = lang;
+            const langStrings = translations[lang];
+
+            document.querySelectorAll('[data-lang-key]').forEach(el => {
+                const key = el.dataset.langKey;
+                if (langStrings[key]) {
+                    el.innerHTML = langStrings[key];
+                }
+            });
+            
+            document.title = langStrings.title;
+            document.getElementById('outputCode').textContent = langStrings.output_placeholder;
+            
+            // Populate selector options with the correct language
+            const selector = document.getElementById('boardSelector');
+            const currentSelectedValue = selector.value;
+            selector.innerHTML = ''; // Clear existing options
+            boardOptions.forEach(opt => {
+                const optionElement = document.createElement('option');
+                optionElement.value = opt.value;
+                // For the placeholder, use the translated string, otherwise use the fixed text
+                optionElement.textContent = (opt.value === "") ? langStrings[opt.text] : opt.text;
+                selector.appendChild(optionElement);
+            });
+            selector.value = currentSelectedValue; // Restore selection
+
+            // Update active language link
+            document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+            document.getElementById('lang-zh').classList.toggle('active', lang === 'zh');
+            
+            generateConfig(); // Regenerate config with new language if needed
+        }
+
+        function handleSelectionChange() {
+            const selector = document.getElementById('boardSelector');
+            const selectedValue = parseInt(selector.value, 10);
+            const ePaperDiv = document.getElementById('ePaperOptions');
+
+            const isEpaper = (selectedValue >= 502 && selectedValue <= 508);
+
+            if (isEpaper) {
+                ePaperDiv.style.display = 'block';
+            } else {
+                ePaperDiv.style.display = 'none';
+                // When switching away, reset to the new default
+                document.querySelector('input[name="driverBoard"][value="driver"]').checked = true;
+            }
+            generateConfig();
+        }
+
+        function generateConfig() {
+            const selector = document.getElementById('boardSelector');
+            const selectedValue = selector.value;
+            const outputElement = document.getElementById('outputCode');
+            const currentLang = document.documentElement.lang;
+            const langStrings = translations[currentLang];
+            let outputString = '';
+
+            if (selectedValue) {
+                const selectedText = selector.options[selector.selectedIndex].text;
+                outputString = `#define BOARD_SCREEN_COMBO ${selectedValue} // ${selectedText}`;
+
+                const ePaperDiv = document.getElementById('ePaperOptions');
+                if (ePaperDiv.style.display === 'block') {
+                    const selectedDriver = document.querySelector('input[name="driverBoard"]:checked').value;
+                    if (selectedDriver === 'driver') {
+                        // This corresponds to the setting requested in the previous turn.
+                        // Based on the provided .h files, the correct macro to enable a driver board is USE_XIAO_EPAPER_DRIVER_BOARD
+                        outputString += '\n#define USE_XIAO_EPAPER_DRIVER_BOARD';
+                    } else if (selectedDriver === 'monitor') {
+                        // This assumes another macro for the monitor kit.
+                        outputString += '\n#define USE_XIAO_EPAPER_DISPLAY_BOARD';
+                    }
+                    // if selectedDriver is 'none', no additional line is added.
+                }
+                outputElement.textContent = outputString;
+            } else {
+                outputElement.textContent = langStrings.output_placeholder;
+            }
+        }
+
+        // Initialize with default language on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            switchLanguage('en');
+        });
+    </script>
+
+</body>
+</html>

@@ -77,6 +77,28 @@ The library includes numerous examples demonstrating:
 2. Install it into your Arduino libraries folder
 3. Select the appropriate setup configuration for your hardware
 
+
+## Online Configuration Tool
+
+To simplify the hardware setup, we provide an online tool that helps you quickly generate the configuration code for your specific hardware combination.
+
+
+
+### How to Use
+
+1.  **Open the Tool**: Click the link above to open the tool in your browser.
+2.  **Select Your Hardware**:
+      * From the "Step 1" dropdown menu, select your hardware combination.
+      * If you select an ePaper screen, an additional "Step 2" option will appear. Choose your driver board type ("Seeed ePaper Driver Board" or "XIAO ePaper Monitor Kit").
+3.  **Generate the Code**: The required configuration code is automatically generated in the "Step 3" box.
+4.  **Copy and Paste**:
+      * Copy the entire generated code.
+      * In the library folder, find and open `User_Setup_Select.h`.
+      * Ensure the following line is active and not commented out: `#include <User_Custom_config.h>`
+      * Create a new file named `User_Custom_config.h` in the same directory and paste the copied code into it.
+5.  **Compile and Upload**: Save the file, then recompile and upload your sketch.
+
+
 ## Documentation
 
 For detailed implementation information:
