@@ -794,6 +794,10 @@ void TFT_eSPI::init(uint8_t tc)
 
 #elif defined (JD79686B_DRIVER)
     #include "TFT_Drivers/JD79686B_Init.h"
+
+#elif defined (ED2208_DRIVER)
+    #include "TFT_Drivers/ED2208_Init.h"
+  
 #endif
 
 #ifdef TFT_INVERSION_ON
@@ -915,6 +919,9 @@ void TFT_eSPI::setRotation(uint8_t m)
 
 #elif defined (JD79686B_DRIVER)
     #include "TFT_Drivers/JD79686B_Rotation.h"
+    
+#elif defined (ED2208_DRIVER)
+    #include "TFT_Drivers/ED2208_Rotation.h"
 #endif
 
   delayMicroseconds(10);

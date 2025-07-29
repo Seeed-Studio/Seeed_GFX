@@ -157,16 +157,18 @@
 //#include <User_Setups/Dustin_ILI9341_ESP32.h>    // Setup file for Dustin Watts PCB with ILI9341
 //#include <User_Setups/ILI9225.h>
 
-#include <User_Setups/Setup666_XIAO_ILI9341.h>                // Default Setup file for Seeed XIAO 
+// #include <User_Setups/Setup666_XIAO_ILI9341.h>                // Default Setup file for Seeed XIAO 
 // #include <User_Setups/Setup500_Seeed_Wio_Terminal.h>          // Setup file for Seeed Wio Terimal with SPI ILI9341 320x240
 // #include <User_Setups/Setup501_Seeed_XIAO_Round_Display.h>    // Setup file for Seeed XIAO ROUND with GC9A01 240 x 240
 // #include <User_Setups/Setup520_Seeed_reTerminal_E1001.h>      // Setup file for Seeed reTerminal E1001 with 7.5inch ePaper
 
 /************************************ Seeed XIAO EPAPER *************************************/
-#define ENABLE_EPAPER_BOARD_PIN_SETUPS    // Enable this macro to enable the following board pin presets
+// #define ENABLE_EPAPER_BOARD_PIN_SETUPS    // Enable this macro to enable the following board pin presets
 
 // #define USE_XIAO_EPAPER_DRIVER_BOARD   // Uncomment to enable ePaper Driver Board for Seeed Studio XIAO pin presets
 // #define USE_XIAO_EPAPER_DISPLAY_BOARD  // Uncomment to enable XIAO ePaper Monitor Kit pin presets
+
+// #define USE_COLORFULL_EPAPER
 
 // #include <User_Setups/Setup502_Seeed_XIAO_EPaper_7inch5.h>    // Setup file for Seeed XIAO with 7.5inch ePaper
 // #include <User_Setups/Setup503_Seeed_XIAO_EPaper_5inch83.h>   // Setup file for Seeed XIAO with 5.83inch ePaper
@@ -175,7 +177,7 @@
 // #include <User_Setups/Setup506_Seeed_XIAO_EPaper_4inch26.h>   // Setup file for Seeed XIAO with 4.26inch ePaper
 // #include <User_Setups/Setup507_Seeed_XIAO_EPaper_4inch2.h>    // Setup file for Seeed XIAO with 4.2inch ePaper     
 // #include <User_Setups/Setup508_Seeed_XIAO_EPaper_2inch13.h>   // Setup file for Seeed XIAO with 2.13inch ePaper
-
+// #include <User_Setups/Setup509_Seeed_XIAO_EPaper_7inch3_colorful.h>    // Setup file for Seeed XIAO with 7.3inch RGB ePaper
 
 #endif // USER_SETUP_LOADED
 
@@ -312,7 +314,9 @@
 #elif defined (JD79686B_DRIVER)
      #include "TFT_Drivers/JD79686B_Defines.h"
      #define  TFT_DRIVER 0x7968
-
+#elif defined (ED2208_DRIVER)
+     #include "TFT_Drivers/ED2208_Defines.h"
+     #define  TFT_DRIVER 0x2208
                               // <<<<<<<<<<<<<<<<<<<<<<<< ADD NEW DRIVER HERE
                               // XYZZY_init.h and XYZZY_rotation.h must also be added in TFT_eSPI.cpp
 #elif defined (XYZZY_DRIVER)

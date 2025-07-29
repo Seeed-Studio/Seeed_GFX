@@ -27,7 +27,7 @@ A professional graphics library for Seeed hardware platforms, forked from [TFT_e
   - SSD1680-based displays
   - SSD1681-based displays
   - JD79686B-based displays
-
+  - ED2208-based displays
 ## E-Paper Implementation
 
 The library includes a comprehensive implementation for E-Paper displays, providing:
