@@ -5,8 +5,8 @@
 // the specific path to their project.
 // We use __has_include for safety, so compilation won't fail if the file is missing.
 // The error will be handled gracefully inside Dynamic_Setup.h.
-#if __has_include("Custom_config.h")
-  #include "Custom_config.h"
+#if __has_include("driver.h")
+  #include "driver.h"
 #endif
 
 #define ENABLE_EPAPER_BOARD_PIN_SETUPS
