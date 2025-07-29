@@ -164,16 +164,16 @@
 #define EPD_PUSH_NEW_COLORS(w, h, colors)   \
     do                                      \
     {                                       \
-        uint8_t temp1,temp2 ;          \
+        uint16_t bytes_per_row = (w) / 2;   \
+        uint8_t temp1,temp2 ;               \
         writecommand(0x10);                 \
-        for (int i = 0; i < h ; i++)        \
+        for (uint16_t row = 0; row < (h) ; row++)        \
         {                                   \
-            for(int j = 0; j< w / 2; j++)   \
+            for(uint16_t col = 0; col < bytes_per_row; col++)   \
             {                               \
-                temp1 =  (colors[w /2 *i+j]) ;   \
-                temp2 =  (colors[w /2 *i+j]) ;   \
-                temp1 =  (temp1 >> 4) & 0x0F;\
-                temp2 = temp2 & 0x0F;\
+                uint8_t b = (colors[bytes_per_row *row+col]) ;   \
+                temp1 =  (b >> 4) & 0x0F;\
+                temp2 =   b & 0x0F;\
                 writedata(((COLOR_GET(temp1) <<4)|( COLOR_GET(temp2))));\
             }                               \
         }                                   \
@@ -182,18 +182,18 @@
 #define EPD_PUSH_NEW_COLORS_FLIP(w, h, colors)                         \
     do                                                                 \
     {                                                                  \
-        writecommand(0x10);                                            \
         uint16_t bytes_per_row = (w) / 2;                              \
+        uint8_t temp1,temp2 ;                                          \
+        writecommand(0x10);                                            \
         for (uint16_t row = 0; row < (h); row++)                       \
         {                                                              \
             uint16_t start = row * bytes_per_row;                      \
             for (uint16_t col = 0; col < bytes_per_row; col++)         \
             {                                                          \
-                uint8_t b = colors[start + (bytes_per_row - 1 - col)]; \
-                b = ((b & 0xF0) >> 4) | ((b & 0x0F) << 4);             \
-                b = ((b & 0xCC) >> 2) | ((b & 0x33) << 2);             \
-                b = ((b & 0xAA) >> 1) | ((b & 0x55) << 1);             \
-                writedata(b);                                          \
+                uint8_t b = (colors[bytes_per_row *row + (bytes_per_row - 1 - col)]) ;\
+                temp1 =  (b >> 4) & 0x0F;                              \
+                temp2 =  b & 0x0F;                                     \
+                writedata(((COLOR_GET(temp2) <<4)|( COLOR_GET(temp1))));\
             }                                                          \
         }                                                              \
     } while (0)
