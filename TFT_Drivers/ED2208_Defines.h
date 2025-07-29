@@ -15,7 +15,7 @@
 #define TFT_HEIGHT EPD_HEIGHT
 #endif
 
-#define EPD_COLOR_DEPTH 8
+#define EPD_COLOR_DEPTH 4
 
 
 #define EPD_PSR         0x00
@@ -80,7 +80,7 @@
  #define EPD_INIT()                 \
     do                              \
     {                               \
-        digitalWrite(TFT_RST, LOW); \ 
+        digitalWrite(TFT_RST, LOW); \
         delay(10);                  \
         digitalWrite(TFT_RST, HIGH);\
         delay(10);                  \
@@ -132,8 +132,8 @@
         writedata(0x01);\
         writecommand(EPD_PWS);\
         writedata(0x2F);\
-        writecommand(0x04);  \    
-        CHECK_BUSY();  \        
+        writecommand(0x04);  \
+        CHECK_BUSY();  \
     } while (0)
 
 #define EPD_WAKEUP()   \
@@ -152,27 +152,28 @@
 
 
 #define COLOR_GET(color) ( \
-    (color) == 0x00 ? 0x00 : \
-    (color) == 0xFF ? 0x01 : \
-    (color) == 0xFC ? 0x02 : \
-    (color) == 0xE0 ? 0x03 : \
-    (color) == 0x03 ? 0x05 : \
-    (color) == 0x1C ? 0x06 : \
+    (color) == 0x0F ? 0x00 : \
+    (color) == 0x00 ? 0x01 : \
+    (color) == 0x0B ? 0x02 : \
+    (color) == 0x06 ? 0x03 : \
+    (color) == 0x0D ? 0x05 : \
+    (color) == 0x02 ? 0x06 : \
     0x00 \
 )
 
 #define EPD_PUSH_NEW_COLORS(w, h, colors)   \
     do                                      \
     {                                       \
-        unsigned char temp1,temp2;          \
+        uint8_t temp1,temp2 ;          \
         writecommand(0x10);                 \
         for (int i = 0; i < h ; i++)        \
         {                                   \
-            unsigned int k = 0;             \          
             for(int j = 0; j< w / 2; j++)   \
             {                               \
-                temp1 =  colors[w*i+k++];   \
-                temp2 =  colors[w*i+k++];   \
+                temp1 =  (colors[w /2 *i+j]) ;   \
+                temp2 =  (colors[w /2 *i+j]) ;   \
+                temp1 =  (temp1 >> 4) & 0x0F;\
+                temp2 = temp2 & 0x0F;\
                 writedata(((COLOR_GET(temp1) <<4)|( COLOR_GET(temp2))));\
             }                               \
         }                                   \
