@@ -396,15 +396,6 @@ static const uint16_t default_4bit_palette[] PROGMEM = {
 };
 
 
-// Default palette for 6 color epaper
-#ifdef USE_COLORFULL_EPAPER
-    #define EPAPER_BLACK 0XF
-    #define EPAPER_WHITE 0X0
-    #define EPAPER_BLUE 0XD
-    #define EPAPER_YELLO 0XB
-    #define EPAPER_GREEN 0X2
-    #define EPAPER_RED 0X6
-#endif
 
 /***************************************************************************************
 **                         Section 7: Diagnostic support

@@ -9,6 +9,7 @@ Here is the 6 colors you can display:
 5.TFT_BLUE
 6.TFT_RED
 */
+
 #include "TFT_eSPI.h"
 
 #ifdef EPAPER_ENABLE // Only compile this code if the EPAPER_ENABLE is defined in User_Setup.h
