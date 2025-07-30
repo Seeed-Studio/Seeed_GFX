@@ -198,20 +198,31 @@
 #elif BOARD_SCREEN_COMBO == 501
 #include <User_Setups/Setup501_Seeed_XIAO_Round_Display.h>
 #elif BOARD_SCREEN_COMBO == 502
+#define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup502_Seeed_XIAO_EPaper_7inch5.h>
 #elif BOARD_SCREEN_COMBO == 503
+#define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup503_Seeed_XIAO_EPaper_5inch83.h>
 #elif BOARD_SCREEN_COMBO == 504
+#define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup504_Seeed_XIAO_EPaper_2inch9.h>
 #elif BOARD_SCREEN_COMBO == 505
+#define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup505_Seeed_XIAO_EPaper_1inch54.h>
 #elif BOARD_SCREEN_COMBO == 506
+#define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup506_Seeed_XIAO_EPaper_4inch26.h>
 #elif BOARD_SCREEN_COMBO == 507
+#define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup507_Seeed_XIAO_EPaper_4inch2.h>
 #elif BOARD_SCREEN_COMBO == 508
+#define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup508_Seeed_XIAO_EPaper_2inch13.h>
+#elif BOARD_SCREEN_COMBO == 509
+#define USE_COLORFULL_EPAPER
+#include <User_Setups/Setup509_Seeed_XIAO_EPaper_7inch3_colorful.h>    // Setup file for Seeed XIAO with 7.3inch RGB ePaper
 #elif BOARD_SCREEN_COMBO == 520
+#define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup520_Seeed_reTerminal_E1001.h>
 
 #elif BOARD_SCREEN_COMBO == 666
