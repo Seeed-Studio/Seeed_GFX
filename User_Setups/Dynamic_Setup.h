@@ -220,6 +220,7 @@
 #include <User_Setups/Setup508_Seeed_XIAO_EPaper_2inch13.h>
 #elif BOARD_SCREEN_COMBO == 509
 #define USE_COLORFULL_EPAPER
+#define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup509_Seeed_XIAO_EPaper_7inch3_colorful.h>    // Setup file for Seeed XIAO with 7.3inch RGB ePaper
 #elif BOARD_SCREEN_COMBO == 520
 #define ENABLE_EPAPER_BOARD_PIN_SETUPS
