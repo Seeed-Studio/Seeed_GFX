@@ -9,11 +9,9 @@
   #include "driver.h"
 #endif
 
-#define ENABLE_EPAPER_BOARD_PIN_SETUPS
 
-// Now, include the central configuration hub which uses the macros defined above
-// to set up the correct pins, drivers, and settings.
 #include <User_Setups/Dynamic_Setup.h>
+
 
 
 #endif // USER_SETUP_LOADED
@@ -151,7 +149,9 @@
 #elif defined (JD79686B_DRIVER)
      #include "TFT_Drivers/JD79686B_Defines.h"
      #define  TFT_DRIVER 0x7968
-
+#elif defined (ED2208_DRIVER)
+     #include "TFT_Drivers/ED2208_Defines.h"
+     #define  TFT_DRIVER 0x2208
                               // <<<<<<<<<<<<<<<<<<<<<<<< ADD NEW DRIVER HERE
                               // XYZZY_init.h and XYZZY_rotation.h must also be added in TFT_eSPI.cpp
 #elif defined (XYZZY_DRIVER)
