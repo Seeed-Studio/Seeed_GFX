@@ -168,7 +168,7 @@
 // #define USE_XIAO_EPAPER_DRIVER_BOARD   // Uncomment to enable ePaper Driver Board for Seeed Studio XIAO pin presets
 // #define USE_XIAO_EPAPER_DISPLAY_BOARD  // Uncomment to enable XIAO ePaper Monitor Kit pin presets
 
-// #define USE_COLORFULL_EPAPER
+
 
 // #include <User_Setups/Setup502_Seeed_XIAO_EPaper_7inch5.h>    // Setup file for Seeed XIAO with 7.5inch ePaper
 // #include <User_Setups/Setup503_Seeed_XIAO_EPaper_5inch83.h>   // Setup file for Seeed XIAO with 5.83inch ePaper
