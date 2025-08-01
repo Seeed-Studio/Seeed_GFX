@@ -74,7 +74,7 @@
     {                       \
         writecommand(0x02);          \
         writedata(0x00);             \
-        delay(100);                  \
+        delay(1);                    \
         CHECK_BUSY();                \
     } while (0)
 
@@ -141,7 +141,7 @@
     do                  \
     {                       \
         writecommand(0x04);          \
-        delay(100);                  \
+        delay(1);                    \
         CHECK_BUSY();                \
     } while (0)
 
@@ -199,12 +199,12 @@
         }                                                              \
     } while (0)
 
-#define EPD_PUSH_OLD_COLORS(w, h, colors)   \
+#define EPD_PUSH_OLD_COLORS_FILP(w, h, colors)\
     do                                      \
     {                                       \
     } while (0)
-
-#define EPD_PUSH_OLD_COLORS_FLIP(w, h, colors)                         \
-    do                                                                 \
-    {                                                                  \
+    
+#define EPD_PUSH_OLD_COLORS(w, h, colors)   \
+    do                                      \
+    {                                       \
     } while (0)
