@@ -225,6 +225,10 @@
 #elif BOARD_SCREEN_COMBO == 520
 #define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup520_Seeed_reTerminal_E1001.h>
+#elif BOARD_SCREEN_COMBO == 521
+#define USE_COLORFULL_EPAPER
+#define ENABLE_EPAPER_BOARD_PIN_SETUPS
+#include <User_Setups/Setup521_Seeed_reTerminal_E1002.h>
 
 #elif BOARD_SCREEN_COMBO == 666
 #include <User_Setups/Setup666_XIAO_ILI9341.h>
