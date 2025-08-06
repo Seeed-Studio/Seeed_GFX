@@ -35,7 +35,7 @@ void setup()
     epaper.update(); // update the display
     printf("GREEN\r\n");
 
-    epaper.fillScreen(TFT_YELLO); // change the color to YELLO
+    epaper.fillScreen(TFT_YELLOW); // change the color to YELLO
     epaper.update(); // update the display
     printf("YELLO\r\n");
 
