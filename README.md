@@ -2,6 +2,12 @@
 
 A professional graphics library for Seeed hardware platforms, forked from [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI) with significant enhancements to support Seeed's development boards and display modules.
 
+## Online Configuration Tool
+
+To simplify the hardware setup, we provide an online tool that helps you quickly generate the configuration code for your specific hardware combination.
+
+➡️ **[Click here to open the Online Configuration Tool](https://qingwind6.github.io/Display_online_config_tool/)**
+
 ## Key Features
 
 - **Enhanced Processor Support**: Expanded compatibility with Seeed's diverse microcontroller lineup
