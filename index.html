@@ -521,6 +521,12 @@
             });
             document.title = langStrings.title;
             
+            // Update language switcher active state
+            document.querySelectorAll('.lang-switcher a').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.getElementById(`lang-${lang}`).classList.add('active');
+            
             populateDropdowns(lang);
             generateConfig(); // Re-generate code in case placeholder text needs to be shown
         }
@@ -628,8 +634,6 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             switchLanguage('en'); // Set default language and populate dropdowns
-            document.getElementById('lang-en').classList.add('active');
-            document.getElementById('lang-zh').classList.remove('active');
         });
     </script>
 
