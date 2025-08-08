@@ -1,4 +1,4 @@
-# Seeed Arduino LCD
+# Seeed GFX
 
 A professional graphics library for Seeed hardware platforms, forked from [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI) with significant enhancements to support Seeed's development boards and display modules.
 
@@ -61,7 +61,7 @@ epaper.update();  // Explicit update required for E-Paper displays
 - Register-level optimizations for maximum performance on each platform
 
 ### File System Integration
-- Seamless integration with Seeed_Arduino_FS for compatible platforms
+- Seamless integration with Seeed__FS for compatible platforms
 - Fallback to standard FS library for other platforms
 
 ### Low-Level Display Interface
