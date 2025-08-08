@@ -6,7 +6,7 @@ A professional graphics library for Seeed hardware platforms, forked from [TFT_e
 
 To simplify the hardware setup, we provide an online tool that helps you quickly generate the configuration code for your specific hardware combination.
 
-➡️ **[Click here to open the Online Configuration Tool](https://qingwind6.github.io/Display_online_config_tool/)**
+➡️ **[Click here to open the Online Configuration Tool](https://seeed-studio.github.io/Seeed_GFX/)**
 
 ## Key Features
 
