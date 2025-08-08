@@ -94,6 +94,27 @@
             box-shadow: var(--shadow-lg);
             transform: translateY(-2px);
         }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-top: 1rem;
+        }
+
+        .company-logo {
+            max-height: 80px;
+            height: auto;
+            max-width: 200px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 8px rgba(0, 73, 102, 0.15));
+            transition: var(--transition);
+        }
+
+        .company-logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 4px 12px rgba(0, 73, 102, 0.25));
+        }
         .selection-group {
             margin-bottom: 2rem;
         }
@@ -324,6 +345,16 @@
             select {
                 font-size: 1rem;
             }
+
+            .company-logo {
+                max-height: 60px;
+                max-width: 150px;
+            }
+
+            .logo-container {
+                margin-bottom: 1.5rem;
+                padding-top: 0.5rem;
+            }
         }
 
         /* 加载动画 */
@@ -371,6 +402,9 @@
     </div>
 
     <div class="container">
+        <div class="logo-container">
+            <img src="seeed_logo.png" alt="Seeed Studio" class="company-logo">
+        </div>
         <h1 data-lang-key="main_title">Online Configuration Generator</h1>
 
         <h2 data-lang-key="step1_title">Step 1: Select Your Target Hardware</h2>
@@ -430,7 +464,7 @@
                 select_title_hardware: "🔧 Select Integrated Devices or DIY displays",
                 select_title_mono_epaper: "🖥️ OR Select Display Component",
                 select_placeholder_hardware: "-- Please select the Integrated Devices or DIY displays --",
-                select_placeholder_mono_epaper: "-- Please select your universal ePaper screen specification --",
+                select_placeholder_mono_epaper: "-- Please select Display Component --",
                 epaper_option_driver: "ePaper Driver Board for XIAO",
                 epaper_option_breakout: "ePaper Breakout Board for XIAO",
                 epaper_option_monitor: "XIAO ePaper Display Board EE04",
