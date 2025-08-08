@@ -3,129 +3,363 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seeed Arduino Display - Online Configuration Generator</title>
+    <title>🎨 Seeed GFX Library - Online Configuration Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #8FC31F;
+            --primary-gradient: linear-gradient(135deg, #8FC31F 0%, #004966 100%);
+            --secondary-color: #004966;
+            --accent-color: #8FC31F;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e5e7eb;
+            --shadow: 0 10px 25px -5px rgba(0, 73, 102, 0.15), 0 4px 6px -2px rgba(0, 73, 102, 0.08);
+            --shadow-lg: 0 25px 50px -12px rgba(0, 73, 102, 0.25);
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 0 20px;
-            background-color: #f9f9f9;
+            color: var(--text-primary);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--background);
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(143, 195, 31, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(0, 73, 102, 0.1) 0%, transparent 50%);
+            min-height: 100vh;
             position: relative;
         }
-        h1, h2, h3 {
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-            margin-top: 30px;
+
+        h1 {
+            color: var(--text-primary);
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin: 2rem 0;
+            letter-spacing: -0.025em;
         }
+
+        h2 {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 2rem 0 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h2::before {
+            content: '';
+            width: 4px;
+            height: 1.5rem;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+
         h3 {
-            border-bottom: none;
-            color: #34495e;
-            margin-top: 25px;
-            margin-bottom: 10px;
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            font-weight: 500;
+            margin: 1.5rem 0 0.75rem 0;
         }
+
         .container {
-            background-color: #ffffff;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
         }
+
+        .container:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+        .selection-group {
+            margin-bottom: 2rem;
+        }
+
         select {
             width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            margin-bottom: 20px;
-            background-color: #fff;
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: var(--border-radius);
+            border: 2px solid var(--border-color);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            color: var(--text-primary);
+            transition: var(--transition);
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            font-family: inherit;
         }
+
+        select:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(143, 195, 31, 0.15);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(143, 195, 31, 0.1);
+        }
+
         select:disabled {
-            background-color: #f2f2f2;
+            background: #f9fafb;
+            color: var(--text-secondary);
             cursor: not-allowed;
+            opacity: 0.6;
         }
-        pre {
-            background-color: #2d3436;
-            color: #dfe6e9;
-            padding: 20px;
-            border-radius: 5px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-family: "Courier New", Courier, monospace;
-            font-size: 16px;
-            min-height: 40px;
-            position: relative;
-        }
+
         .code-container {
             position: relative;
+            margin-top: 2rem;
         }
+
+        pre {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: #e2e8f0;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            min-height: 80px;
+            position: relative;
+            border: 1px solid #475569;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
         .copy-btn {
             position: absolute;
-            top: 8px;
-            right: 8px;
-            padding: 4px;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem;
             border: none;
-            background: transparent;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 0.5rem;
             cursor: pointer;
-            width: 24px;
-            height: 24px;
+            width: 2.5rem;
+            height: 2.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
         .copy-btn svg {
-            width: 16px;
-            height: 16px;
+            width: 1rem;
+            height: 1rem;
             position: absolute;
             transition: opacity 0.2s ease-in-out;
         }
+
         .copy-icon {
-            fill: #3498db;
+            fill: #e2e8f0;
             opacity: 1;
         }
+
         .check-icon {
-            fill: green;
+            fill: var(--secondary-color);
             opacity: 0;
         }
+
         .epaper-options {
-            background-color: #fffbe6;
-            border: 1px solid #ffe58f;
-            padding: 15px 20px;
-            border-radius: 5px;
-            margin-top: 15px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid var(--secondary-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-top: 1.5rem;
+            position: relative;
+            overflow: hidden;
         }
+
+        .epaper-options::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-color);
+        }
+
         .epaper-options label {
-            display: block;
-            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--secondary-color);
+            transition: var(--transition);
+        }
+
+        .epaper-options label:hover {
+            color: #003344;
+        }
+
+        .epaper-options input[type="radio"] {
+            margin-right: 0.75rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: var(--accent-color);
         }
         .lang-switcher {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 14px;
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            padding: 0.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            z-index: 1000;
         }
+
         .lang-switcher a {
-            color: #3498db;
+            color: var(--text-secondary);
             text-decoration: none;
             cursor: pointer;
-            padding: 5px;
+            padding: 0.5rem 1rem;
+            border-radius: 1.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: var(--transition);
+            display: inline-block;
         }
+
+        .lang-switcher a:hover {
+            color: var(--primary-color);
+            background: rgba(143, 195, 31, 0.1);
+        }
+
         .lang-switcher a.active {
-            font-weight: bold;
-            text-decoration: underline;
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 600;
         }
+
         .final-instruction {
-            font-size: 14px;
-            color: #666;
-            margin-top: -5px;
-            margin-bottom: 10px;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin: 1rem 0;
+            padding: 1rem;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary-color);
         }
+
+        .final-instruction code {
+            background: rgba(143, 195, 31, 0.1);
+            color: var(--primary-color);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
         .final-instruction-img {
             max-width: 100%;
             height: auto;
-            margin-bottom: 10px;
+            margin-bottom: 1rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+                padding-top: 4rem; /* 为固定的语言切换器留出空间 */
+            }
+
+            .container {
+                padding: 2rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .lang-switcher {
+                position: fixed;
+                top: 1rem;
+                right: 1rem;
+                left: 1rem;
+                display: flex;
+                justify-content: center;
+                z-index: 1000;
+            }
+
+            select {
+                font-size: 1rem;
+            }
+        }
+
+        /* 加载动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* 选择框聚焦效果 */
+        .selection-group {
+            position: relative;
+        }
+
+        .selection-group::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+        }
+
+        .selection-group:focus-within::after {
+            width: 100%;
         }
     </style>
 </head>
@@ -139,19 +373,19 @@
     <div class="container">
         <h1 data-lang-key="main_title">Online Configuration Generator</h1>
 
-        <h2 data-lang-key="step1_title">Step 1: Select Your Hardware</h2>
+        <h2 data-lang-key="step1_title">Step 1: Select Your Target Hardware</h2>
         
-        <h3 data-lang-key="select_title_hardware">Hardware Configuration</h3>
-        <select id="hardwareSelector" onchange="handleSelectionChange(this)">
-        </select>
+        <div class="selection-group">
+            <h3 data-lang-key="select_title_hardware">🔧 Select Integrated Devices or DIY displays</h3>
+            <select id="hardwareSelector" onchange="handleSelectionChange(this)">
+            </select>
+        </div>
 
-        <h3 data-lang-key="select_title_mono_epaper">Universal Monochrome ePaper Screen</h3>
-        <select id="monoEPaperSelector" onchange="handleSelectionChange(this)">
-        </select>
-        
-        <h3 data-lang-key="select_title_color_epaper">Universal Colour ePaper Screen</h3>
-        <select id="colorEPaperSelector" onchange="handleSelectionChange(this)">
-        </select>
+        <div class="selection-group">
+            <h3 data-lang-key="select_title_mono_epaper">🖥️ OR Select Display Component</h3>
+            <select id="monoEPaperSelector" onchange="handleSelectionChange(this)">
+            </select>
+        </div>
         
         <div id="ePaperOptions" style="display: none;">
             <h2 data-lang-key="step2_title">Step 2: (ePaper Only) Select Your Driver Board Type</h2>
@@ -186,39 +420,35 @@
     <script>
         const translations = {
             en: {
-                title: "Seeed Arduino Display - Online Configuration Generator",
-                main_title: "Seeed Arduino Display - Online Configuration Generator",
-                step1_title: "Step 1: Select Your Hardware",
-                step2_title: "Step 2: (ePaper Only) Select Your Driver Board Type",
+                title: "Seeed GFX Library - Online Configuration Generator",
+                main_title: "Seeed GFX Library - Online Configuration Generator",
+                step1_title: "Step 1: Select Your Target Hardware",
+                step2_title: "Step 2: Select Your Driver Board",
                 step3_title: "Final step: Copy the Generated Code",
                 final_step_instruction: "Create a <code>driver.h</code> file and paste the following code into it.",
                 output_placeholder: "// Please select a hardware configuration from one of the dropdown menus above.",
-                select_title_hardware: "Hardware Configuration",
-                select_title_mono_epaper: "Universal Monochrome ePaper Screen",
-                select_title_color_epaper: "Universal Colour ePaper Screen",
-                select_placeholder_hardware: "-- Please select your hardware configuration --",
-                select_placeholder_mono_epaper: "-- Please select your universal monochrome ePaper screen specification --",
-                select_placeholder_color_epaper: "-- Please select your universal colour ePaper screen specification --",
-                epaper_option_driver: "Seeed ePaper Driver Board",
-                epaper_option_breakout: "Seeed ePaper Breakout Board",
+                select_title_hardware: "🔧 Select Integrated Devices or DIY displays",
+                select_title_mono_epaper: "🖥️ OR Select Display Component",
+                select_placeholder_hardware: "-- Please select the Integrated Devices or DIY displays --",
+                select_placeholder_mono_epaper: "-- Please select your universal ePaper screen specification --",
+                epaper_option_driver: "ePaper Driver Board for XIAO",
+                epaper_option_breakout: "ePaper Breakout Board for XIAO",
                 epaper_option_monitor: "XIAO ePaper Display Board EE04",
             },
             zh: {
-                title: "Seeed Arduino Display - 在线配置生成器 (Online Configuration Generator)",
-                main_title: "Seeed Arduino Display - 在线配置生成器",                
-                step1_title: "步骤 1: 选择您的硬件",
-                step2_title: "步骤 2: (仅ePaper) 选择您的驱动板类型",
+                title: "Seeed GFX Library - 在线配置生成器 (Online Configuration Generator)",
+                main_title: "Seeed GFX Library - 在线配置生成器",                
+                step1_title: "步骤 1: 选择您的硬件或者DIY设备",
+                step2_title: "步骤 2: 选择您的驱动板类型",
                 step3_title: "最后一步: 复制生成的代码",
                 final_step_instruction: "请创建一个名为 <code>driver.h</code> 的文件，并将以下代码粘贴到其中。",
                 output_placeholder: "// 请从上方的某个下拉菜单中选择一个硬件配置。",
-                select_title_hardware: "硬件配置",
-                select_title_mono_epaper: "通用单色电子墨水屏",
-                select_title_color_epaper: "通用彩色电子墨水屏",
+                select_title_hardware: "🔧 选择集成设备或DIY显示屏",
+                select_title_mono_epaper: "🖥️ 或选择显示组件",
                 select_placeholder_hardware: "-- 请从这里选择您的硬件配置 --",
-                select_placeholder_mono_epaper: "-- 请选择您的通用单色电子墨水屏规格 --",
-                select_placeholder_color_epaper: "-- 请选择您的通用彩色电子墨水屏规格 --",
-                epaper_option_driver: "Seeed ePaper Driver Board",
-                epaper_option_breakout: "Seeed ePaper Breakout Board",
+                select_placeholder_mono_epaper: "-- 请选择您的通用电子墨水屏规格 --",
+                epaper_option_driver: "ePaper Driver Board for XIAO",
+                epaper_option_breakout: "ePaper Breakout Board for XIAO",
                 epaper_option_monitor: "XIAO ePaper Display Board EE04",
             }
         };
@@ -240,19 +470,13 @@
                 placeholderKey: 'select_placeholder_mono_epaper',
                 options: [
                     { value: "502", text: "7.5 inch monochrome ePaper Screen （UC8179）" },
+                    { value: "509", text: "7.3 inch six-color ePaper Screen（ED2208）" },
                     { value: "503", text: "5.86 inch monochrome ePaper Screen （UC8179）" },
                     { value: "506", text: "4.26 inch monochrome ePaper Screen （SSD1677）" },
                     { value: "507", text: "4.2 inch monochrome ePaper Screen （SSD1683）" },
                     { value: "504", text: "2.9 inch monochrome ePaper Screen （SSD1680）" },
                     { value: "508", text: "2.13 inch monochrome ePaper Screen （SSD1680）" },
                     { value: "505", text: "1.54 inch monochrome ePaper Screen （SSD1681）" }
-                ]
-            },
-            colorEPaper: {
-                selectorId: 'colorEPaperSelector',
-                placeholderKey: 'select_placeholder_color_epaper',
-                options: [
-                    { value: "509", text: "7.3 six-color ePaper Screen（ED2208）" }
                 ]
             }
         };
@@ -321,10 +545,10 @@
             const selectedValue = parseInt(activeSelector.value, 10);
             const ePaperDiv = document.getElementById('ePaperOptions');
             
-            // The ePaper driver choice is only for monochrome e-papers
-            const isMonoEpaper = (selectedValue >= 502 && selectedValue <= 508);
+            // The ePaper driver choice is for all e-papers except the 6-color one (509)
+            const isEpaperWithDriverChoice = (selectedValue >= 502 && selectedValue <= 508);
 
-            if (isMonoEpaper) {
+            if (isEpaperWithDriverChoice) {
                 ePaperDiv.style.display = 'block';
             } else {
                 ePaperDiv.style.display = 'none';

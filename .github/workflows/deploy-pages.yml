@@ -4,7 +4,6 @@ on:
   push:
     branches: [ master ]
     paths:
-      - 'configuration.html'
       - 'index.html'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
