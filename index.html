@@ -551,8 +551,8 @@
             const selectedValue = parseInt(activeSelector.value, 10);
             const ePaperDiv = document.getElementById('ePaperOptions');
             
-            // The ePaper driver choice is for all e-papers except the 6-color one (509)
-            const isEpaperWithDriverChoice = (selectedValue >= 502 && selectedValue <= 508);
+            // The ePaper driver choice is for all e-papers (502-509)
+            const isEpaperWithDriverChoice = (selectedValue >= 502 && selectedValue <= 509);
 
             if (isEpaperWithDriverChoice) {
                 ePaperDiv.style.display = 'block';
@@ -593,11 +593,8 @@
 
                 const ePaperDiv = document.getElementById('ePaperOptions');
                 
-                // Special case for the colorful ePaper, which only works with the XIAO ePaper Display Board
-                if (selectedValue === '509') {
-                    outputString += '\n#define USE_XIAO_EPAPER_DISPLAY_BOARD_EE04';
-                } else if (ePaperDiv.style.display === 'block') {
-                    // Logic for other e-papers that have a choice of driver board
+                // Logic for all e-papers that have a choice of driver board
+                if (ePaperDiv.style.display === 'block') {
                     const selectedDriver = document.querySelector('input[name="driverBoard"]:checked').value;
                     if (selectedDriver === 'driver') {
                         outputString += '\n#define USE_XIAO_EPAPER_DRIVER_BOARD';
