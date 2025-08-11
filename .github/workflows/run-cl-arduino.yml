@@ -305,6 +305,12 @@ jobs:
           echo "ePaper/Sprite/Clock_Digital,esp32:esp32:XIAO_ESP32C6" >> ignore.list
           echo "ePaper/Sprite/Clock_Digital,esp32:esp32:XIAO_ESP32S3" >> ignore.list
 
+      - name: Create a default driver.h for CI
+        run: |
+          echo "Creating a default driver.h for CI environment..."
+          echo '#define BOARD_SCREEN_COMBO 520' >> driver.h
+          echo "driver.h created with content:"
+          cat driver.h
 
       - name: Build sketch
         run: |
