@@ -80,6 +80,8 @@
         writedata(0x02);             \
         writecommand(0xE5);          \
         writedata(0x6E);             \
+        writecommand(0x00);          \
+        writedata(0x1F);         \
     } while (0)
 
 #define EPD_SET_WINDOW(x1, y1, x2, y2)                  \
