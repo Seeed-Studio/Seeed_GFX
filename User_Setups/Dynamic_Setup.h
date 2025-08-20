@@ -3,7 +3,7 @@
 
 
 #ifndef BOARD_SCREEN_COMBO
-  #error "Hardware configuration is missing! Please create a 'Custom_config.h' file in your sketch folder and define BOARD_SCREEN_COMBO. Use the online configurator to get the correct content."
+  #error "Hardware configuration is missing! Please create a 'driver.h' file in your sketch folder and define BOARD_SCREEN_COMBO. Use the online configurator to get the correct content."
 #endif
 
 
