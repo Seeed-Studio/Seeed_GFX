@@ -80,7 +80,7 @@ SPI3_HOST = 2
   #elif CONFIG_IDF_TARGET_ESP32S2
     #define SPI_PORT 2 //FSPI(ESP32 S2)
   #elif CONFIG_IDF_TARGET_ESP32S3
-    #define SPI_PORT FSPI
+    #define SPI_PORT 2//FSPI->2 asd1
   #endif
 #endif
 
@@ -572,11 +572,11 @@ SPI3_HOST = 2
                            *_spi_w = ((C)<<8 | (C)>>8); \
                            *_spi_cmd = SPI_USR;
   #else
-    #define tft_Write_16N(C)  *_spi_mosi_dlen = 16-1;         \
-                              *_spi_w = ((C)<<8 | (C)>>8);    \
-                              *_spi_cmd = SPI_UPDATE;         \
-                              while (*_spi_cmd & SPI_UPDATE); \
-                              *_spi_cmd = SPI_USR;
+    #define tft_Write_16N(C) *_spi_mosi_dlen = 16-1;    \
+                           *_spi_w = ((C)<<8 | (C)>>8); \
+                           *_spi_cmd = SPI_UPDATE;      \
+                    while (*_spi_cmd & SPI_UPDATE);     \
+                           *_spi_cmd = SPI_USR;
   #endif
 
   // Write 16 bits

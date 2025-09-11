@@ -8,7 +8,7 @@
 #define _TFT_eSPI_ESP32H_
 
 #if !defined(DISABLE_ALL_LIBRARY_WARNINGS)
- #warning >>>>------>> DMA is not supported on the ESP32 C3 (possible future update)
+ #warning >>>>------>> DMA is not supported on the ESP32 C3 C6(possible future update)	
 #endif
 
 // Processor ID reported by getSetup()
@@ -19,7 +19,13 @@
 #include "driver/spi_master.h"
 #include "hal/gpio_ll.h"
 
-#if !defined(CONFIG_IDF_TARGET_ESP32C3) && !defined(CONFIG_IDF_TARGET_ESP32C6) && !defined(CONFIG_IDF_TARGET_ESP32S2) && !defined(CONFIG_IDF_TARGET_ESP32) 
+
+#if !defined(CONFIG_IDF_TARGET_ESP32C3) && !defined(CONFIG_IDF_TARGET_ESP32S2) && !defined(CONFIG_IDF_TARGET_ESP32)  && !defined(CONFIG_IDF_TARGET_ESP32c6)
+  #define CONFIG_IDF_TARGET_ESP32
+#endif
+
+
+#if !defined(CONFIG_IDF_TARGET_ESP32C6) && !defined(CONFIG_IDF_TARGET_ESP32C3) && !defined(CONFIG_IDF_TARGET_ESP32S2) && !defined(CONFIG_IDF_TARGET_ESP32)
   #define CONFIG_IDF_TARGET_ESP32
 #endif
 
@@ -28,11 +34,25 @@
 #endif
 
 // Fix IDF problems with ESP32C3
-#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32C6
+//#if CONFIG_IDF_TARGET_ESP32C3
+#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32C6	
+  /*
   // Fix ESP32C3 IDF bug for missing definition (VSPI/FSPI only tested at the moment)
   #ifndef REG_SPI_BASE
     #define REG_SPI_BASE(i) DR_REG_SPI2_BASE
   #endif
+  */
+
+  #ifdef REG_SPI_BASE		//?// ESP32-C3 + ESP32-C6 + ESP32-H2
+    #undef REG_SPI_BASE
+  #endif
+
+  #define REG_SPI_BASE(i) (((i)==2) ? (DR_REG_SPI2_BASE) : (DR_REG_SPI0_BASE - ((i) * 0x1000))) // GPSPI2 and GPSPI3 
+
+  //#if CONFIG_IDF_TARGET_ESP32C6         //?// Speedlimit ESP32-C6 40MHz why ?
+  //  #undef APB_CLK_FREQ
+  //  #define APB_CLK_FREQ ( 80*1000000 )
+  //#endif
 
   // Fix ESP32C3 IDF bug for name change
   #ifndef SPI_MOSI_DLEN_REG
@@ -67,9 +87,9 @@ SPI2_HOST = 1
 SPI3_HOST = 2
 */
 
-// ESP32 specific SPI port selection - only SPI2_HOST available on C3
-#if ESP_ARDUINO_VERSION_MAJOR < 3
-  #define SPI_PORT SPI2_HOST
+// ESP32 specific SPI port selection - only SPI2_HOST available on C3 
+ #if ESP_ARDUINO_VERSION_MAJOR < 3
+  #define SPI_PORT 2
 #else
   #define SPI_PORT 2
 #endif
@@ -537,17 +557,17 @@ SPI3_HOST = 2
 //*/
 //* Replacement slimmer macros
   #if !defined(CONFIG_IDF_TARGET_ESP32C3) && !defined(CONFIG_IDF_TARGET_ESP32C6)
-    #define TFT_WRITE_BITS(D, B)  *_spi_mosi_dlen = B-1;    \
-                                  *_spi_w = D;              \
-                                  *_spi_cmd = SPI_USR;      \
-                                  while (*_spi_cmd & SPI_USR);
+    #define TFT_WRITE_BITS(D, B) *_spi_mosi_dlen = B-1;  \
+                               *_spi_w = D;              \
+                               *_spi_cmd = SPI_USR;      \
+                        while (*_spi_cmd & SPI_USR);
   #else
-    #define TFT_WRITE_BITS(D, B)  *_spi_mosi_dlen = B-1;           \
-                                  *_spi_w = D;                     \
-                                  *_spi_cmd = SPI_UPDATE;          \
-                                  while (*_spi_cmd & SPI_UPDATE);  \
-                                  *_spi_cmd = SPI_USR;             \
-                                  while (*_spi_cmd & SPI_USR);
+    #define TFT_WRITE_BITS(D, B) *_spi_mosi_dlen = B-1;  \
+                               *_spi_w = D;              \
+                               *_spi_cmd = SPI_UPDATE;   \
+                        while (*_spi_cmd & SPI_UPDATE);  \
+                               *_spi_cmd = SPI_USR;      \
+                        while (*_spi_cmd & SPI_USR);
   #endif
   // Write 8 bits
   #define tft_Write_8(C) TFT_WRITE_BITS(C, 8)
@@ -556,16 +576,17 @@ SPI3_HOST = 2
   #define tft_Write_16(C) TFT_WRITE_BITS((C)<<8 | (C)>>8, 16)
 
   // Future option for transfer without wait
-  #if !defined(CONFIG_IDF_TARGET_ESP32C3) && !defined(CONFIG_IDF_TARGET_ESP32C6)
-    #define tft_Write_16N(C)  *_spi_mosi_dlen = 16-1;      \
-                              *_spi_w = ((C)<<8 | (C)>>8); \
-                              *_spi_cmd = SPI_USR;
+  // #if !defined(CONFIG_IDF_TARGET_ESP32C3)
+  #if !defined(CONFIG_IDF_TARGET_ESP32C3) && !defined(CONFIG_IDF_TARGET_ESP32C6) 
+    #define tft_Write_16N(C) *_spi_mosi_dlen = 16-1;    \
+                           *_spi_w = ((C)<<8 | (C)>>8); \
+                           *_spi_cmd = SPI_USR;
   #else
-    #define tft_Write_16N(C)  *_spi_mosi_dlen = 16-1;         \
-                              *_spi_w = ((C)<<8 | (C)>>8);    \
-                              *_spi_cmd = SPI_UPDATE;         \
-                              while (*_spi_cmd & SPI_UPDATE); \
-                              *_spi_cmd = SPI_USR;
+    #define tft_Write_16N(C) *_spi_mosi_dlen = 16-1;    \
+                           *_spi_w = ((C)<<8 | (C)>>8); \
+                           *_spi_cmd = SPI_UPDATE;      \
+                    while (*_spi_cmd & SPI_UPDATE);     \
+                           *_spi_cmd = SPI_USR;
   #endif
 
   // Write 16 bits
@@ -600,3 +621,4 @@ SPI3_HOST = 2
 #define DAT8TO32(P) ( (uint32_t)P[0]<<8 | P[1] | P[2]<<24 | P[3]<<16 )
 
 #endif // Header end
+
