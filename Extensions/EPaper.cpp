@@ -11,17 +11,17 @@ void EPaper::begin(uint8_t tc)
     setTextFont(1);
     setTextColor(TFT_BLACK, TFT_WHITE, true);
     init(tc);
-    fillSprite(1);
-#ifdef EPD_HORIZONTAL_MIRROR
-    EPD_PUSH_OLD_COLORS_FLIP(_width, _height, _img8);
-    fillSprite(0);
-    EPD_PUSH_NEW_COLORS_FLIP(_width, _height, _img8);
-#else
-    EPD_PUSH_OLD_COLORS(_width, _height, _img8);
-    fillSprite(0);
-    EPD_PUSH_NEW_COLORS(_width, _height, _img8);
-#endif
-    EPD_UPDATE();
+//     fillSprite(1);
+// #ifdef EPD_HORIZONTAL_MIRROR
+//     EPD_PUSH_OLD_COLORS_FLIP(_width, _height, _img8);
+//     fillSprite(0);
+//     EPD_PUSH_NEW_COLORS_FLIP(_width, _height, _img8);
+// #else
+//     EPD_PUSH_OLD_COLORS(_width, _height, _img8);
+//     fillSprite(0);
+//     EPD_PUSH_NEW_COLORS(_width, _height, _img8);
+// #endif
+//     EPD_UPDATE();
     EPD_WAKEUP();
 }
 
