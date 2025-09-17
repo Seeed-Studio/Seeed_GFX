@@ -14,9 +14,9 @@
 
 // #define EPD_HORIZONTAL_MIRROR
 
-#define TFT_SCLK D8
+#define TFT_SCLK 7
 #define TFT_MISO -1
-#define TFT_MOSI D10
+#define TFT_MOSI 9
 #define TFT_CS 10   // D16
 #define TFT_DC 11   // D19
 #define TFT_BUSY 13 // D17

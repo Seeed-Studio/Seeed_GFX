@@ -41,6 +41,7 @@
 #define CHECK_BUSY()               \
     do                             \
     {                              \
+        delay(10);                 \
         if (digitalRead(TFT_BUSY)) \
             break;                 \
     } while (true)
