@@ -67,13 +67,38 @@
         writedata(0xA5);    \
     } while (0)
 
-#define EPD_WAKEUP()                 \
+#define EPD_INIT_FULL()          \
+    do                           \
+    {                            \
+        writecommand(0x01);      \
+        writedata(0x07);         \
+        writedata(0x07);         \
+        writedata(0x3f);         \
+        writedata(0x3f);         \
+        writecommand(0x06);      \
+        writedata(0x17);         \
+        writedata(0x17);         \
+        writedata(0x28);         \
+        writedata(0x17);         \
+        writecommand(0x04);      \
+        delay(100);              \
+        CHECK_BUSY();            \
+        writecommand(0x00);      \
+        writedata(0x1F);         \
+        writecommand(0x61);      \
+        writedata(EPD_WIDTH >> 8); \
+        writedata(EPD_WIDTH & 0xFF); \
+        writedata(EPD_HEIGHT >> 8); \
+        writedata(EPD_HEIGHT & 0xFF); \
+        writecommand(0x50);      \
+        writedata(0x10);         \
+        writedata(0x07);         \
+    } while (0)
+
+
+#define EPD_INIT_PARTIAL()           \
     do                               \
     {                                \
-        digitalWrite(TFT_RST, LOW);  \
-        delay(10);                   \
-        digitalWrite(TFT_RST, HIGH); \
-        delay(10);                   \
         writecommand(0x04);          \
         delay(100);                  \
         CHECK_BUSY();                \
@@ -82,26 +107,23 @@
         writecommand(0xE5);          \
         writedata(0x6E);             \
         writecommand(0x00);          \
-        writedata(0x1F);         \
+        writedata(0x1F);             \
+    } while (0)
+
+#define EPD_WAKEUP()                 \
+    do                               \
+    {                                \
+        digitalWrite(TFT_RST, LOW);  \
+        delay(10);                   \
+        digitalWrite(TFT_RST, HIGH); \
+        delay(10);                   \
+        CHECK_BUSY();                \
+        EPD_INIT_FULL();             \
     } while (0)
 
 #define EPD_SET_WINDOW(x1, y1, x2, y2)                  \
     do                                                  \
     {                                                   \
-        writecommand(0x50);                             \
-        writedata(0xA9);                                \
-        writedata(0x07);                                \
-        writecommand(0x91);                             \
-        writecommand(0x90);                             \
-        writedata((x1 >> 8) & 0xFF); /* x1 / 256 */     \
-        writedata(x1 & 0xFF);        /* x1 % 256 */     \
-        writedata((x2 >> 8) & 0xFF); /* x2 / 256 */     \
-        writedata((x2 & 0xFF) - 1);  /* x2 % 256 - 1 */ \
-        writedata((y1 >> 8) & 0xFF); /* y1 / 256 */     \
-        writedata(y1 & 0xFF);        /* y1 % 256 */     \
-        writedata((y2 >> 8) & 0xFF); /* y2 / 256 */     \
-        writedata((y2 & 0xFF) - 1);  /* y2 % 256 - 1 */ \
-        writedata(0x01);                                \
     } while (0)
 
 #define EPD_PUSH_NEW_COLORS(w, h, colors)   \
@@ -110,7 +132,7 @@
         writecommand(0x13);                 \
         for (int i = 0; i < w * h / 8; i++) \
         {                                   \
-            writedata(colors[i]);           \
+            writedata(~colors[i]);           \
         }                                   \
     } while (0)
 
@@ -139,7 +161,7 @@
         writecommand(0x10);                 \
         for (int i = 0; i < w * h / 8; i++) \
         {                                   \
-            writedata(colors[i]);           \
+            writedata(~colors[i]);           \
         }                                   \
     } while (0)
 
