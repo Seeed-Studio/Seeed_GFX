@@ -2,8 +2,10 @@
 #define DYNAMIC_SETUP_H
 
 
-#ifndef BOARD_SCREEN_COMBO
-  #error "Hardware configuration is missing! Please create a 'driver.h' file in your sketch folder and define BOARD_SCREEN_COMBO. Use the online configurator to get the correct content."
+#ifdef BOARD_SCREEN_COMBO
+
+#ifndef USER_SETUP_LOADED
+#define USER_SETUP_LOADED
 #endif
 
 
@@ -257,6 +259,16 @@
 #else
   // If BOARD_SCREEN_COMBO was defined but did not match any of the above IDs
   #error "The provided BOARD_SCREEN_COMBO ID is not a valid or supported configuration."
+#endif
+
+#else
+
+#include <User_Setup.h>
+
+#ifndef USER_SETUP_LOADED
+#define USER_SETUP_LOADED
+#endif
+
 #endif
 
 
