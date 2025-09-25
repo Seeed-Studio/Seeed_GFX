@@ -265,6 +265,23 @@
 
 #include <User_Setup.h>
 
+#if !defined(ILI9341_DRIVER)  && !defined(ILI9341_2_DRIVER) && !defined(ILI9342_DRIVER) && \
+    !defined(ST7735_DRIVER)  && !defined(ILI9163_DRIVER)     && !defined(S6D02A1_DRIVER) && \
+    !defined(ST7796_DRIVER)  && !defined(ILI9486_DRIVER)     && !defined(ILI9481_DRIVER) && \
+    !defined(ILI9488_DRIVER) && !defined(HX8357D_DRIVER)     && !defined(EPD_DRIVER)     && \
+    !defined(ST7789_DRIVER)  && !defined(R61581_DRIVER)      && !defined(ST7789_2_DRIVER) && \
+    !defined(RM68140_DRIVER) && !defined(SSD1351_DRIVER)     && !defined(SSD1963_480_DRIVER) && \
+    !defined(SSD1963_800_DRIVER)     && !defined(SSD1963_800ALT_DRIVER) && \
+    !defined(SSD1963_800BD_DRIVER)   && !defined(GC9A01_DRIVER)         && \
+    !defined(ILI9225_DRIVER)         && !defined(RM68120_DRIVER)        && \
+    !defined(HX8357B_DRIVER)         && !defined(HX8357C_DRIVER)        && \
+    !defined(UC8179_DRIVER)          && !defined(SSD1680_DRIVER)        && \
+    !defined(SSD1681_DRIVER)         && !defined(SSD1683_DRIVER)        && \
+    !defined(SSD1677_DRIVER)         && !defined(JD79686B_DRIVER)       && \
+    !defined(ED2208_DRIVER)          && !defined(XYZZY_DRIVER)
+  #include <User_Setups/Setup_CI_Default.h>
+#endif
+
 #ifndef USER_SETUP_LOADED
 #define USER_SETUP_LOADED
 #endif
