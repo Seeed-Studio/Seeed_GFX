@@ -308,6 +308,7 @@ jobs:
 
       - name: Build sketch
         run: |
+          unset BOARD_SCREEN_COMBO
           ./ci/tools/compile.sh
 
       - name: Build result

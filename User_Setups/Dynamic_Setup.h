@@ -3,8 +3,26 @@
 
 
 #ifndef BOARD_SCREEN_COMBO
-  // Default to Seeed Wio Terminal (ILI9341) when no configuration is provided.
-  #define BOARD_SCREEN_COMBO 500
+  // Pick a sensible default based on the detected board so that CI targets
+  // without built-in LCD pin macros (e.g. the XIAO family) still compile.
+  #if defined(SEEED_WIO_TERMINAL) || defined(ARDUINO_SEEED_WIO_TERMINAL)
+    #define BOARD_SCREEN_COMBO 500
+  #elif defined(SEEED_XIAO_M0) || defined(ARDUINO_SEEED_XIAO_M0) || \
+        defined(ARDUINO_XIAO_RA4M1) || defined(ARDUINO_SEEED_XIAO_RA4M1) || \
+        defined(ARDUINO_SEEED_XIAO_NRF52840) || defined(ARDUINO_SEEED_XIAO_NRF52840_SENSE) || \
+        defined(ARDUINO_Seeed_XIAO_nRF52840) || defined(ARDUINO_Seeed_XIAO_nRF52840_Sense) || \
+        defined(ARDUINO_SEEED_XIAO_RP2040) || defined(ARDUINO_SEEED_XIAO_RP2350) || \
+        defined(ARDUINO_XIAO_ESP32S3) || defined(ARDUINO_XIAO_ESP32S3_PLUS) || \
+        defined(ARDUINO_XIAO_ESP32C3) || defined(ARDUINO_XIAO_ESP32C6) || \
+        defined(ARDUINO_XIAO_ESP32S3_PRO) || defined(ARDUINO_XIAO_ESP32S3_PROSENSE) || \
+        defined(EFR32MG24B220F1536IM48)
+    #define BOARD_SCREEN_COMBO 666
+  #elif defined(SEEED_XIAO_ROUND_DISPLAY) || defined(ARDUINO_SEEED_XIAO_ROUND_DISPLAY)
+    #define BOARD_SCREEN_COMBO 501
+  #else
+    // Default to Wio Terminal behaviour if no better match is known.
+    #define BOARD_SCREEN_COMBO 500
+  #endif
 #endif
 
 
