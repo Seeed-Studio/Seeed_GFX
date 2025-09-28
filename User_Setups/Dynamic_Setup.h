@@ -2,6 +2,65 @@
 #define DYNAMIC_SETUP_H
 
 
+#if defined(ARDUINO_SEEED_XIAO_RA4M1) && !defined(SEEED_XIAO_RA4M1_SERIAL_PRINTF_SHIM)
+  #include <Arduino.h>
+  #include <stdarg.h>
+  #include <stdio.h>
+  #include <stdlib.h>
+
+  class SeeedSerialPrintfShim {
+  public:
+    explicit SeeedSerialPrintfShim(_SerialUSB &serial) : port(serial) {}
+
+    size_t printf(const char *format, ...) {
+      va_list args;
+      va_start(args, format);
+      va_list args_copy;
+      va_copy(args_copy, args);
+      int needed = vsnprintf(nullptr, 0, format, args);
+      va_end(args);
+
+      if (needed <= 0) {
+        va_end(args_copy);
+        return 0;
+      }
+
+      size_t buffer_len = static_cast<size_t>(needed) + 1U;
+      char stack_buffer[128];
+      char *buffer = buffer_len <= sizeof(stack_buffer)
+                      ? stack_buffer
+                      : static_cast<char *>(malloc(buffer_len));
+
+      if (!buffer) {
+        va_end(args_copy);
+        return 0;
+      }
+
+      vsnprintf(buffer, buffer_len, format, args_copy);
+      va_end(args_copy);
+
+      size_t written = port.write(reinterpret_cast<const uint8_t *>(buffer), needed);
+
+      if (buffer != stack_buffer) {
+        free(buffer);
+      }
+      return written;
+    }
+
+    _SerialUSB *operator->() { return &port; }
+    operator _SerialUSB &() { return port; }
+    operator bool() { return static_cast<bool>(port); }
+
+  private:
+    _SerialUSB &port;
+  };
+
+  static SeeedSerialPrintfShim SerialShim(Serial);
+  #undef Serial
+  #define Serial SerialShim
+  #define SEEED_XIAO_RA4M1_SERIAL_PRINTF_SHIM
+#endif
+
 #ifndef BOARD_SCREEN_COMBO
   // Pick a sensible default based on the detected board so that CI targets
   // without built-in LCD pin macros (e.g. the XIAO family) still compile.
