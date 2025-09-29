@@ -433,8 +433,12 @@
                     <span data-lang-key="epaper_option_breakout">Seeed ePaper Breakout Board</span>
                 </label>
                 <label>
-                    <input type="radio" name="driverBoard" value="monitor" onchange="generateConfig()">
-                    <span data-lang-key="epaper_option_monitor">XIAO ePaper Display Board EE04</span>
+                    <input type="radio" name="driverBoard" value="monitor_ee04" onchange="generateConfig()">
+                    <span data-lang-key="epaper_option_monitor_ee04">XIAO ePaper Display Board EE04</span>
+                </label>
+                <label>
+                    <input type="radio" name="driverBoard" value="monitor_en04" onchange="generateConfig()">
+                    <span data-lang-key="epaper_option_monitor_en04">XIAO ePaper Display Board EE04</span>
                 </label>
             </div>
         </div>
@@ -467,7 +471,8 @@
                 select_placeholder_mono_epaper: "-- Please select Display Component --",
                 epaper_option_driver: "ePaper Driver Board for XIAO",
                 epaper_option_breakout: "ePaper Breakout Board for XIAO",
-                epaper_option_monitor: "XIAO ePaper Display Board EE04",
+                epaper_option_monitor_ee04: "XIAO ePaper Display Board EE04",
+                epaper_option_monitor_en04: "XIAO ePaper Display Board EN04",
             },
             zh: {
                 title: "Seeed GFX Library - 在线配置生成器 (Online Configuration Generator)",
@@ -483,7 +488,8 @@
                 select_placeholder_mono_epaper: "-- 请选择您的通用电子墨水屏规格 --",
                 epaper_option_driver: "ePaper Driver Board for XIAO",
                 epaper_option_breakout: "ePaper Breakout Board for XIAO",
-                epaper_option_monitor: "XIAO ePaper Display Board EE04",
+                epaper_option_monitor_ee04: "XIAO ePaper Display Board EE04",
+                epaper_option_monitor_en04: "XIAO ePaper Display Board EN04",
             }
         };
 
@@ -632,8 +638,10 @@
                     const selectedDriver = document.querySelector('input[name="driverBoard"]:checked').value;
                     if (selectedDriver === 'driver') {
                         outputString += '\n#define USE_XIAO_EPAPER_DRIVER_BOARD';
-                    } else if (selectedDriver === 'monitor') {
+                    } else if (selectedDriver === 'monitor_ee04') {
                         outputString += '\n#define USE_XIAO_EPAPER_DISPLAY_BOARD_EE04';
+                    } else if (selectedDriver === 'monitor_en04') {
+                        outputString += '\n#define USE_XIAO_EPAPER_DISPLAY_BOARD_EN04';
                     } else if (selectedDriver === 'breakout') {
                         outputString += '\n#define USE_XIAO_EPAPER_BREAKOUT_BOARD';
                     }

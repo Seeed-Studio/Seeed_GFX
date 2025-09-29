@@ -14,7 +14,7 @@ void setup()
   
   epaper.fillScreen(TFT_WHITE);
   epaper.update(); // update the display
-
+  
   // epaper.pushImage(0, 0, 800, 480, (uint16_t *)gImage_1);
   // epaper.update();
   Serial.println("update");
