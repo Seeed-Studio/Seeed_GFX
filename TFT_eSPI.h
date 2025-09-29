@@ -315,9 +315,9 @@ const PROGMEM fontinfo fontdata[] = {
     #define TFT_BLACK 0XF
     #define TFT_WHITE 0X0
     #define TFT_BLUE 0XD
-    #define TFT_YELLOW 0XB
-    #define TFT_GREEN 0X2
-    #define TFT_RED 0X6
+    #define TFT_YELLOW 0X2
+    #define TFT_GREEN 0X6
+    #define TFT_RED 0XB
 
 //In the 6-color mode, other colors will be mapped to similar ones.
     #define TFT_NAVY        TFT_BLUE

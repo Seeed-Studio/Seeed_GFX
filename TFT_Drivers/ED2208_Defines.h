@@ -156,12 +156,13 @@
 #define COLOR_GET(color) ( \
     (color) == 0x0F ? 0x00 : \
     (color) == 0x00 ? 0x01 : \
-    (color) == 0x0B ? 0x02 : \
-    (color) == 0x06 ? 0x03 : \
+    (color) == 0x02 ? 0x02 : \
+    (color) == 0x0B ? 0x03 : \
     (color) == 0x0D ? 0x05 : \
-    (color) == 0x02 ? 0x06 : \
+    (color) == 0x06 ? 0x06 : \
     0x00 \
 )
+
 
 #define EPD_PUSH_NEW_COLORS(w, h, colors)   \
     do                                      \
