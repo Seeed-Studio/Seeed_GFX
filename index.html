@@ -433,6 +433,10 @@
                     <span data-lang-key="epaper_option_breakout">Seeed ePaper Breakout Board</span>
                 </label>
                 <label>
+                    <input type="radio" name="driverBoard" value="monitor_ee03" onchange="generateConfig()">
+                    <span data-lang-key="epaper_option_monitor_ee03">XIAO ePaper Display Board EE03</span>
+                </label>
+                <label>
                     <input type="radio" name="driverBoard" value="monitor_ee04" onchange="generateConfig()">
                     <span data-lang-key="epaper_option_monitor_ee04">XIAO ePaper Display Board EE04</span>
                 </label>
@@ -471,6 +475,7 @@
                 select_placeholder_mono_epaper: "-- Please select Display Component --",
                 epaper_option_driver: "ePaper Driver Board for XIAO",
                 epaper_option_breakout: "ePaper Breakout Board for XIAO",
+                epaper_option_monitor_ee03: "XIAO ePaper Display Board EE03",
                 epaper_option_monitor_ee04: "XIAO ePaper Display Board EE04",
                 epaper_option_monitor_en04: "XIAO ePaper Display Board EN04",
             },
@@ -488,6 +493,7 @@
                 select_placeholder_mono_epaper: "-- 请选择您的通用电子墨水屏规格 --",
                 epaper_option_driver: "ePaper Driver Board for XIAO",
                 epaper_option_breakout: "ePaper Breakout Board for XIAO",
+                epaper_option_monitor_ee03: "XIAO ePaper Display Board EE03",
                 epaper_option_monitor_ee04: "XIAO ePaper Display Board EE04",
                 epaper_option_monitor_en04: "XIAO ePaper Display Board EN04",
             }
@@ -511,6 +517,7 @@
                 options: [
                     { value: "502", text: "7.5 inch monochrome ePaper Screen （UC8179）" },
                     { value: "509", text: "7.3 inch six-color ePaper Screen（ED2208）" },
+                    { value: "511", text: "10.3 inch six-color ePaper Screen（ED103TC2）" },
                     { value: "503", text: "5.86 inch monochrome ePaper Screen （UC8179）" },
                     { value: "506", text: "4.26 inch monochrome ePaper Screen （SSD1677）" },
                     { value: "507", text: "4.2 inch monochrome ePaper Screen （SSD1683）" },
@@ -591,8 +598,8 @@
             const selectedValue = parseInt(activeSelector.value, 10);
             const ePaperDiv = document.getElementById('ePaperOptions');
             
-            // The ePaper driver choice is for all e-papers (502-509)
-            const isEpaperWithDriverChoice = (selectedValue >= 502 && selectedValue <= 509);
+            // The ePaper driver choice is for all e-papers (502-511)
+            const isEpaperWithDriverChoice = (selectedValue >= 502 && selectedValue <= 511);
 
             if (isEpaperWithDriverChoice) {
                 ePaperDiv.style.display = 'block';
@@ -638,6 +645,8 @@
                     const selectedDriver = document.querySelector('input[name="driverBoard"]:checked').value;
                     if (selectedDriver === 'driver') {
                         outputString += '\n#define USE_XIAO_EPAPER_DRIVER_BOARD';
+                    }else if (selectedDriver === 'monitor_ee03') {
+                        outputString += '\n#define USE_XIAO_EPAPER_DISPLAY_BOARD_EE03\n#define TCON_ENABLE';
                     } else if (selectedDriver === 'monitor_ee04') {
                         outputString += '\n#define USE_XIAO_EPAPER_DISPLAY_BOARD_EE04';
                     } else if (selectedDriver === 'monitor_en04') {

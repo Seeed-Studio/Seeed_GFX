@@ -797,7 +797,10 @@ void TFT_eSPI::init(uint8_t tc)
 
 #elif defined (ED2208_DRIVER)
     #include "TFT_Drivers/ED2208_Init.h"
-  
+
+#elif defined (ED103TC2_DRIVER)
+     #include "TFT_Drivers/ED103TC2_Init.h" 
+     
 #endif
 
 #ifdef TFT_INVERSION_ON
@@ -922,6 +925,10 @@ void TFT_eSPI::setRotation(uint8_t m)
     
 #elif defined (ED2208_DRIVER)
     #include "TFT_Drivers/ED2208_Rotation.h"
+
+#elif defined (ED103TC2_DRIVER)
+     #include "TFT_Drivers/ED103TC2_Rotation.h"    
+
 #endif
 
   delayMicroseconds(10);
@@ -6194,6 +6201,10 @@ void TFT_eSPI::getSetup(setup_t &tft_settings)
 #ifdef TOUCH_CS
   #include "Extensions/Touch.cpp"
 #endif
+#ifdef TCON_ENABLE
+  #include "Extensions/Tcon.cpp"
+#endif
+
 
 #include "Extensions/Button.cpp"
 
@@ -6209,8 +6220,10 @@ void TFT_eSPI::getSetup(setup_t &tft_settings)
 
 #include "Touch_Drivers/Touch.cpp"
 
+
 #ifdef EPAPER_ENABLE
 #include "Extensions/EPaper.cpp"
+
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////////////

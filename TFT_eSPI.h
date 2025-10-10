@@ -873,6 +873,9 @@ public:
   uint8_t decoderState = 0; // UTF8 decoder state        - not for user access
   uint16_t decoderBuffer;   // Unicode code-point buffer - not for user access
 
+#ifdef TCON_ENABLE
+  #include "Extensions/Tcon.h"
+#endif
   //--------------------------------------- private ------------------------------------//
 private:
   // Legacy begin and end prototypes - deprecated TODO: delete
@@ -1057,6 +1060,10 @@ fastBlend(A alpha, F fgc, B bgc)
 // Load the EPaper
 #ifdef EPAPER_ENABLE
 #include "Extensions/EPaper.h"
+
+
 #endif
+
+
 
 #endif // ends #ifndef _TFT_eSPIH_

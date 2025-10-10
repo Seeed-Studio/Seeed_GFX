@@ -152,6 +152,10 @@
 #elif defined (ED2208_DRIVER)
      #include "TFT_Drivers/ED2208_Defines.h"
      #define  TFT_DRIVER 0x2208
+#elif defined (ED103TC2_DRIVER)
+     #include "TFT_Drivers/IT8951_Defines.h"
+     #include "TFT_Drivers/ED103TC2_Defines.h"
+     #define  TFT_DRIVER 0x1032     
                               // <<<<<<<<<<<<<<<<<<<<<<<< ADD NEW DRIVER HERE
                               // XYZZY_init.h and XYZZY_rotation.h must also be added in TFT_eSPI.cpp
 #elif defined (XYZZY_DRIVER)
