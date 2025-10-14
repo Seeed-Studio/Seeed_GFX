@@ -66,6 +66,11 @@ jobs:
           echo "PNG Images/Flash_transparent_PNG,Seeeduino:renesas_uno:XIAO_RA4M1" >> ignore.list
           echo "Round Display/Arduino_Life,Seeeduino:renesas_uno:XIAO_RA4M1" >> ignore.list
           echo "Round Display/GifPlayer ,Seeeduino:renesas_uno:XIAO_RA4M1" >> ignore.list
+          # Serial.printf is not implemented by the Renesas USB serial class
+          echo "Round Display/Touch_Pannel,Seeeduino:renesas_uno:XIAO_RA4M1" >> ignore.list
+
+          # AnimatedGIF library lacks millis()/delay glue on the RP2040 core build
+          echo "Round Display/GifPlayer ,rp2040:rp2040:seeed_xiao_rp2040" >> ignore.list
 
           # PNGdec callbacks must return an int on these toolchains
           png_examples=(
