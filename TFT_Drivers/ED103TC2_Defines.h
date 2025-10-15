@@ -17,7 +17,6 @@
 
 #define EPD_COLOR_DEPTH 1
 
-#define USE_COLORFULL_EPAPER
 
 #define EPD_PSR         0x00
 #define EPD_PWRR        0x01

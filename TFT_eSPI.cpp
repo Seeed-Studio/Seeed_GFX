@@ -799,8 +799,11 @@ void TFT_eSPI::init(uint8_t tc)
     #include "TFT_Drivers/ED2208_Init.h"
 
 #elif defined (ED103TC2_DRIVER)
-     #include "TFT_Drivers/ED103TC2_Init.h" 
-     
+    #include "TFT_Drivers/ED103TC2_Init.h" 
+
+#elif defined (T133A01_DRIVER)
+    #include "TFT_Drivers/T133A01_Init.h" 
+
 #endif
 
 #ifdef TFT_INVERSION_ON
@@ -926,6 +929,9 @@ void TFT_eSPI::setRotation(uint8_t m)
 #elif defined (ED2208_DRIVER)
     #include "TFT_Drivers/ED2208_Rotation.h"
 
+#elif defined (T133A01_DRIVER)
+     #include "TFT_Drivers/ED2208_Rotation.h"   
+
 #elif defined (ED103TC2_DRIVER)
      #include "TFT_Drivers/ED103TC2_Rotation.h"    
 
@@ -1048,6 +1054,8 @@ void TFT_eSPI::writecommand(uint8_t c)
 
   end_tft_write();
 }
+
+
 #else
 void TFT_eSPI::writecommand(uint16_t c)
 {
@@ -1062,6 +1070,7 @@ void TFT_eSPI::writecommand(uint16_t c)
   end_tft_write();
 
 }
+
 void TFT_eSPI::writeRegister8(uint16_t c, uint8_t d)
 {
   begin_tft_write();
@@ -1112,7 +1121,35 @@ void TFT_eSPI::writedata(uint8_t d)
   end_tft_write();
 }
 
+void TFT_eSPI::writendata(uint8_t* d, uint16_t dataLength)
+{
+  begin_tft_write();
 
+  DC_D;        // Play safe, but should already be in data mode
+
+  for(int i = 0; i < dataLength; i++)
+	{
+    tft_Write_8(d[i]);
+	}
+  CS_L;        // Allow more hold time for low VDI rail
+
+  end_tft_write();
+}
+
+void TFT_eSPI::writecommanddata(uint8_t c,const uint8_t* d, uint16_t dataLength)
+{
+  begin_tft_write();
+  DC_C;        // Play safe, but should already be in command mode
+  tft_Write_8(c);
+  DC_D;        // Play safe, but should already be in data mode
+
+  for(int i = 0; i < dataLength; i++)
+	{
+    tft_Write_8(d[i]);
+	}
+  CS_L;        // Allow more hold time for low VDI rail
+  end_tft_write();
+}
 /***************************************************************************************
 ** Function name:           readcommand8
 ** Description:             Read a 8-bit data value from an indexed command register

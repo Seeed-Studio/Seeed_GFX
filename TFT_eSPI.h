@@ -747,6 +747,8 @@ public:
   void writecommand(uint8_t c); // Send an 8-bit command, function resets DC/RS high ready for data
 #endif
   void writedata(uint8_t d); // Send data with DC/RS set high
+  void writendata(uint8_t* d, uint16_t dataLength);
+  void writecommanddata(uint8_t c,const uint8_t* d, uint16_t dataLength);
 
   void commandList(const uint8_t *addr); // Send a initialisation sequence to TFT stored in FLASH
 

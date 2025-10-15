@@ -35,6 +35,7 @@ To simplify the hardware setup, we provide an online tool that helps you quickly
   - JD79686B-based displays
   - ED2208-based displays
   - ED103TC2-based displays
+  - T133A01-based displays
 ## E-Paper Implementation
 
 The library includes a comprehensive implementation for E-Paper displays, providing:

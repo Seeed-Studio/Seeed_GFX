@@ -152,6 +152,9 @@
 #elif defined (ED2208_DRIVER)
      #include "TFT_Drivers/ED2208_Defines.h"
      #define  TFT_DRIVER 0x2208
+#elif defined (T133A01_DRIVER)
+     #include "TFT_Drivers/T133A01_Defines.h"
+     #define  TFT_DRIVER 0x1330
 #elif defined (ED103TC2_DRIVER)
      #include "TFT_Drivers/IT8951_Defines.h"
      #include "TFT_Drivers/ED103TC2_Defines.h"

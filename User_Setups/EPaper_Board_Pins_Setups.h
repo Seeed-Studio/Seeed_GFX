@@ -15,6 +15,16 @@
 #define TFT_DC D3
 #define TFT_BUSY D5
 #define TFT_RST D0
+#elif defined(USE_XIAO_EPAPER_DISPLAY_BOARD_EE02)
+#define TFT_SCLK D8
+#define TFT_MISO -1
+#define TFT_MOSI D10
+#define TFT_CS 44  // D7
+#define TFT_CS1 41  // D8
+#define TFT_DC 10  // D16
+#define TFT_BUSY 4 // D3
+#define TFT_RST 38 // D11
+#define TFT_ENABLE 43
 #elif defined(USE_XIAO_EPAPER_DISPLAY_BOARD_EE03)
 #define TFT_SCLK D8
 #define TFT_MISO D9
