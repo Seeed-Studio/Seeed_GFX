@@ -70,6 +70,8 @@
         defined(ARDUINO_XIAO_RA4M1) || defined(ARDUINO_SEEED_XIAO_RA4M1) || \
         defined(ARDUINO_SEEED_XIAO_NRF52840) || defined(ARDUINO_SEEED_XIAO_NRF52840_SENSE) || \
         defined(ARDUINO_Seeed_XIAO_nRF52840) || defined(ARDUINO_Seeed_XIAO_nRF52840_Sense) || \
+        defined(ARDUINO_SEEED_XIAO_NRF52840_Plus) || defined(ARDUINO_SEEED_XIAO_NRF52840_Sense_Plus) || \
+        defined(ARDUINO_Seeed_XIAO_nRF52840_Plus) || defined(ARDUINO_Seeed_XIAO_nRF52840_Sense_Plus) || \
         defined(ARDUINO_SEEED_XIAO_RP2040) || defined(ARDUINO_SEEED_XIAO_RP2350) || \
         defined(ARDUINO_XIAO_ESP32S3) || defined(ARDUINO_XIAO_ESP32S3_PLUS) || \
         defined(ARDUINO_XIAO_ESP32C3) || defined(ARDUINO_XIAO_ESP32C6) || \
@@ -319,7 +321,10 @@
 #define TCON_ENABLE
 #define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup522_Seeed_reTerminal_E1003.h>
-
+#elif BOARD_SCREEN_COMBO == 523
+#define USE_COLORFULL_EPAPER
+#define ENABLE_EPAPER_BOARD_PIN_SETUPS
+#include <User_Setups/Setup523_Seeed_reTerminal_E1004.h>
 #elif BOARD_SCREEN_COMBO == 666
 #include <User_Setups/Setup666_XIAO_ILI9341.h>
 
