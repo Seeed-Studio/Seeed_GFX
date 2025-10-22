@@ -17,6 +17,9 @@
 
 #define EPD_COLOR_DEPTH 1
 
+#define USE_MUTIGRAY_EPAPER
+#define GRAY_LEVEL4 4
+
 #define EPD_NOP 0xFF
 #define EPD_PNLSET 0x00
 #define EPD_DISPON 0x04
@@ -117,6 +120,33 @@
         writedata(0x5A);    \
     } while (0)
 
+#define EPD_INIT_GRAY()     \
+    do                      \
+    {                       \
+        digitalWrite(TFT_RST, LOW);  \
+        delay(10);                   \
+        digitalWrite(TFT_RST, HIGH); \
+        delay(10);                   \
+        CHECK_BUSY();                \
+        writecommand(0X00); \
+        writedata(0x1F);    \
+        writecommand(0X50); \
+        writedata(0x10);    \
+        writedata(0x07);    \
+        writecommand(0x04); \
+        delay(10);         \
+        CHECK_BUSY();       \
+        writecommand(0x06); \
+        writedata(0x27);    \
+        writedata(0x27);    \
+        writedata(0x18);    \
+        writedata(0x17);    \
+        writecommand(0xE0); \
+        writedata(0x02);    \
+        writecommand(0xE5); \
+        writedata(0x5F);    \
+    } while (0)
+    
 #define EPD_INIT_PARTIAL()           \
     do                               \
     {                                \
@@ -158,6 +188,90 @@
     } while (0)
 
 #define EPD_PUSH_NEW_COLORS_FLIP(w, h, colors)                         \
+    do                                                                 \
+    {                                                                  \
+        writecommand(0x13);                                            \
+        uint16_t bytes_per_row = (w) / 8;                              \
+        for (uint16_t row = 0; row < (h); row++)                       \
+        {                                                              \
+            uint16_t start = row * bytes_per_row;                      \
+            for (uint16_t col = 0; col < bytes_per_row; col++)         \
+            {                                                          \
+                uint8_t b = colors[start + (bytes_per_row - 1 - col)]; \
+                b = ((b & 0xF0) >> 4) | ((b & 0x0F) << 4);             \
+                b = ((b & 0xCC) >> 2) | ((b & 0x33) << 2);             \
+                b = ((b & 0xAA) >> 1) | ((b & 0x55) << 1);             \
+                writedata(b);                                          \
+            }                                                          \
+        }                                                              \
+    } while (0)
+
+#define EPD_PUSH_NEW_GRAY_COLORS(w, h, colors, g)                       \
+    do                                                                  \
+    {                                                                   \
+        EPD_INIT_GRAY();                                                \
+        uint16_t i,j,k;                                                 \
+        uint8_t temp1,temp2,temp3;                                      \
+        if(g == GRAY_LEVEL4)                                            \
+        {                                                               \
+            writecommand(0x10);                                         \
+            for(i=0; i<48000; i++)                                      \ 
+            {                                                           \       
+                temp3=0;                                                \
+                for(j=0; j<2; j++)                                      \ 
+                {                                                       \
+                    temp1 = colors[i*2+j];                              \
+                    for(k=0;k<4;k++)                                    \   
+				{                                                       \
+					temp2 = temp1&0xC0 ;                                \
+					if(temp2 == 0xC0)                                   \
+						temp3 |= 0x01;                                  \
+					else if(temp2 == 0x00)                              \
+						temp3 |= 0x00;                                  \
+					else if((temp2>=0x80)&&(temp2<0xC0))                \
+						temp3 |= 0x00;                                  \
+					else if(temp2 == 0x40)                              \
+						temp3 |= 0x01;                                  \
+                    if((j==0&&k<=3)||(j==1&&k<=2))                      \
+                    {                                                   \
+                    temp3 <<= 1;	                                    \
+                    temp1 <<= 2;                                        \
+                    }                                                   \
+                }                                                       \
+                }                                                       \
+                writedata(~temp3);                                      \
+            }                                                           \
+            writecommand(0x13);                                         \
+            for(i=0; i<48000; i++)                                      \ 
+            {                                                           \       
+                temp3=0;                                                \
+                for(j=0; j<2; j++)                                      \ 
+                {                                                       \
+                    temp1 = colors[i*2+j];                              \
+                    for(k=0;k<4;k++)                                    \   
+				{                                                       \
+					temp2 = temp1&0xC0 ;                                \
+					if(temp2 == 0xC0)                                   \
+						temp3 |= 0x01;                                  \
+					else if(temp2 == 0x00)                              \
+						temp3 |= 0x00;                                  \
+					else if((temp2>=0x80)&&(temp2<0xC0))                \
+						temp3 |= 0x01;                                  \
+					else if(temp2 == 0x40)                              \
+						temp3 |= 0x00;                                  \
+                    if((j==0&&k<=3)||(j==1&&k<=2))                      \
+                    {                                                   \
+                    temp3 <<= 1;	                                    \
+                    temp1 <<= 2;                                        \
+                    }                                                   \
+                }                                                       \
+                }                                                       \
+                writedata(~temp3);                                      \
+            }                                                           \
+        }                                                               \
+    } while (0)
+
+#define EPD_PUSH_NEW_GRAY_COLORS_FLIP(w, h, colors, g)                 \
     do                                                                 \
     {                                                                  \
         writecommand(0x13);                                            \

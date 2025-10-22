@@ -63,6 +63,29 @@ void EPaper::update(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t *da
     sleep();
 }
 
+#ifdef USE_MUTIGRAY_EPAPER
+void EPaper::update(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t *data, uint8_t grayLevel)
+{
+    if (_sleep)
+    {
+        EPD_WAKEUP();
+        _sleep = false;
+    }
+    uint8_t *p = (uint8_t *)data;
+    x = (x / 8) * 8;
+    y = (y / 8) * 8;
+    pushImage(x, y, w, h , (uint16_t *)p);
+    EPD_SET_WINDOW(x, y, (x + w - 1), (y + h - 1));
+#ifdef EPD_HORIZONTAL_MIRROR
+    EPD_PUSH_NEW_GRAY_COLORS_FLIP(w, h, p, grayLevel);
+#else
+    EPD_PUSH_NEW_GRAY_COLORS(w, h, p, grayLevel);
+#endif
+    EPD_UPDATE();
+    sleep();
+}
+#endif 
+
 void EPaper::sleep()
 {
     if (_sleep)
