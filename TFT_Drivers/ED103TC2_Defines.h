@@ -86,7 +86,7 @@
     {                       \
         tconWake();    \
         hostTconInit(); \
-        tconDisplayArea1bpp(0,0, _gstI80DevInfo.usPanelW, _gstI80DevInfo.usPanelH, 0x00, 0x00, 0xFF); \
+        // tconDisplayArea1bpp(0,0, _gstI80DevInfo.usPanelW, _gstI80DevInfo.usPanelH, 0x00, 0x00, 0xFF);
     } while (0)
 
 #define EPD_SET_WINDOW(x1, y1, x2, y2)                  \
