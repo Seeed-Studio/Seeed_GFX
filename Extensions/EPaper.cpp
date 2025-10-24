@@ -1,4 +1,4 @@
-EPaper::EPaper() : _sleep(false), TFT_eSprite(this)
+EPaper::EPaper() : _sleep(false), _entemp(true), _temp(16.00), _humi(50.00), TFT_eSprite(this)
 {
     setColorDepth(EPD_COLOR_DEPTH);
     createSprite(_width, _height, 1);
@@ -98,6 +98,26 @@ void EPaper::wake()
 {
     if (!_sleep)
         return;
+    if(_entemp)
+        EPD_SET_TEMP(_temp);
     EPD_WAKEUP();
     _sleep = false;
+}
+
+void  EPaper::setTemp(GetTempCallback callback)
+{
+    _temp = callback();
+    EPD_SET_TEMP(_temp);
+}
+float EPaper::getTemp()
+{
+    return _temp;
+}
+void  EPaper::setHumi(GetHumiCallback callback)
+{
+    _humi = callback();
+}
+float EPaper::getHumi()
+{
+    return _humi;
 }

@@ -318,3 +318,8 @@
             }                                                          \
         }                                                              \
     } while (0)
+
+#define EPD_SET_TEMP(temp)                  \
+    do                                      \
+    {                                       \
+    } while (0)    

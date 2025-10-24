@@ -15,7 +15,16 @@ public:
     void sleep();
     void wake();
 
+    using GetTempCallback = std::function<float()>;
+    using GetHumiCallback = std::function<float()>;
+    void  setTemp(GetTempCallback callback);
+    float getTemp();
+    void  setHumi(GetHumiCallback callback);
+    float getHumi();
 private:
     bool _sleep;
+    bool _entemp;
+    float _temp;
+    float _humi;
 };
 

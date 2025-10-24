@@ -164,4 +164,8 @@
     {                                          \
     } while (0)
 
-#endif
+#define EPD_SET_TEMP(temp)                  \
+    do                                      \
+    {                                       \
+    } while (0)
+#endif 

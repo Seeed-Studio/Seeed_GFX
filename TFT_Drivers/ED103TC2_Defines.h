@@ -86,7 +86,6 @@
     {                       \
         tconWake();    \
         hostTconInit(); \
-        // tconDisplayArea1bpp(0,0, _gstI80DevInfo.usPanelW, _gstI80DevInfo.usPanelH, 0x00, 0x00, 0xFF);
     } while (0)
 
 #define EPD_SET_WINDOW(x1, y1, x2, y2)                  \
@@ -114,4 +113,10 @@
 #define EPD_PUSH_OLD_COLORS(w, h, colors)   \
     do                                      \
     {                                       \
+    } while (0)
+
+#define EPD_SET_TEMP(temp)              \
+    do                                      \
+    {                                       \
+        setTconTemp((uint16_t)temp); 		\
     } while (0)

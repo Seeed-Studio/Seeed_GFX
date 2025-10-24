@@ -342,7 +342,7 @@ void TFT_eSPI::hostTconInit()
 {
 
 	setTconVcom(1400);      //SET VCOM
-    setTconTemp(14); 		//SET TEMP
+	//setTconTemp(14); 		//SET TEMP
     getTconInfo(&_gstI80DevInfo);
     if (_gstI80DevInfo.usPanelW == 0 || _gstI80DevInfo.usPanelH == 0) {
         println("Invalid panel size! Communication with IT8951 may have failed.");

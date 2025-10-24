@@ -335,3 +335,11 @@ const unsigned char rb1DataBuf[1]={
     do                                      \
     {                                       \
     } while (0)
+
+
+#define EPD_SET_TEMP(temp)                  \
+    do                                      \
+    {                                       \
+        uint8_t _temp_val = (uint8_t)(temp); \
+        writecommanddata(RE5_TSSET, &_temp_val, 1); \
+    } while (0)    
