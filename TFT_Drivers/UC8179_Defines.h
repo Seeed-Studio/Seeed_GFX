@@ -169,7 +169,7 @@
         digitalWrite(TFT_RST, HIGH); \
         delay(10);                   \
         CHECK_BUSY();                \
-        EPD_INIT_FAST();             \
+        EPD_INIT_FULL();             \
     } while (0)
 
 #define EPD_SET_WINDOW(x1, y1, x2, y2)                  \
