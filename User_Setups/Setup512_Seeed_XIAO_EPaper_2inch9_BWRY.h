@@ -1,8 +1,8 @@
 #include <Wire.h>
 
-#define USER_SETUP_ID 504
+#define USER_SETUP_ID 512
 
-#define SSD1680_DRIVER
+#define JD79667_DRIVER
 
 #define EPAPER_ENABLE
 

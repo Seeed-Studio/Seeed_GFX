@@ -310,6 +310,10 @@
 #define TCON_ENABLE
 #define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup511_Seeed_XIAO_EPaper_10inch3.h>    // Setup file for Seeed XIAO with 10.3inch  ePaper
+#elif BOARD_SCREEN_COMBO == 512
+#define USE_BWRY_EPAPER
+#define ENABLE_EPAPER_BOARD_PIN_SETUPS
+#include <User_Setups/Setup512_Seeed_XIAO_EPaper_2inch9_BWRY.h>
 #elif BOARD_SCREEN_COMBO == 520
 #define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup520_Seeed_reTerminal_E1001.h>

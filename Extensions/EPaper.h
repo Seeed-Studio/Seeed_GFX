@@ -14,7 +14,7 @@ public:
 #endif
     void sleep();
     void wake();
-
+    
     using GetTempCallback = std::function<float()>;
     using GetHumiCallback = std::function<float()>;
     void  setTemp(GetTempCallback callback);

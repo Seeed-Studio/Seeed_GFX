@@ -318,8 +318,33 @@ const PROGMEM fontinfo fontdata[] = {
     #define TFT_YELLOW 0X2
     #define TFT_GREEN 0X6
     #define TFT_RED 0XB
-
 //In the 6-color mode, other colors will be mapped to similar ones.
+    #define TFT_NAVY        TFT_BLUE
+    #define TFT_DARKGREEN   TFT_GREEN
+    #define TFT_DARKCYAN    TFT_GREEN
+    #define TFT_MAROON      TFT_RED
+    #define TFT_PURPLE      TFT_BLUE
+    #define TFT_OLIVE       TFT_YELLOW
+    #define TFT_LIGHTGREY   TFT_WHITE
+    #define TFT_DARKGREY    TFT_BLACK
+    #define TFT_CYAN        TFT_GREEN
+    #define TFT_MAGENTA     TFT_RED
+    #define TFT_ORANGE      TFT_YELLOW
+    #define TFT_GREENYELLOW TFT_GREEN
+    #define TFT_PINK        TFT_RED
+    #define TFT_BROWN       TFT_YELLOW  
+    #define TFT_GOLD        TFT_YELLOW
+    #define TFT_SILVER      TFT_WHITE
+    #define TFT_SKYBLUE     TFT_BLUE
+    #define TFT_VIOLET      TFT_BLUE
+#elif defined (USE_BWRY_EPAPER)    
+    #define TFT_WHITE 0X00
+    #define TFT_YELLOW 0X01
+    #define TFT_RED 0X02
+    #define TFT_BLACK 0X03
+
+    #define TFT_BLUE TFT_YELLOW
+    #define TFT_GREEN TFT_YELLOW
     #define TFT_NAVY        TFT_BLUE
     #define TFT_DARKGREEN   TFT_GREEN
     #define TFT_DARKCYAN    TFT_GREEN
