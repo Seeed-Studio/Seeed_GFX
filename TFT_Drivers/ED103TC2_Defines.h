@@ -85,6 +85,8 @@
     do                  \
     {                       \
         tconWake();    \
+        if(_entemp)     \
+            EPD_SET_TEMP(_temp);        \
         hostTconInit(); \
     } while (0)
 
