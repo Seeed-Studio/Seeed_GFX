@@ -5,6 +5,7 @@ public:
         TWord usEndianType; //little or Big Endian
         TWord usPixelFormat; //bpp
         TWord usRotate; //Rotate mode
+        TWord usFilp; //Filp mode
         TDWord ulStartFBAddr; //Start address of source Frame buffer
         TDWord ulImgBufBaseAddr;//Base address of target image buffer
         
@@ -66,7 +67,7 @@ public:
     void tconDisplayArea(TWord usX, TWord usY, TWord usW, TWord usH, TWord usDpyMode);
     void tconDisplayArea1bpp(TWord usX, TWord usY, TWord usW, TWord usH, TWord usDpyMode, TByte ucBGGrayVal, TByte ucFGGrayVal);    
 
-    void tconLoad1bppImage(const TByte* p1bppImgBuf, TWord usX, TWord usY, TWord usW, TWord usH);
+    void tconLoad1bppImage(const TByte* p1bppImgBuf, TWord usX, TWord usY, TWord usW, TWord usH, TByte enFilp);
 
     TWord getTconTemp();
     void setTconTemp(TWord temp);

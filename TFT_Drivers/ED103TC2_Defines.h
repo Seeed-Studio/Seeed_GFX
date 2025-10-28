@@ -96,15 +96,20 @@
         setTconWindowsData(x1,y1, x2, y2); \
     } while (0)
 
+ #define EPD_COLOR_INVERT()                 \
+    do                              \
+    {                               \
+    } while (0)
+
 #define EPD_PUSH_NEW_COLORS(w, h, colors)   \
     do                                      \
     {                                       \
-        tconLoad1bppImage(colors, _imgAreaInfo.usX, _imgAreaInfo.usY , w ,h);                 \
+        tconLoad1bppImage(colors, _imgAreaInfo.usX, _imgAreaInfo.usY , w ,h, false);                 \
     } while (0)
 
 #define EPD_PUSH_NEW_COLORS_FLIP(w, h, colors)                         \
     do                                                                 \
-    {                                                                  \
+    {  tconLoad1bppImage(colors, _imgAreaInfo.usX, _imgAreaInfo.usY , w ,h, true);                 \
     } while (0)
 
 #define EPD_PUSH_OLD_COLORS_FILP(w, h, colors)\

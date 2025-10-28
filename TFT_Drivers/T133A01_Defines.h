@@ -228,7 +228,7 @@ const unsigned char rb1DataBuf[1]={
     (color) == 0x0B ? 0x03 : \
     (color) == 0x0D ? 0x05 : \
     (color) == 0x06 ? 0x06 : \
-    0x00 \
+    0x01 \
 )
 
 

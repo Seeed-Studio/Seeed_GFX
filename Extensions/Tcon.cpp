@@ -249,9 +249,11 @@ void TFT_eSPI::tconHostAreaPackedPixelWrite(TCONLdImgInfo* pstLdImgInfo,TCONArea
 	{
 		 for(i=0;i< pstAreaImgInfo->usWidth/2;i++)
 			{
+				if(pstLdImgInfo->usFilp)
 					//Write a Word(2-Bytes) for each time
+					tconWirteData(reverse_bits_16(pusFrameBuf[j * (pstAreaImgInfo->usWidth/2) + (pstAreaImgInfo->usWidth/2 + i)]));
+				else
 					tconWirteData((pusFrameBuf[j * (pstAreaImgInfo->usWidth/2) + (pstAreaImgInfo->usWidth/2 - i - 1)]));
-					
 			}
 	}
 	//printf("---IT8951 Host Area Packed Pixel Write end---\r\n");
@@ -296,7 +298,7 @@ void TFT_eSPI::tconDisplayArea1bpp(TWord usX, TWord usY, TWord usW, TWord usH, T
 
 
 
-void TFT_eSPI::tconLoad1bppImage(const TByte* p1bppImgBuf, TWord usX, TWord usY, TWord usW, TWord usH)
+void TFT_eSPI::tconLoad1bppImage(const TByte* p1bppImgBuf, TWord usX, TWord usY, TWord usW, TWord usH, TByte enFilp)
 {
 	TCONLdImgInfo stLdImgInfo;
     TCONAreaImgInfo stAreaImgInfo;
@@ -307,6 +309,7 @@ void TFT_eSPI::tconLoad1bppImage(const TByte* p1bppImgBuf, TWord usX, TWord usY,
     stLdImgInfo.usPixelFormat    = IT8951_8BPP; //we use 8bpp because IT8951 dose not support 1bpp mode for load image�Aso we use Load 8bpp mode ,but the transfer size needs to be reduced to Size/8
     stLdImgInfo.usRotate         = IT8951_ROTATE_0;
     stLdImgInfo.ulImgBufBaseAddr = _gulImgBufAddr;
+	stLdImgInfo.usFilp           = enFilp;
     //Set Load Area
     stAreaImgInfo.usX      = usX/8;
     stAreaImgInfo.usY      = usY;
