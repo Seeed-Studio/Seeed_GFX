@@ -17,8 +17,8 @@
 
 
 #define TFT_SCLK 7
-#define TFT_MISO 9
-#define TFT_MOSI 8
+#define TFT_MISO 8
+#define TFT_MOSI 9
 #define TFT_CS 10  // D7
 #define TFT_CS1 2  // D7
 #define TFT_DC 11  // D16
