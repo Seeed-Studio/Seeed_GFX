@@ -314,6 +314,10 @@
 #define USE_BWRY_EPAPER
 #define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup512_Seeed_XIAO_EPaper_2inch9_BWRY.h>
+#elif BOARD_SCREEN_COMBO == 513
+#define USE_BWRY_EPAPER
+#define ENABLE_EPAPER_BOARD_PIN_SETUPS
+#include <User_Setups/Setup513_Seeed_XIAO_EPaper_2inch13_BWRY.h>
 #elif BOARD_SCREEN_COMBO == 520
 #define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup520_Seeed_reTerminal_E1001.h>

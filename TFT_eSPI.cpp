@@ -806,6 +806,9 @@ void TFT_eSPI::init(uint8_t tc)
 
 #elif defined (JD79667_DRIVER)
      #include "TFT_Drivers/JD79667_Init.h"  
+  
+#elif defined (JD79676_DRIVER)
+     #include "TFT_Drivers/JD79676_Init.h"       
 
 #endif
 
@@ -940,6 +943,9 @@ void TFT_eSPI::setRotation(uint8_t m)
 
 #elif defined (JD79667_DRIVER)
      #include "TFT_Drivers/JD79667_Rotation.h"  
+
+#elif defined (JD79676_DRIVER)
+     #include "TFT_Drivers/JD79676_Rotation.h" 
 
 #endif
 

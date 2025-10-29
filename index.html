@@ -533,6 +533,7 @@
                     { value: "504", text: "2.9 inch monochrome ePaper Screen （SSD1680）" },
                     { value: "512", text: "2.9 inch BWRY ePaper Screen （JD79667）" },
                     { value: "508", text: "2.13 inch monochrome ePaper Screen （SSD1680）" },
+                    { value: "513", text: "2.13 inch BWRY ePaper Screen （JD79676）" },
                     { value: "505", text: "1.54 inch monochrome ePaper Screen （SSD1681）" }
                 ]
             }
@@ -609,7 +610,7 @@
             const ePaperDiv = document.getElementById('ePaperOptions');
             
             // The ePaper driver choice is for all e-papers (502-511)
-            const isEpaperWithDriverChoice = (selectedValue >= 502 && selectedValue <= 512);
+            const isEpaperWithDriverChoice = (selectedValue >= 502 && selectedValue <= 513);
 
             if (isEpaperWithDriverChoice) {
                 ePaperDiv.style.display = 'block';
