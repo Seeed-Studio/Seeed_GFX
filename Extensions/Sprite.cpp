@@ -919,7 +919,28 @@ uint16_t TFT_eSprite::readPixelValue(int32_t x, int32_t y)
 
   if (_bpp == 4)
   {
-    if (x >= _dwidth) return 0xFF;
+    if (rotation)
+    {
+      int32_t tx = x;
+      if (rotation == 1)
+      {
+        x = _dwidth - y - 1;
+        y = tx;
+      }
+      else if (rotation == 2)
+      {
+        x = _dwidth - x - 1;
+        y = _dheight - y - 1;
+      }
+      else if (rotation == 3)
+      {
+        x = y;
+        y = _dheight - tx - 1;
+      }
+    }
+
+    if (x < 0 || y < 0 || x >= _dwidth || y >= _dheight) return 0xFF;
+
     if ((x & 0x01) == 0)
       return _img4[((x+y*_iwidth)>>1)] >> 4;   // even index = bits 7 .. 4
     else
@@ -988,7 +1009,28 @@ uint16_t TFT_eSprite::readPixel(int32_t x, int32_t y)
 
   if (_bpp == 4)
   {
-    if (x >= _dwidth) return 0xFFFF;
+    if (rotation)
+    {
+      int32_t tx = x;
+      if (rotation == 1)
+      {
+        x = _dwidth - y - 1;
+        y = tx;
+      }
+      else if (rotation == 2)
+      {
+        x = _dwidth - x - 1;
+        y = _dheight - y - 1;
+      }
+      else if (rotation == 3)
+      {
+        x = y;
+        y = _dheight - tx - 1;
+      }
+    }
+
+    if (x < 0 || y < 0 || x >= _dwidth || y >= _dheight) return 0xFFFF;
+
     uint16_t color;
     if ((x & 0x01) == 0)
       color = _colorMap[_img4[((x+y*_iwidth)>>1)] >> 4];   // even index = bits 7 .. 4
@@ -1111,7 +1153,7 @@ void  TFT_eSprite::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_
     int sWidth = (_iwidth >> 1);
     uint8_t *ptr = (uint8_t *)data;
 
-    if ((x & 0x01) == 0 && (dx & 0x01) == 0 && (dw & 0x01) == 0)
+    if (rotation == 0 && (x & 0x01) == 0 && (dx & 0x01) == 0 && (dw & 0x01) == 0)
     {
       x = (x >> 1) + y * sWidth;
       dw = (dw >> 1);
@@ -1125,20 +1167,17 @@ void  TFT_eSprite::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_
     }
     else  // not optimized
     {
+      int32_t rowY = y - _yDatum;
       for (int32_t yp = dy; yp < dy + dh; yp++)
       {
-        int32_t ox = x;
+        int32_t px = x - _xDatum;
         for (int32_t xp = dx; xp < dx + dw; xp++)
         {
-          uint32_t color;
-          if ((xp & 0x01) == 0)
-            color = (ptr[((xp+yp*w)>>1)] & 0xF0) >> 4; // even index = bits 7 .. 4
-          else
-            color = ptr[((xp-1+yp*w)>>1)] & 0x0F;      // odd index = bits 3 .. 0.
-          drawPixel(ox, y, color);
-          ox++;
+          uint8_t packed = ptr[((xp + yp * w) >> 1)];
+          uint32_t color = (xp & 0x01) == 0 ? ((packed & 0xF0) >> 4) : (packed & 0x0F);
+          drawPixel(px++, rowY, color);
         }
-        y++;
+        rowY++;
       }
     }
   }
@@ -1534,7 +1573,7 @@ void TFT_eSprite::fillSprite(uint32_t color)
     else if (_bpp == 4)
     {
       uint8_t c = ((color & 0x0F) | (((color & 0x0F) << 4) & 0xF0));
-      memset(_img4, c, (_iwidth * _yHeight) >> 1);
+      memset(_img4, c, (_iwidth * _iheight) >> 1);
     }
     else if (_bpp == 1)
     {
@@ -1555,14 +1594,13 @@ int16_t TFT_eSprite::width(void)
 {
   if (!_created ) return 0;
 
-  if (_bpp > 1) {
+  if (_bpp == 1 || _bpp == 4) {
+    if (rotation & 1) {
+      if (_vpDatum) return _xWidth;
+      return _dheight;
+    }
     if (_vpDatum) return _xWidth;
     return _dwidth;
-  }
-
-  if (rotation & 1) {
-    if (_vpDatum) return _xWidth;
-    return _dheight;
   }
 
   if (_vpDatum) return _xWidth;
@@ -1578,14 +1616,13 @@ int16_t TFT_eSprite::height(void)
 {
   if (!_created ) return 0;
 
-  if (_bpp > 1) {
+  if (_bpp == 1 || _bpp == 4) {
+    if (rotation & 1) {
+      if (_vpDatum) return _yHeight;
+      return _dwidth;
+    }
     if (_vpDatum) return _yHeight;
     return _dheight;
-  }
-
-  if (rotation & 1) {
-    if (_vpDatum) return _yHeight;
-    return _dwidth;
   }
 
   if (_vpDatum) return _yHeight;
@@ -1595,27 +1632,20 @@ int16_t TFT_eSprite::height(void)
 
 /***************************************************************************************
 ** Function name:           setRotation
-** Description:             Rotate coordinate frame for 1bpp sprite
+** Description:             Rotate coordinate frame for 1bpp and 4bpp sprites
 ***************************************************************************************/
-// Does nothing for 4, 8 and 16 bpp sprites.
 void TFT_eSprite::setRotation(uint8_t r)
 {
-  if (_bpp != 1) return;
+  if (_bpp != 1 && _bpp != 4) return;
 
-  rotation = r;
-  
-  if (rotation&1) {
-    resetViewport();
-  }
-  else {
-    resetViewport();
-  }
+  rotation = r & 0x03;
+  resetViewport();
 }
 
 
 /***************************************************************************************
 ** Function name:           getRotation
-** Description:             Get rotation for 1bpp sprite
+** Description:             Get rotation for 1bpp and 4bpp sprites
 ***************************************************************************************/
 uint8_t TFT_eSprite::getRotation(void)
 {
@@ -1648,8 +1678,31 @@ void TFT_eSprite::drawPixel(int32_t x, int32_t y, uint32_t color)
   }
   else if (_bpp == 4)
   {
+    if (rotation)
+    {
+      int32_t tx = x;
+      if (rotation == 1)
+      {
+        x = _dwidth - y - 1;
+        y = tx;
+      }
+      else if (rotation == 2)
+      {
+        x = _dwidth - x - 1;
+        y = _dheight - y - 1;
+      }
+      else if (rotation == 3)
+      {
+        x = y;
+        y = _dheight - tx - 1;
+      }
+    }
+
+    if (x < 0 || y < 0 || x >= _dwidth || y >= _dheight) return;
+
     uint8_t c = color & 0x0F;
-    int index = (x+y*_iwidth)>>1;;
+    int index = (x+y*_iwidth)>>1;
+
     if ((x & 0x01) == 0) {
       _img4[index] = (uint8_t)((c << 4) | (_img4[index] & 0x0F));
     }
@@ -1774,6 +1827,17 @@ void TFT_eSprite::drawFastVLine(int32_t x, int32_t y, int32_t h, uint32_t color)
   }
   else if (_bpp == 4)
   {
+    if (rotation)
+    {
+      x -= _xDatum;
+      y -= _yDatum;
+      while (h--)
+      {
+        drawPixel(x, y++, color);
+      }
+      return;
+    }
+
     if ((x & 0x01) == 0)
     {
       uint8_t c = (uint8_t) (color & 0xF) << 4;
@@ -1834,6 +1898,17 @@ void TFT_eSprite::drawFastHLine(int32_t x, int32_t y, int32_t w, uint32_t color)
   }
   else if (_bpp == 4)
   {
+    if (rotation)
+    {
+      x -= _xDatum;
+      y -= _yDatum;
+      while (w--)
+      {
+        drawPixel(x++, y, color);
+      }
+      return;
+    }
+
     uint8_t c = (uint8_t)color & 0x0F;
     uint8_t c2 = (c | ((c << 4) & 0xF0));
     if ((x & 0x01) == 1)
@@ -1913,6 +1988,17 @@ void TFT_eSprite::fillRect(int32_t x, int32_t y, int32_t w, int32_t h, uint32_t 
   }
   else if (_bpp == 4)
   {
+    if (rotation)
+    {
+      int32_t yy = y - _yDatum;
+      int32_t xx = x - _xDatum;
+      while (h--)
+      {
+        drawFastHLine(xx, yy++, w, color);
+      }
+      return;
+    }
+
     uint8_t c1 = (uint8_t)color & 0x0F;
     uint8_t c2 = c1 | ((c1 << 4) & 0xF0);
     if ((x & 0x01) == 0 && (w & 0x01) == 0)
