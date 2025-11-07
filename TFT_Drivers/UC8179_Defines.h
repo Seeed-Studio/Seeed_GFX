@@ -101,23 +101,33 @@
 #define EPD_INIT_FAST()     \
     do                      \
     {                       \
-        writecommand(0X00); \
-        writedata(0x1F);    \
-        writecommand(0X50); \
-        writedata(0x10);    \
-        writedata(0x07);    \
-        writecommand(0x04); \
-        delay(100);         \
-        CHECK_BUSY();       \
-        writecommand(0x06); \
-        writedata(0x27);    \
-        writedata(0x27);    \
-        writedata(0x18);    \
-        writedata(0x17);    \
+        writecommand(0x01);      \
+        writedata(0x07);         \
+        writedata(0x07);         \
+        writedata(0x3f);         \
+        writedata(0x3f);         \
+        writecommand(0x06);      \
+        writedata(0x17);         \
+        writedata(0x17);         \
+        writedata(0x28);         \
+        writedata(0x17);         \
+        writecommand(0x04);      \
+        delay(100);              \
+        CHECK_BUSY();            \
+        writecommand(0x00);      \
+        writedata(0x1F);         \
+        writecommand(0x61);      \
+        writedata(EPD_WIDTH >> 8); \
+        writedata(EPD_WIDTH & 0xFF); \
+        writedata(EPD_HEIGHT >> 8); \
+        writedata(EPD_HEIGHT & 0xFF); \
+        writecommand(0x50);      \
+        writedata(0x10);         \
+        writedata(0x07);         \
         writecommand(0xE0); \
         writedata(0x02);    \
         writecommand(0xE5); \
-        writedata(0x5A);    \
+        writedata(0x55);    \
     } while (0)
 
 #define EPD_INIT_GRAY()     \
@@ -169,7 +179,7 @@
         digitalWrite(TFT_RST, HIGH); \
         delay(10);                   \
         CHECK_BUSY();                \
-        EPD_INIT_FULL();             \
+        EPD_INIT_FAST();             \
     } while (0)
 
 #define EPD_SET_WINDOW(x1, y1, x2, y2)                  \
