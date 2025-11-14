@@ -28,7 +28,7 @@ void EPaper::begin(uint8_t tc)
 
  void EPaper::drawPixel(int32_t x, int32_t y, uint32_t color, uint8_t bpp)
  {
-    _img8[y * (_width >> 2) + (x >> 2)] = color;
+    _img8[y * (_width / (8 / bpp)) + (x / (8 / bpp))] = color;
  }
 
 void EPaper::update()
