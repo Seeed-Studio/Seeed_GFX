@@ -6,7 +6,7 @@ public:
     explicit EPaper();
 
     void begin(uint8_t tc = TAB_COLOUR);
-    void drawPixel(int32_t x, int32_t y, uint32_t color, uint8_t bpp);
+    void drawBufferPixel(int32_t x, int32_t y, uint32_t color, uint8_t bpp);
     void update();
     void update(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t *data);
 
