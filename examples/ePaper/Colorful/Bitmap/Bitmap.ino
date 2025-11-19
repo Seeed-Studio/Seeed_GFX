@@ -11,7 +11,6 @@ Here is the 6 colors you can display:
 */
 #include "TFT_eSPI.h"
 #include "image.h"
-#include "image_1.h"
 #ifdef EPAPER_ENABLE // Only compile this code if the EPAPER_ENABLE is defined in User_Setup.h
 EPaper epaper;
 #endif
