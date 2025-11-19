@@ -6,7 +6,10 @@
 #ifdef TFT_BUSY
     pinMode(TFT_BUSY, INPUT);
 #endif
-
+#ifdef TFT_ENABLE
+    pinMode(TFT_ENABLE, OUTPUT);
+    digitalWrite(TFT_ENABLE, HIGH);
+#endif  
     writecommand(0x01); // POWER SETTING
     writedata(0x07);
     writedata(0x07); // VGH=20V,VGL=-20V

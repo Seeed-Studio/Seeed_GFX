@@ -25,6 +25,7 @@
 #define TFT_DC 10 // D16 Data Command control pin
 #define TFT_BUSY D3
 #define TFT_RST 38 // D11 Reset pin (could connect to RST pin)
+#define TFT_ENABLE D6
 #endif
 
 
