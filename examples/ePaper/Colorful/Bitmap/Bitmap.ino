@@ -24,8 +24,6 @@ void setup()
 
     epaper.update(0,0,epaper.width(),epaper.height(), (uint16_t *)gImage); // display the image1
     printf("image1\r\n");
-    epaper.update(0,0,epaper.width(),epaper.height(), (uint16_t *)gImage_1); // display the image2
-    printf("image2\r\n");
 
     epaper.fillScreen(TFT_BLUE); // change the color to BLUE
     epaper.update(); // update the display
