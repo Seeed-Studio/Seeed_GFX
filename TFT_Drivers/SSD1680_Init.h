@@ -58,7 +58,4 @@
     writedata((128 - 1) % 256);
     writedata((128 - 1) / 256);
     CHECK_BUSY();
-
-    //set ic offset
-    setViewport(COL_OFFSET ,ROW_OFFSET ,EPD_WIDTH - COL_OFFSET ,EPD_HEIGHT - ROW_OFFSET);
 }
