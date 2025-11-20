@@ -18,8 +18,8 @@ public:
     void sleep();
     void wake();
     
-    using GetTempCallback = std::function<float()>;
-    using GetHumiCallback = std::function<float()>;
+    typedef float (*GetTempCallback)();
+    typedef float (*GetHumiCallback)();
     void  setTemp(GetTempCallback callback);
     float getTemp();
     void  setHumi(GetHumiCallback callback);

@@ -51,4 +51,5 @@
 #define TFT_DC D16  // D16
 #define TFT_BUSY D3 // D3
 #define TFT_RST D11 // D11
+#define TFT_ENABLE D6 //D6
 #endif
