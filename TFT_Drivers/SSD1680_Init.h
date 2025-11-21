@@ -18,8 +18,8 @@
 
     // Set driver output control
     writecommand(0x01);
-    writedata((250 - 1) % 256);
-    writedata((250 - 1) / 256);
+    writedata((EPD_HEIGHT - 1) % 256);
+    writedata((EPD_HEIGHT - 1) / 256);
     writedata(0x00);
 
     // Set data entry mode
@@ -29,12 +29,12 @@
     // Set RAM X address range
     writecommand(0x44);
     writedata(0x00);
-    writedata(128 / 8 - 1);
+    writedata(EPD_WIDTH / 8 - 1);
 
     // Set RAM Y address range
     writecommand(0x45);
-    writedata((250 - 1) % 256);
-    writedata((250 - 1) / 256);
+    writedata((EPD_HEIGHT - 1) % 256);
+    writedata((EPD_HEIGHT - 1) / 256);
     writedata(0x00);
     writedata(0x00);
 
@@ -55,8 +55,8 @@
     writecommand(0x4E);
     writedata(0x00);
     writecommand(0x4F);
-    writedata((128 - 1) % 256);
-    writedata((128 - 1) / 256);
+    writedata((EPD_HEIGHT - 1) % 256);
+    writedata((EPD_HEIGHT - 1) / 256);
     CHECK_BUSY();
 
     //set ic offset
