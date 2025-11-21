@@ -62,7 +62,7 @@
     do                      \
     {                       \
                             \
-        tconDisplayArea1bpp(_imgAreaInfo.usX,_imgAreaInfo.usY, _imgAreaInfo.usWidth, _imgAreaInfo.usHeight, 0x02, 0xff, 0x00); \
+        tconDisplayArea1bpp(_imgAreaInfo.usX,_imgAreaInfo.usY, _imgAreaInfo.usWidth, _imgAreaInfo.usHeight, 0x02, 0x00, 0xff); \
     } while (0)
 
 #define EPD_SLEEP()         \

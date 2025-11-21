@@ -7,7 +7,6 @@ EPaper::EPaper() : _sleep(false), _entemp(true), _temp(16.00), _humi(50.00), TFT
 
 void EPaper::begin(uint8_t tc)
 {
-      
     setBitmapColor(1, 0);
     setTextFont(1);
     setTextColor(TFT_BLACK, TFT_WHITE, true);
@@ -35,13 +34,13 @@ void EPaper::update()
 {
     wake();
     EPD_SET_WINDOW(0, 0, (_width - 1), (_height - 1));
-#ifdef TCON_ENABLE    
-    size_t total_bytes = (_width * _height + 7) / 8;
-    for (size_t i = 0; i < total_bytes; i++)
-    {
-        _img8[i] =~_img8[i];  
-    }
-#endif
+// #ifdef TCON_ENABLE    
+    // size_t total_bytes = (_width * _height + 7) / 8;
+    // for (size_t i = 0; i < total_bytes; i++)
+    // {
+    //     _img8[i] =~_img8[i];  
+    // }
+// #endif
 #ifdef EPD_HORIZONTAL_MIRROR
     EPD_PUSH_NEW_COLORS_FLIP(_width, _height, _img8);
 #else
