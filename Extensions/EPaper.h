@@ -10,6 +10,10 @@ public:
     void update();
     void update(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t *data);
 
+    bool setCanvasSize(uint16_t w, uint16_t h);
+    void setOutputRotation(uint8_t rotation);
+    uint8_t getOutputRotation() const;
+
     
 #ifdef  USE_MUTIGRAY_EPAPER
     void update(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t *data, uint8_t grayLevel);
@@ -29,5 +33,10 @@ private:
     bool _entemp;
     float _temp;
     float _humi;
-};
+    uint8_t _outputRotation;
 
+    bool pushRotatedArea(uint16_t x, uint16_t y, uint16_t w, uint16_t h, bool useGray = false, uint8_t grayLevel = 0);
+    uint32_t readSpritePixelRaw(int32_t x, int32_t y) const;
+    void writeLinePixel(uint8_t *line, uint16_t column, uint32_t value) const;
+    bool mapToSprite(int32_t destX, int32_t destY, int32_t &srcX, int32_t &srcY) const;
+};
