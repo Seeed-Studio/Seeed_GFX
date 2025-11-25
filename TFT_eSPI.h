@@ -339,9 +339,9 @@ const PROGMEM fontinfo fontdata[] = {
     #define TFT_VIOLET      TFT_BLUE
 #elif defined (USE_BWRY_EPAPER)    
     #define TFT_WHITE 0X00
-    #define TFT_YELLOW 0X01
-    #define TFT_RED 0X02
-    #define TFT_BLACK 0X03
+    #define TFT_YELLOW 0X0B
+    #define TFT_RED 0X06
+    #define TFT_BLACK 0X0F
 
     #define TFT_BLUE TFT_YELLOW
     #define TFT_GREEN TFT_YELLOW

@@ -69,4 +69,7 @@
     
     writecommand(0x04);
     CHECK_BUSY();  
+
+    //set ic offset
+    setViewport(0 ,0 ,EPD_WIDTH - COL_OFFSET ,EPD_HEIGHT - ROW_OFFSET);
 }
