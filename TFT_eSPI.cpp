@@ -291,6 +291,79 @@ void TFT_eSPI::resetViewport(void)
 }
 
 /***************************************************************************************
+** Function name:           applyRotationViewport
+** Description:             Re-apply hardware viewport offsets after rotation changes
+***************************************************************************************/
+void TFT_eSPI::applyRotationViewport(void)
+{
+#if defined(EPAPER_ENABLE) && (defined(COL_OFFSET) || defined(ROW_OFFSET))
+  const int32_t colOffset =
+#if defined(COL_OFFSET)
+      COL_OFFSET;
+#else
+      0;
+#endif
+  const int32_t rowOffset =
+#if defined(ROW_OFFSET)
+      ROW_OFFSET;
+#else
+      0;
+#endif
+
+  if ((colOffset == 0 && rowOffset == 0) || (_init_width <= colOffset) || (_init_height <= rowOffset)) return;
+
+  int32_t corners[4][2] = {
+      {colOffset, rowOffset},
+      {_init_width - 1, rowOffset},
+      {colOffset, _init_height - 1},
+      {_init_width - 1, _init_height - 1}};
+
+  int32_t minX = INT32_MAX;
+  int32_t minY = INT32_MAX;
+  int32_t maxX = INT32_MIN;
+  int32_t maxY = INT32_MIN;
+  uint8_t rot = rotation & 0x03;
+
+  for (uint8_t i = 0; i < 4; ++i)
+  {
+    int32_t px = corners[i][0];
+    int32_t py = corners[i][1];
+    int32_t tx = px;
+    int32_t ty = py;
+
+    switch (rot)
+    {
+    case 0:
+      break;
+    case 1:
+      tx = py;
+      ty = _init_width - 1 - px;
+      break;
+    case 2:
+      tx = _init_width - 1 - px;
+      ty = _init_height - 1 - py;
+      break;
+    default: // case 3
+      tx = _init_height - 1 - py;
+      ty = px;
+      break;
+    }
+
+    if (tx < minX) minX = tx;
+    if (ty < minY) minY = ty;
+    if (tx > maxX) maxX = tx;
+    if (ty > maxY) maxY = ty;
+  }
+
+  int32_t vpW = maxX - minX + 1;
+  int32_t vpH = maxY - minY + 1;
+  if (vpW < 1 || vpH < 1) return;
+
+  setViewport(minX, minY, vpW, vpH);
+#endif
+}
+
+/***************************************************************************************
 ** Function name:           getViewportX
 ** Description:             Get x position of the viewport datum
 ***************************************************************************************/
@@ -958,6 +1031,7 @@ void TFT_eSPI::setRotation(uint8_t m)
 
   // Reset the viewport to the whole screen
   resetViewport();
+  applyRotationViewport();
 }
 
 
@@ -6276,4 +6350,3 @@ void TFT_eSPI::getSetup(setup_t &tft_settings)
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////////////
-

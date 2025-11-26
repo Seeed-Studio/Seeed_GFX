@@ -973,6 +973,7 @@ private:
   //-------------------------------------- protected ----------------------------------//
 protected:
   // int32_t  win_xe, win_ye;          // Window end coords - not needed
+  void applyRotationViewport(void);
 
   int32_t _init_width, _init_height; // Display w/h as input, used by setRotation()
   int32_t _width, _height;           // Display w/h as modified by current rotation

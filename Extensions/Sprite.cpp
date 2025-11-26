@@ -1608,6 +1608,7 @@ void TFT_eSprite::setRotation(uint8_t r)
 
   rotation = SpriteRotation4bpp::Normalize(r);
   resetViewport();
+  applyRotationViewport();
 }
 
 
