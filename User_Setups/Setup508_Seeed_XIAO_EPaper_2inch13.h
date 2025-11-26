@@ -9,6 +9,9 @@
 #define TFT_WIDTH 128
 #define TFT_HEIGHT 250
 
+#define COL_OFFSET 6
+#define ROW_OFFSET 0
+
 #define EPD_WIDTH TFT_WIDTH
 #define EPD_HEIGHT TFT_HEIGHT
 
@@ -37,6 +40,8 @@
 #define LOAD_GFXFF // FreeFonts. Include access to the 48 Adafruit_GFX free fonts FF1 to FF48 and custom fonts
 
 #define SMOOTH_FONT
+
+
 
 #ifdef CONFIG_IDF_TARGET_ESP32S3
 #define USE_HSPI_PORT

@@ -9,6 +9,9 @@
 #define TFT_WIDTH 128
 #define TFT_HEIGHT 250
 
+#define COL_OFFSET 6
+#define ROW_OFFSET 0
+
 #define EPD_WIDTH TFT_WIDTH
 #define EPD_HEIGHT TFT_HEIGHT
 

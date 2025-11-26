@@ -7,7 +7,6 @@ EPaper::EPaper() : _sleep(false), _entemp(true), _temp(16.00), _humi(50.00), TFT
 
 void EPaper::begin(uint8_t tc)
 {
-      
     setBitmapColor(1, 0);
     setTextFont(1);
     setTextColor(TFT_BLACK, TFT_WHITE, true);
@@ -26,17 +25,22 @@ void EPaper::begin(uint8_t tc)
     EPD_WAKEUP();
 }
 
+ void EPaper::drawBufferPixel(int32_t x, int32_t y, uint32_t color, uint8_t bpp)
+ {
+    _img8[y * (_width / (8 / bpp)) + (x / (8 / bpp))] = color;
+ }
+
 void EPaper::update()
 {
     wake();
     EPD_SET_WINDOW(0, 0, (_width - 1), (_height - 1));
-#ifdef TCON_ENABLE    
-    size_t total_bytes = (_width * _height + 7) / 8;
-    for (size_t i = 0; i < total_bytes; i++)
-    {
-        _img8[i] =~_img8[i];  
-    }
-#endif
+// #ifdef TCON_ENABLE    
+    // size_t total_bytes = (_width * _height + 7) / 8;
+    // for (size_t i = 0; i < total_bytes; i++)
+    // {
+    //     _img8[i] =~_img8[i];  
+    // }
+// #endif
 #ifdef EPD_HORIZONTAL_MIRROR
     EPD_PUSH_NEW_COLORS_FLIP(_width, _height, _img8);
 #else
@@ -45,6 +49,8 @@ void EPaper::update()
     EPD_UPDATE();
     sleep();
 }
+
+
 
 void EPaper::update(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t *data)
 {
@@ -94,7 +100,24 @@ void EPaper::update(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t *da
     EPD_UPDATE();
     sleep();
 }
+
+void EPaper::updateGray()
+{
+    wake();
+    EPD_SET_WINDOW(0, 0, (_width - 1), (_height - 1));
+    
+    // Push the sprite buffer to screen using gray mode
+#ifdef EPD_HORIZONTAL_MIRROR
+    EPD_PUSH_NEW_GRAY_COLORS_FLIP(_width, _height, _img8, GRAY_LEVEL4);
+#else
+    EPD_PUSH_NEW_GRAY_COLORS(_width, _height, _img8, GRAY_LEVEL4);
+#endif
+    EPD_UPDATE();
+    sleep();
+}
+
 #endif 
+
 
 void EPaper::sleep()
 {

@@ -4,7 +4,10 @@
 #ifdef TFT_BUSY
     pinMode(TFT_BUSY, INPUT);
 #endif
-
+#ifdef TFT_ENABLE
+    pinMode(TFT_ENABLE, OUTPUT);
+    digitalWrite(TFT_ENABLE, HIGH);
+#endif  
     // Hardware reset
     digitalWrite(TFT_RST, LOW);
     delay(10);
@@ -58,4 +61,7 @@
     writedata((EPD_HEIGHT - 1) % 256);
     writedata((EPD_HEIGHT - 1) / 256);
     CHECK_BUSY();
+
+    //set ic offset
+    setViewport(COL_OFFSET ,ROW_OFFSET ,EPD_WIDTH ,EPD_HEIGHT);
 }

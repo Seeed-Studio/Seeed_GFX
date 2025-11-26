@@ -284,6 +284,7 @@
 #define EPD_PUSH_NEW_GRAY_COLORS_FLIP(w, h, colors, g)                 \
     do                                                                 \
     {                                                                  \
+        EPD_INIT_GRAY();                                               \
         writecommand(0x13);                                            \
         uint16_t bytes_per_row = (w) / 8;                              \
         for (uint16_t row = 0; row < (h); row++)                       \
