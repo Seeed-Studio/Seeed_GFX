@@ -1,4 +1,4 @@
 
-idf_component_register(SRCS "TFT_eSPI.cpp" "Extensions/EspidfSPI.cpp"
+idf_component_register(SRCS "TFT_eSPI.cpp"
                     INCLUDE_DIRS "."
                     PRIV_REQUIRES arduino)
