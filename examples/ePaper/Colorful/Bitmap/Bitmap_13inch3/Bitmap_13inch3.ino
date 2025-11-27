@@ -32,7 +32,7 @@ void setup()
   
   // Display color bitmap image using pushImage API
   // pushImage(x, y, width, height, image_data)
-  epaper.pushImage(0, 0, 1600, 1200, (uint16_t *)gImage_13inch3);
+  epaper.pushImage(0, 0, 1200, 1600, (uint16_t *)gImage_13inch3);
   epaper.update();
   
   Serial.println("Color bitmap displayed successfully");
