@@ -1,4 +1,4 @@
-EPaper::EPaper() : _sleep(false), _entemp(true), _temp(16.00), _humi(50.00), TFT_eSprite(this)
+EPaper::EPaper() : _sleep(false), _entemp(true), _temp(16.00), _humi(50.00), _grayLevel(0), TFT_eSprite(this)
 {
     setColorDepth(EPD_COLOR_DEPTH);
     createSprite(_width, _height, 1);
@@ -34,18 +34,23 @@ void EPaper::update()
 {
     wake();
     EPD_SET_WINDOW(0, 0, (_width - 1), (_height - 1));
-// #ifdef TCON_ENABLE    
-    // size_t total_bytes = (_width * _height + 7) / 8;
-    // for (size_t i = 0; i < total_bytes; i++)
-    // {
-    //     _img8[i] =~_img8[i];  
-    // }
-// #endif
-#ifdef EPD_HORIZONTAL_MIRROR
-    EPD_PUSH_NEW_COLORS_FLIP(_width, _height, _img8);
-#else
-    EPD_PUSH_NEW_COLORS(_width, _height, _img8);
-#endif
+
+    if(!_grayLevel)
+    {
+        #ifdef EPD_HORIZONTAL_MIRROR
+            EPD_PUSH_NEW_COLORS_FLIP(_width, _height, _img8);
+        #else
+            EPD_PUSH_NEW_COLORS(_width, _height, _img8);
+        #endif
+    }    
+    else
+    {
+        #ifdef EPD_HORIZONTAL_MIRROR
+            EPD_PUSH_NEW_GRAY_COLORS_FLIP(_width, _height, _img8);
+        #else
+            EPD_PUSH_NEW_GRAY_COLORS(_width, _height, _img8);
+        #endif
+    }
     EPD_UPDATE();
     sleep();
 }
@@ -80,42 +85,41 @@ void EPaper::update(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t *da
 }
 
 #ifdef USE_MUTIGRAY_EPAPER
-void EPaper::update(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t *data, uint8_t grayLevel)
+void EPaper::initGrayMode(uint8_t grayLevel)
 {
-    if (_sleep)
-    {
-        EPD_WAKEUP();
-        _sleep = false;
+    if (grayLevel != 4 && grayLevel != 16) {
+        return;
     }
-    uint8_t *p = (uint8_t *)data;
-    x = (x / 8) * 8;
-    y = (y / 8) * 8;
-    pushImage(x, y, w, h , (uint16_t *)p);
-    EPD_SET_WINDOW(x, y, (x + w - 1), (y + h - 1));
-#ifdef EPD_HORIZONTAL_MIRROR
-    EPD_PUSH_NEW_GRAY_COLORS_FLIP(w, h, p, grayLevel);
-#else
-    EPD_PUSH_NEW_GRAY_COLORS(w, h, p, grayLevel);
-#endif
-    EPD_UPDATE();
-    sleep();
+    if (grayLevel == _grayLevel) {
+        return;
+    }
+    else
+    {
+        _grayLevel =  grayLevel;
+    }
+    if (_created) {
+        deleteSprite();
+    }
+    setColorDepth(grayLevel); 
+    createSprite(_width, _height, 1);
+    fillSprite(TFT_GRAY_3); 
+    setTextColor(TFT_GRAY_0, TFT_GRAY_3, true);
 }
 
-void EPaper::updateGray()
+
+void EPaper::deinitGrayMode()
 {
-    wake();
-    EPD_SET_WINDOW(0, 0, (_width - 1), (_height - 1));
-    
-    // Push the sprite buffer to screen using gray mode
-#ifdef EPD_HORIZONTAL_MIRROR
-    EPD_PUSH_NEW_GRAY_COLORS_FLIP(_width, _height, _img8, GRAY_LEVEL4);
-#else
-    EPD_PUSH_NEW_GRAY_COLORS(_width, _height, _img8, GRAY_LEVEL4);
-#endif
-    EPD_UPDATE();
-    sleep();
-}
+    if (_bpp == EPD_COLOR_DEPTH) return;
 
+    if (_created) {
+        deleteSprite();
+        _grayLevel = 0;
+    }
+    setColorDepth(EPD_COLOR_DEPTH);
+    createSprite(_width, _height, 1);
+    fillSprite(TFT_WHITE); 
+    setTextColor(TFT_BLACK, TFT_WHITE, true);
+}
 #endif 
 
 
@@ -133,7 +137,10 @@ void EPaper::wake()
         return;
     if(_entemp)
         EPD_SET_TEMP(_temp);
-    EPD_WAKEUP();
+    if(!_grayLevel)
+        EPD_WAKEUP();
+    else
+        EPD_WAKEUP_GRAY();
     _sleep = false;
 }
 

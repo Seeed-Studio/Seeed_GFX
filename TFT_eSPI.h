@@ -389,6 +389,36 @@ const PROGMEM fontinfo fontdata[] = {
     #define TFT_SILVER 0xC618                   /* 192, 192, 192 */
     #define TFT_SKYBLUE 0x867D                  /* 135, 206, 235 */
     #define TFT_VIOLET 0x915C                   /* 180,  46, 226 */
+    #ifdef USE_MUTIGRAY_EPAPER
+            #ifdef GRAY_LEVEL4
+                // #define TFT_BLACK TFT_GRAY_0
+                // #define TFT_WHITE TFT_GRAY_3
+                #define TFT_GRAY_0 0X00
+                #define TFT_GRAY_1 0X01
+                #define TFT_GRAY_2 0X02
+                #define TFT_GRAY_3 0X03
+            #elif defined(GRAY_LEVEL16)
+                // #define TFT_BLACK TFT_GRAY_0
+                // #define TFT_WHITE TFT_GRAY_15
+                #define TFT_GRAY_0  0x00
+                #define TFT_GRAY_1  0x01
+                #define TFT_GRAY_2  0x02
+                #define TFT_GRAY_3  0x03
+                #define TFT_GRAY_4  0x04
+                #define TFT_GRAY_5  0x05
+                #define TFT_GRAY_6  0x06
+                #define TFT_GRAY_7  0x07
+                #define TFT_GRAY_8  0x08
+                #define TFT_GRAY_9  0x09
+                #define TFT_GRAY_10 0x0A
+                #define TFT_GRAY_11 0x0B
+                #define TFT_GRAY_12 0x0C
+                #define TFT_GRAY_13 0x0D
+                #define TFT_GRAY_14 0x0E
+                #define TFT_GRAY_15 0x0F
+            #endif
+
+    #endif
 #endif
 
 
