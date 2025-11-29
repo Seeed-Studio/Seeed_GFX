@@ -182,6 +182,17 @@
         EPD_INIT_FAST();             \
     } while (0)
 
+#define EPD_WAKEUP_GRAY()            \
+do                               \
+{                                \
+    digitalWrite(TFT_RST, LOW);  \
+    delay(10);                   \
+    digitalWrite(TFT_RST, HIGH); \
+    delay(10);                   \
+    CHECK_BUSY();                \
+    EPD_INIT_GRAY();             \
+} while (0)
+
 #define EPD_SET_WINDOW(x1, y1, x2, y2)                  \
     do                                                  \
     {                                                   \
@@ -216,72 +227,103 @@
         }                                                              \
     } while (0)
 
-#define EPD_PUSH_NEW_GRAY_COLORS(w, h, colors, g)                       \
+#define EPD_PUSH_NEW_GRAY_COLORS(w, h, colors)                       \
     do                                                                  \
     {                                                                   \
         EPD_INIT_GRAY();                                                \
-        uint16_t i,j,k;                                                 \
-        uint8_t temp1,temp2,temp3;                                      \
-        if(g == GRAY_LEVEL4)                                            \
+        uint16_t i, j, k;                                               \
+        uint8_t temp1, temp2, temp3;                                    \
+        writecommand(0x10);                                             \
+        for(i = 0; i < 48000; i++)                                      \
         {                                                               \
-            writecommand(0x10);                                         \
-            for(i=0; i<48000; i++)                                      \ 
-            {                                                           \       
-                temp3=0;                                                \
-                for(j=0; j<2; j++)                                      \ 
+            /* Read 4 input bytes = 8 pixels */                         \
+            uint8_t c0 = colors[i * 4 + 0];                             \
+            uint8_t c1 = colors[i * 4 + 1];                             \
+            uint8_t c2 = colors[i * 4 + 2];                             \
+            uint8_t c3 = colors[i * 4 + 3];                             \
+            /* Extract 8 pixels from bit5-4 and bit1-0 of each byte */  \
+            uint8_t p0 = (c0 >> 4) & 0x03;                              \
+            uint8_t p1 = (c0 >> 0) & 0x03;                              \
+            uint8_t p2 = (c1 >> 4) & 0x03;                              \
+            uint8_t p3 = (c1 >> 0) & 0x03;                              \
+            uint8_t p4 = (c2 >> 4) & 0x03;                              \
+            uint8_t p5 = (c2 >> 0) & 0x03;                              \
+            uint8_t p6 = (c3 >> 4) & 0x03;                              \
+            uint8_t p7 = (c3 >> 0) & 0x03;                              \
+            /* Pack into original-style packed bytes (high 2-bit per pixel) */ \
+            uint8_t packed_byte0 = (p0 << 6) | (p1 << 4) | (p2 << 2) | p3; \
+            uint8_t packed_byte1 = (p4 << 6) | (p5 << 4) | (p6 << 2) | p7; \
+                                                                        \
+            temp3 = 0;                                                  \
+            for(j = 0; j < 2; j++)                                      \
+            {                                                           \
+                temp1 = (j == 0) ? packed_byte0 : packed_byte1;         \
+                for(k = 0; k < 4; k++)                                  \
                 {                                                       \
-                    temp1 = colors[i*2+j];                              \
-                    for(k=0;k<4;k++)                                    \   
-				{                                                       \
-					temp2 = temp1&0xC0 ;                                \
-					if(temp2 == 0xC0)                                   \
-						temp3 |= 0x01;                                  \
-					else if(temp2 == 0x00)                              \
-						temp3 |= 0x00;                                  \
-					else if((temp2>=0x80)&&(temp2<0xC0))                \
-						temp3 |= 0x00;                                  \
-					else if(temp2 == 0x40)                              \
-						temp3 |= 0x01;                                  \
-                    if((j==0&&k<=3)||(j==1&&k<=2))                      \
+                    temp2 = temp1 & 0xC0;                               \
+                    if(temp2 == 0xC0)                                   \
+                        temp3 |= 0x01;                                  \
+                    else if(temp2 == 0x00)                              \
+                        temp3 |= 0x00;                                  \
+                    else if((temp2 >= 0x80) && (temp2 < 0xC0))          \
+                        temp3 |= 0x00;                                  \
+                    else if(temp2 == 0x40)                              \
+                        temp3 |= 0x01;                                  \
+                    if((j == 0 && k <= 3) || (j == 1 && k <= 2))        \
                     {                                                   \
-                    temp3 <<= 1;	                                    \
-                    temp1 <<= 2;                                        \
+                        temp3 <<= 1;                                    \
+                        temp1 <<= 2;                                    \
                     }                                                   \
                 }                                                       \
-                }                                                       \
-                writedata(~temp3);                                      \
             }                                                           \
-            writecommand(0x13);                                         \
-            for(i=0; i<48000; i++)                                      \ 
-            {                                                           \       
-                temp3=0;                                                \
-                for(j=0; j<2; j++)                                      \ 
+            writedata(~temp3);                                          \
+        }                                                               \
+                                                                        \
+        writecommand(0x13);                                             \
+        for(i = 0; i < 48000; i++)                                      \
+        {                                                               \
+            uint8_t c0 = colors[i * 4 + 0];                             \
+            uint8_t c1 = colors[i * 4 + 1];                             \
+            uint8_t c2 = colors[i * 4 + 2];                             \
+            uint8_t c3 = colors[i * 4 + 3];                             \
+            uint8_t p0 = (c0 >> 4) & 0x03;                              \
+            uint8_t p1 = (c0 >> 0) & 0x03;                              \
+            uint8_t p2 = (c1 >> 4) & 0x03;                              \
+            uint8_t p3 = (c1 >> 0) & 0x03;                              \
+            uint8_t p4 = (c2 >> 4) & 0x03;                              \
+            uint8_t p5 = (c2 >> 0) & 0x03;                              \
+            uint8_t p6 = (c3 >> 4) & 0x03;                              \
+            uint8_t p7 = (c3 >> 0) & 0x03;                              \
+            uint8_t packed_byte0 = (p0 << 6) | (p1 << 4) | (p2 << 2) | p3; \
+            uint8_t packed_byte1 = (p4 << 6) | (p5 << 4) | (p6 << 2) | p7; \
+                                                                        \
+            temp3 = 0;                                                  \
+            for(j = 0; j < 2; j++)                                      \
+            {                                                           \
+                temp1 = (j == 0) ? packed_byte0 : packed_byte1;         \
+                for(k = 0; k < 4; k++)                                  \
                 {                                                       \
-                    temp1 = colors[i*2+j];                              \
-                    for(k=0;k<4;k++)                                    \   
-				{                                                       \
-					temp2 = temp1&0xC0 ;                                \
-					if(temp2 == 0xC0)                                   \
-						temp3 |= 0x01;                                  \
-					else if(temp2 == 0x00)                              \
-						temp3 |= 0x00;                                  \
-					else if((temp2>=0x80)&&(temp2<0xC0))                \
-						temp3 |= 0x01;                                  \
-					else if(temp2 == 0x40)                              \
-						temp3 |= 0x00;                                  \
-                    if((j==0&&k<=3)||(j==1&&k<=2))                      \
+                    temp2 = temp1 & 0xC0;                               \
+                    if(temp2 == 0xC0)                                   \
+                        temp3 |= 0x01;                                  \
+                    else if(temp2 == 0x00)                              \
+                        temp3 |= 0x00;                                  \
+                    else if((temp2 >= 0x80) && (temp2 < 0xC0))          \
+                        temp3 |= 0x01;                                  \
+                    else if(temp2 == 0x40)                              \
+                        temp3 |= 0x00;                                  \
+                    if((j == 0 && k <= 3) || (j == 1 && k <= 2))        \
                     {                                                   \
-                    temp3 <<= 1;	                                    \
-                    temp1 <<= 2;                                        \
+                        temp3 <<= 1;                                    \
+                        temp1 <<= 2;                                    \
                     }                                                   \
                 }                                                       \
-                }                                                       \
-                writedata(~temp3);                                      \
             }                                                           \
+            writedata(~temp3);                                          \
         }                                                               \
     } while (0)
 
-#define EPD_PUSH_NEW_GRAY_COLORS_FLIP(w, h, colors, g)                 \
+#define EPD_PUSH_NEW_GRAY_COLORS_FLIP(w, h, colors)                    \
     do                                                                 \
     {                                                                  \
         EPD_INIT_GRAY();                                               \

@@ -12,8 +12,8 @@ public:
 
     
 #ifdef  USE_MUTIGRAY_EPAPER
-    void update(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t *data, uint8_t grayLevel);
-    void updateGray();
+    void initGrayMode(uint8_t grayLevel);
+    void deinitGrayMode();
 #endif
     void sleep();
     void wake();
@@ -25,6 +25,7 @@ public:
     void  setHumi(GetHumiCallback callback);
     float getHumi();
 private:
+    uint8_t _grayLevel;
     bool _sleep;
     bool _entemp;
     float _temp;

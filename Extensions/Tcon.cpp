@@ -82,16 +82,37 @@ void TFT_eSPI::tconWirteData(TWord usData)
 void TFT_eSPI::tconWirteNData(TWord* pwBuf, TDWord ulSizeWordCnt)
 {
     TWord wPreamble	= 0x0000;
-	TWord i;
+    TDWord i, b = 0;
+    TDWord chunk_size = 32768;  
+	TWord *EPD_temp = NULL;
     spi_begin(); 
 	tconWaitForReady();
 	tconSendWord(wPreamble);		
 	tconWaitForReady();
 	//Send Data
-	for(i=0;i<ulSizeWordCnt;i++)
-	{
-		tconSendWord((pwBuf[i]));
-	}
+
+	for (i = 0; i < (ulSizeWordCnt / chunk_size); i++)
+    {
+
+
+		EPD_temp = &pwBuf[b];
+		pushPixels(EPD_temp, chunk_size);
+       // writenBytes(EPD_temp, chunk_size, 32768);
+        b += chunk_size;
+    }
+
+    // 处理剩余部分
+    TDWord remainder = ulSizeWordCnt % chunk_size;
+    if (remainder > 0)
+    {
+		EPD_temp = &pwBuf[b];
+		pushPixels(EPD_temp, chunk_size);
+        //writenBytes(EPD_temp, remainder, 32768);
+    }
+	// for(i=0;i<ulSizeWordCnt;i++)
+	// {
+	// 	tconSendWord((pwBuf[i]));
+	// }
 	
 	//delay_nop();
     spi_end();
@@ -245,6 +266,8 @@ void TFT_eSPI::tconHostAreaPackedPixelWrite(TCONLdImgInfo* pstLdImgInfo,TCONArea
 	//tconSetImgRotation(IT8951_ROTATE_180);
 	//printf("---IT8951 Host Area Packed Pixel Write begin---\r\n");
 	//Host Write Data
+
+	//tconWirteNData(pusFrameBuf, pstAreaImgInfo->usHeight * pstAreaImgInfo->usWidth / 2);
 	for(j=0;j< pstAreaImgInfo->usHeight;j++)
 	{
 		 for(i=0;i< pstAreaImgInfo->usWidth/2;i++)

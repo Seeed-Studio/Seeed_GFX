@@ -56,4 +56,6 @@
     writedata((EPD_HEIGHT - 1) % 256); // 199 % 256 = 199
     writedata((EPD_HEIGHT - 1) / 256); // 199 / 256 = 0
     CHECK_BUSY();
+
+    setRotation(2);
 }
