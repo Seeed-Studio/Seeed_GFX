@@ -45,11 +45,13 @@ void EPaper::update()
     }    
     else
     {
+      #ifdef USE_MUTIGRAY_EPAPER  
         #ifdef EPD_HORIZONTAL_MIRROR
             EPD_PUSH_NEW_GRAY_COLORS_FLIP(_width, _height, _img8);
         #else
             EPD_PUSH_NEW_GRAY_COLORS(_width, _height, _img8);
         #endif
+      #endif  
     }
     EPD_UPDATE();
     sleep();

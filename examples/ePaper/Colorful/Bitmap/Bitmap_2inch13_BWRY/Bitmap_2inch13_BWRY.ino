@@ -29,7 +29,7 @@ void setup()
   
   // Display 4-color bitmap image using pushImage API
   // pushImage(x, y, width, height, image_data)
-  epaper.pushImage(0, 0, 122, 250, gImage_2inch13_BWRY);
+  epaper.pushImage(0, 0, 122, 250, (uint16_t *)gImage_2inch13_BWRY);
   epaper.update();
   
   Serial.println("4-color bitmap displayed successfully");
