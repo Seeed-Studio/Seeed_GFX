@@ -23,7 +23,7 @@
 #define TFT_CS1 2  // D7
 #define TFT_DC 11  // D16
 #define TFT_BUSY 13 // D3
-#define TFT_RST 12 // D11
+#define TFT_RST 38
 #define TFT_ENABLE 12 // D11
 
 
