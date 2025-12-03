@@ -12,4 +12,5 @@
     digitalWrite(TFT_RST, LOW);  
     delay(20);                   
     digitalWrite(TFT_RST, HIGH); 
-    delay(10);     
+    delay(10);  
+    hostTconInit();   

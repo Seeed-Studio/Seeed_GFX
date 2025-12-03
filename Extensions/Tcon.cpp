@@ -83,7 +83,7 @@ void TFT_eSPI::tconWirteNData(TWord* pwBuf, TDWord ulSizeWordCnt)
 {
     TWord wPreamble	= 0x0000;
     TDWord i, b = 0;
-    TDWord chunk_size = 32768;  
+    TDWord chunk_size = 16384;  
 	TWord *EPD_temp = NULL;
     spi_begin(); 
 	tconWaitForReady();
@@ -96,7 +96,7 @@ void TFT_eSPI::tconWirteNData(TWord* pwBuf, TDWord ulSizeWordCnt)
 
 
 		EPD_temp = &pwBuf[b];
-		pushPixels(EPD_temp, chunk_size);
+		pushPixelsDMA(EPD_temp, chunk_size);
        // writenBytes(EPD_temp, chunk_size, 32768);
         b += chunk_size;
     }
@@ -106,7 +106,7 @@ void TFT_eSPI::tconWirteNData(TWord* pwBuf, TDWord ulSizeWordCnt)
     if (remainder > 0)
     {
 		EPD_temp = &pwBuf[b];
-		pushPixels(EPD_temp, chunk_size);
+		pushPixelsDMA(EPD_temp, chunk_size);
         //writenBytes(EPD_temp, remainder, 32768);
     }
 	// for(i=0;i<ulSizeWordCnt;i++)
@@ -266,19 +266,29 @@ void TFT_eSPI::tconHostAreaPackedPixelWrite(TCONLdImgInfo* pstLdImgInfo,TCONArea
 	//tconSetImgRotation(IT8951_ROTATE_180);
 	//printf("---IT8951 Host Area Packed Pixel Write begin---\r\n");
 	//Host Write Data
-
-	//tconWirteNData(pusFrameBuf, pstAreaImgInfo->usHeight * pstAreaImgInfo->usWidth / 2);
-	for(j=0;j< pstAreaImgInfo->usHeight;j++)
-	{
-		 for(i=0;i< pstAreaImgInfo->usWidth/2;i++)
-			{
-				if(pstLdImgInfo->usFilp)
-					//Write a Word(2-Bytes) for each time
-					tconWirteData(reverse_bits_16(pusFrameBuf[j * (pstAreaImgInfo->usWidth/2) + (pstAreaImgInfo->usWidth/2 + i)]));
-				else
-					tconWirteData((pusFrameBuf[j * (pstAreaImgInfo->usWidth/2) + (pstAreaImgInfo->usWidth/2 - i - 1)]));
-			}
-	}
+	// for(j=0;j< pstAreaImgInfo->usHeight;j++)
+	// {
+	// 	 for(i=0;i< pstAreaImgInfo->usWidth/2;i++)
+	// 		{
+	// 			if(pstLdImgInfo->usFilp)
+	// 				//Write a Word(2-Bytes) for each time
+	// 				tconWirteData(reverse_bits_16(pusFrameBuf[j * (pstAreaImgInfo->usWidth/2) + (pstAreaImgInfo->usWidth/2 + i)]));
+	// 			else
+	// 				tconWirteData((pusFrameBuf[j * (pstAreaImgInfo->usWidth/2) + (pstAreaImgInfo->usWidth/2 - i - 1)]));
+	// 		}
+	// }
+	tconWirteNData(pusFrameBuf, pstAreaImgInfo->usHeight * pstAreaImgInfo->usWidth / 2);
+	// for(j=0;j< pstAreaImgInfo->usHeight;j++)
+	// {
+	// 	 for(i=0;i< pstAreaImgInfo->usWidth/2;i++)
+	// 		{
+	// 			if(pstLdImgInfo->usFilp)
+	// 				//Write a Word(2-Bytes) for each time
+	// 				tconWirteData(reverse_bits_16(pusFrameBuf[j * (pstAreaImgInfo->usWidth/2) + (pstAreaImgInfo->usWidth/2 + i)]));
+	// 			else
+	// 				tconWirteData((pusFrameBuf[j * (pstAreaImgInfo->usWidth/2) + (pstAreaImgInfo->usWidth/2 - i - 1)]));
+	// 		}
+	// }
 	//printf("---IT8951 Host Area Packed Pixel Write end---\r\n");
 	//Send Load Img End Command
 	tconLoadImgEnd();
