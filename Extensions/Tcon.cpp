@@ -14,7 +14,7 @@ TByte reverse_bits_8(TByte x) {
     x = (x & 0xF0) >> 4 | (x & 0x0F) << 4;   
     return x;
 }
-
+ 
 void TFT_eSPI::tconWaitForReady()
 {
     TByte ulData = digitalRead(TFT_BUSY);
@@ -256,7 +256,8 @@ void TFT_eSPI::tconHostAreaPackedPixelWrite(TCONLdImgInfo* pstLdImgInfo,TCONArea
     TDWord i,j;
 	//Source buffer address of Host
 	TWord* pusFrameBuf = (TWord*)pstLdImgInfo->ulStartFBAddr;
-
+	TByte pusFrameBufTemp[pstAreaImgInfo->usWidth] = {0};
+	TByte *pusFrameBufBytes = (TByte *)pusFrameBuf;
 	//Set Image buffer(IT8951) Base address
 	tconSetImgBufBaseAddr(pstLdImgInfo->ulImgBufBaseAddr);
 	//Send Load Image start Cmd
@@ -266,18 +267,18 @@ void TFT_eSPI::tconHostAreaPackedPixelWrite(TCONLdImgInfo* pstLdImgInfo,TCONArea
 	//tconSetImgRotation(IT8951_ROTATE_180);
 	//printf("---IT8951 Host Area Packed Pixel Write begin---\r\n");
 	//Host Write Data
-	// for(j=0;j< pstAreaImgInfo->usHeight;j++)
-	// {
-	// 	 for(i=0;i< pstAreaImgInfo->usWidth/2;i++)
-	// 		{
-	// 			if(pstLdImgInfo->usFilp)
-	// 				//Write a Word(2-Bytes) for each time
-	// 				tconWirteData(reverse_bits_16(pusFrameBuf[j * (pstAreaImgInfo->usWidth/2) + (pstAreaImgInfo->usWidth/2 + i)]));
-	// 			else
-	// 				tconWirteData((pusFrameBuf[j * (pstAreaImgInfo->usWidth/2) + (pstAreaImgInfo->usWidth/2 - i - 1)]));
-	// 		}
-	// }
+	for(j=0;j< pstAreaImgInfo->usHeight;j++)
+	{
+		 for(i=0;i< pstAreaImgInfo->usWidth / 2;i++)
+		 {
+		 	pusFrameBufTemp[i] = pusFrameBufBytes[j * pstAreaImgInfo->usWidth + i];
+			pusFrameBufBytes[j * pstAreaImgInfo->usWidth + i] = pusFrameBufBytes[j * pstAreaImgInfo->usWidth + (pstAreaImgInfo->usWidth - i)];
+			pusFrameBufBytes[j * pstAreaImgInfo->usWidth + (pstAreaImgInfo->usWidth - i)] = pusFrameBufTemp[i];
+			//pusFrameBufTemp[j * (pstAreaImgInfo->usWidth ) +  i] = (reverse_bits_8(pusFrameBufTemp[j * (pstAreaImgInfo->usWidth) +  i]));
+		}
+	}
 	tconWirteNData(pusFrameBuf, pstAreaImgInfo->usHeight * pstAreaImgInfo->usWidth / 2);
+	
 	// for(j=0;j< pstAreaImgInfo->usHeight;j++)
 	// {
 	// 	 for(i=0;i< pstAreaImgInfo->usWidth/2;i++)
@@ -292,6 +293,7 @@ void TFT_eSPI::tconHostAreaPackedPixelWrite(TCONLdImgInfo* pstLdImgInfo,TCONArea
 	//printf("---IT8951 Host Area Packed Pixel Write end---\r\n");
 	//Send Load Img End Command
 	tconLoadImgEnd();
+	//memset(pusFrameBufTemp, 0xf, pstAreaImgInfo->usHeight * pstAreaImgInfo->usWidth);
 }
 
 

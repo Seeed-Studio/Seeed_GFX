@@ -87,7 +87,6 @@
         tconWake();    \
         if(_entemp)     \
             EPD_SET_TEMP(_temp);        \
-        
     } while (0)
 
 #define EPD_SET_WINDOW(x1, y1, x2, y2)                  \
