@@ -96,7 +96,10 @@ void TFT_eSPI::tconWirteNData(TWord* pwBuf, TDWord ulSizeWordCnt)
 
 
 		EPD_temp = &pwBuf[b];
-		pushPixelsDMA(EPD_temp, chunk_size);
+		if (DMA_Enabled) 
+			pushPixelsDMA(EPD_temp, chunk_size);
+		else
+			pushPixels(EPD_temp, chunk_size);
        // writenBytes(EPD_temp, chunk_size, 32768);
         b += chunk_size;
     }
@@ -106,7 +109,10 @@ void TFT_eSPI::tconWirteNData(TWord* pwBuf, TDWord ulSizeWordCnt)
     if (remainder > 0)
     {
 		EPD_temp = &pwBuf[b];
-		pushPixelsDMA(EPD_temp, chunk_size);
+		if (DMA_Enabled) 
+			pushPixelsDMA(EPD_temp, remainder);
+		else
+			pushPixels(EPD_temp, remainder);
         //writenBytes(EPD_temp, remainder, 32768);
     }
 	// for(i=0;i<ulSizeWordCnt;i++)
