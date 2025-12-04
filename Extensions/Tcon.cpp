@@ -315,6 +315,8 @@ void TFT_eSPI::tconDisplayArea(TWord usX, TWord usY, TWord usW, TWord usH, TWord
 	tconWirteData(usH);
 
 	tconWirteData(usDpyMode);
+
+
 }
 
 void TFT_eSPI::tconDisplayArea1bpp(TWord usX, TWord usY, TWord usW, TWord usH, TWord usDpyMode, TByte ucBGGrayVal, TByte ucFGGrayVal)
@@ -360,6 +362,30 @@ void TFT_eSPI::tconLoad1bppImage(const TByte* p1bppImgBuf, TWord usX, TWord usY,
     //Load Image from Host to IT8951 Image Buffer
     tconHostAreaPackedPixelWrite(&stLdImgInfo, &stAreaImgInfo);//Display function 2
 }
+
+
+void TFT_eSPI::tconLoadImage(const TByte* pImgBuf, TWord usX, TWord usY, TWord usW, TWord usH, TByte enFilp)
+{
+	TCONLdImgInfo stLdImgInfo;
+    TCONAreaImgInfo stAreaImgInfo;
+	
+    //Setting Load image information
+    stLdImgInfo.ulStartFBAddr    = (TDWord) pImgBuf;
+    stLdImgInfo.usEndianType     = IT8951_LDIMG_B_ENDIAN;
+    stLdImgInfo.usPixelFormat    = IT8951_4BPP; //we use 8bpp because IT8951 dose not support 1bpp mode for load image�Aso we use Load 8bpp mode ,but the transfer size needs to be reduced to Size/8
+    stLdImgInfo.usRotate         = IT8951_ROTATE_0;
+    stLdImgInfo.ulImgBufBaseAddr = _gulImgBufAddr;
+	stLdImgInfo.usFilp           = enFilp;
+    //Set Load Area
+    stAreaImgInfo.usX      = usX ;
+    stAreaImgInfo.usY      = usY;
+    stAreaImgInfo.usWidth  = usW ;
+    stAreaImgInfo.usHeight = usH;
+    //printf("IT8951HostAreaPackedPixelWrite [wait]\n\r");
+    //Load Image from Host to IT8951 Image Buffer
+    tconHostAreaPackedPixelWrite(&stLdImgInfo, &stAreaImgInfo);//Display function 2
+}
+
 
 void TFT_eSPI::getTconInfo(void* pBuf)
 {

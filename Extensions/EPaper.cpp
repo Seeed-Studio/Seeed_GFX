@@ -42,6 +42,7 @@ void EPaper::update()
         #else
             EPD_PUSH_NEW_COLORS(_width, _height, _img8);
         #endif
+            EPD_UPDATE();
     }    
     else
     {
@@ -51,9 +52,9 @@ void EPaper::update()
         #else
             EPD_PUSH_NEW_GRAY_COLORS(_width, _height, _img8);
         #endif
+            EPD_UPDATE_GRAY();
       #endif  
     }
-    EPD_UPDATE();
     sleep();
 }
 
@@ -102,10 +103,10 @@ void EPaper::initGrayMode(uint8_t grayLevel)
     if (_created) {
         deleteSprite();
     }
-    setColorDepth(grayLevel); 
+    setColorDepth(4); 
     createSprite(_width, _height, 1);
-    fillSprite(TFT_GRAY_3); 
-    setTextColor(TFT_GRAY_0, TFT_GRAY_3, true);
+    fillSprite(grayLevel - 1); 
+    setTextColor(TFT_GRAY_0, grayLevel - 1, true);
 }
 
 

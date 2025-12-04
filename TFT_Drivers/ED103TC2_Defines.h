@@ -17,6 +17,8 @@
 
 #define EPD_COLOR_DEPTH 1
 
+#define USE_MUTIGRAY_EPAPER
+#define GRAY_LEVEL16 16
 
 #define EPD_PSR         0x00
 #define EPD_PWRR        0x01
@@ -65,6 +67,13 @@
         tconDisplayArea1bpp(_imgAreaInfo.usX,_imgAreaInfo.usY, _imgAreaInfo.usWidth, _imgAreaInfo.usHeight, 0x02, 0x00, 0xff); \
     } while (0)
 
+#define EPD_UPDATE_GRAY()        \
+    do                      \
+    {                       \
+                            \
+        tconDisplayArea(_imgAreaInfo.usX,_imgAreaInfo.usY, _imgAreaInfo.usWidth, _imgAreaInfo.usHeight, 0x02); \
+    } while (0)
+
 #define EPD_SLEEP()         \
     do                      \
     {                       \
@@ -89,6 +98,8 @@
             EPD_SET_TEMP(_temp);        \
     } while (0)
 
+#define EPD_WAKEUP_GRAY EPD_WAKEUP
+
 #define EPD_SET_WINDOW(x1, y1, x2, y2)                  \
     do                                                  \
     {                                                   \
@@ -110,6 +121,18 @@
     do                                                                 \
     {  tconLoad1bppImage(colors, _imgAreaInfo.usX, _imgAreaInfo.usY , w ,h, true);                 \
     } while (0)
+
+#define EPD_PUSH_NEW_GRAY_COLORS(w, h, colors)                       \
+    do                                                                  \
+    {                                                                   \
+        tconLoadImage(colors, _imgAreaInfo.usX, _imgAreaInfo.usY , w ,h, false);                 \
+    } while (0)
+
+#define EPD_PUSH_NEW_GRAY_COLORS_FLIP(w, h, colors)                    \
+    do                                                                 \
+    {                                                                  \
+        tconLoadImage(colors, _imgAreaInfo.usX, _imgAreaInfo.usY , w ,h, true);                 \
+    } while (0)    
 
 #define EPD_PUSH_OLD_COLORS_FILP(w, h, colors)\
     do                                      \
