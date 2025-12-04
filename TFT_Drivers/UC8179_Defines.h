@@ -59,6 +59,8 @@
         CHECK_BUSY();       \
     } while (0)
 
+#define EPD_UPDATE_GRAY EPD_UPDATE 
+
 #define EPD_SLEEP()         \
     do                      \
     {                       \
@@ -182,16 +184,7 @@
         EPD_INIT_FAST();             \
     } while (0)
 
-#define EPD_WAKEUP_GRAY()            \
-do                               \
-{                                \
-    digitalWrite(TFT_RST, LOW);  \
-    delay(10);                   \
-    digitalWrite(TFT_RST, HIGH); \
-    delay(10);                   \
-    CHECK_BUSY();                \
-    EPD_INIT_GRAY();             \
-} while (0)
+#define EPD_WAKEUP_GRAY EPD_WAKEUP
 
 #define EPD_SET_WINDOW(x1, y1, x2, y2)                  \
     do                                                  \

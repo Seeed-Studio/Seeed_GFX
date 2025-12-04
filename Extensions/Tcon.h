@@ -68,6 +68,7 @@ public:
     void tconDisplayArea1bpp(TWord usX, TWord usY, TWord usW, TWord usH, TWord usDpyMode, TByte ucBGGrayVal, TByte ucFGGrayVal);    
 
     void tconLoad1bppImage(const TByte* p1bppImgBuf, TWord usX, TWord usY, TWord usW, TWord usH, TByte enFilp);
+    void tconLoadImage(const TByte* pImgBuf, TWord usX, TWord usY, TWord usW, TWord usH, TByte enFilp);
 
     TWord getTconTemp();
     void setTconTemp(TWord temp);
