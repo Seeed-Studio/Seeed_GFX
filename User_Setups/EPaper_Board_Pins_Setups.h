@@ -30,7 +30,7 @@
 #define TFT_MISO D9
 #define TFT_MOSI D10
 #define TFT_CS 44  // D7
-#define TFT_DC 10  // D16
+#define TFT_DC -1  // D16
 #define TFT_BUSY 4 // D3
 #define TFT_RST 38 // D11
 #define TFT_ENABLE 43
