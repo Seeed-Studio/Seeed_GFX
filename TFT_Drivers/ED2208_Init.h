@@ -76,11 +76,12 @@
   writedata(0x00);
   
   writecommand(EPD_TRES);
-  writedata(0x03);
-  writedata(0x20);
-  writedata(0x01); 
-  writedata(0xE0);
+  writedata((TFT_WIDTH >> 8) & 0xFF);
+  writedata(TFT_WIDTH & 0xFF);
+  writedata((TFT_HEIGHT >> 8) & 0xFF);
+  writedata(TFT_HEIGHT & 0xFF);
   
+
   writecommand(EPD_VDCS);
   writedata(0x1E); 
 
