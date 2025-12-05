@@ -268,20 +268,29 @@ void TFT_eSPI::tconHostAreaPackedPixelWrite(TCONLdImgInfo* pstLdImgInfo,TCONArea
 	tconLoadImgAreaStart(pstLdImgInfo , pstAreaImgInfo);	
 	//printf("---IT8951 Host Area Packed Pixel Write begin---\r\n");
 	//Host Write Data
-	uint16_t *mirroredFrameBuf = (uint16_t *)malloc(pstAreaImgInfo->usWidth * pstAreaImgInfo->usHeight * sizeof(uint16_t));
+
+
+    uint16_t height = pstAreaImgInfo->usHeight;
+    uint16_t width = pstAreaImgInfo->usWidth; 
+    if(pstLdImgInfo->usPixelFormat == IT8951_4BPP)
+            width = width / 4;
+    else if(pstLdImgInfo->usPixelFormat == IT8951_8BPP)
+            width = width / 2;
+
+	TWord *mirroredFrameBuf = (TWord *)malloc(width * height * sizeof(TWord));
     if(mirroredFrameBuf == NULL) {
         return;
     }
 
-    for (uint16_t j = 0; j < pstAreaImgInfo->usHeight; j++) {
-        for (uint16_t i = 0; i < pstAreaImgInfo->usWidth; i++) {
+    for (uint16_t j = 0; j < height; j++) {
+        for (uint16_t i = 0; i < width; i++) {
 			if(pstLdImgInfo->usFilp)
-				mirroredFrameBuf[j * pstAreaImgInfo->usWidth + i] = reverse_bits_16(pusFrameBuf[j * pstAreaImgInfo->usWidth + i]);
+				mirroredFrameBuf[j * width + i] = reverse_bits_16(pusFrameBuf[j * width + i]);
 			else
-				mirroredFrameBuf[j * pstAreaImgInfo->usWidth + i] = pusFrameBuf[j * pstAreaImgInfo->usWidth + (pstAreaImgInfo->usWidth - 1 - i)];
+				mirroredFrameBuf[j * width + i] = pusFrameBuf[j * width + (width - 1 - i)];
         }
     }
-	tconWirteNData(mirroredFrameBuf, pstAreaImgInfo->usHeight * pstAreaImgInfo->usWidth / 2);
+	tconWirteNData(mirroredFrameBuf, height * width );
 	free(mirroredFrameBuf);
 	// for(j=0;j< pstAreaImgInfo->usHeight;j++)
 	// {
@@ -370,7 +379,7 @@ void TFT_eSPI::tconLoadImage(const TByte* pImgBuf, TWord usX, TWord usY, TWord u
     //Setting Load image information
     stLdImgInfo.ulStartFBAddr    = (TDWord) pImgBuf;
     stLdImgInfo.usEndianType     = IT8951_LDIMG_L_ENDIAN;
-    stLdImgInfo.usPixelFormat    = IT8951_4BPP; //we use 8bpp because IT8951 dose not support 1bpp mode for load image�Aso we use Load 8bpp mode ,but the transfer size needs to be reduced to Size/8
+    stLdImgInfo.usPixelFormat    = IT8951_4BPP; 
     stLdImgInfo.usRotate         = IT8951_ROTATE_0;
     stLdImgInfo.ulImgBufBaseAddr = _gulImgBufAddr;
 	stLdImgInfo.usFilp           = enFilp;
