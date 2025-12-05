@@ -262,29 +262,27 @@ void TFT_eSPI::tconHostAreaPackedPixelWrite(TCONLdImgInfo* pstLdImgInfo,TCONArea
     TDWord i,j;
 	//Source buffer address of Host
 	TWord* pusFrameBuf = (TWord*)pstLdImgInfo->ulStartFBAddr;
-	TByte pusFrameBufTemp[pstAreaImgInfo->usWidth] = {0};
-	TByte *pusFrameBufBytes = (TByte *)pusFrameBuf;
 	//Set Image buffer(IT8951) Base address
 	tconSetImgBufBaseAddr(pstLdImgInfo->ulImgBufBaseAddr);
 	//Send Load Image start Cmd
 	tconLoadImgAreaStart(pstLdImgInfo , pstAreaImgInfo);	
-
-	
-	//tconSetImgRotation(IT8951_ROTATE_180);
 	//printf("---IT8951 Host Area Packed Pixel Write begin---\r\n");
 	//Host Write Data
-	for(j=0;j< pstAreaImgInfo->usHeight;j++)
-	{
-		 for(i=0;i< pstAreaImgInfo->usWidth / 2;i++)
-		 {
-		 	pusFrameBufTemp[i] = pusFrameBufBytes[j * pstAreaImgInfo->usWidth + i];
-			pusFrameBufBytes[j * pstAreaImgInfo->usWidth + i] = pusFrameBufBytes[j * pstAreaImgInfo->usWidth + (pstAreaImgInfo->usWidth - i)];
-			pusFrameBufBytes[j * pstAreaImgInfo->usWidth + (pstAreaImgInfo->usWidth - i)] = pusFrameBufTemp[i];
-			//pusFrameBufTemp[j * (pstAreaImgInfo->usWidth ) +  i] = (reverse_bits_8(pusFrameBufTemp[j * (pstAreaImgInfo->usWidth) +  i]));
-		}
-	}
-	tconWirteNData(pusFrameBuf, pstAreaImgInfo->usHeight * pstAreaImgInfo->usWidth / 2);
-	
+	uint16_t *mirroredFrameBuf = (uint16_t *)malloc(pstAreaImgInfo->usWidth * pstAreaImgInfo->usHeight * sizeof(uint16_t));
+    if(mirroredFrameBuf == NULL) {
+        return;
+    }
+
+    for (uint16_t j = 0; j < pstAreaImgInfo->usHeight; j++) {
+        for (uint16_t i = 0; i < pstAreaImgInfo->usWidth; i++) {
+			if(pstLdImgInfo->usFilp)
+				mirroredFrameBuf[j * pstAreaImgInfo->usWidth + i] = reverse_bits_16(pusFrameBuf[j * pstAreaImgInfo->usWidth + i]);
+			else
+				mirroredFrameBuf[j * pstAreaImgInfo->usWidth + i] = pusFrameBuf[j * pstAreaImgInfo->usWidth + (pstAreaImgInfo->usWidth - 1 - i)];
+        }
+    }
+	tconWirteNData(mirroredFrameBuf, pstAreaImgInfo->usHeight * pstAreaImgInfo->usWidth / 2);
+	free(mirroredFrameBuf);
 	// for(j=0;j< pstAreaImgInfo->usHeight;j++)
 	// {
 	// 	 for(i=0;i< pstAreaImgInfo->usWidth/2;i++)
@@ -348,7 +346,7 @@ void TFT_eSPI::tconLoad1bppImage(const TByte* p1bppImgBuf, TWord usX, TWord usY,
 	
     //Setting Load image information
     stLdImgInfo.ulStartFBAddr    = (TDWord) p1bppImgBuf;
-    stLdImgInfo.usEndianType     = IT8951_LDIMG_B_ENDIAN;
+    stLdImgInfo.usEndianType     = IT8951_LDIMG_L_ENDIAN;
     stLdImgInfo.usPixelFormat    = IT8951_8BPP; //we use 8bpp because IT8951 dose not support 1bpp mode for load image�Aso we use Load 8bpp mode ,but the transfer size needs to be reduced to Size/8
     stLdImgInfo.usRotate         = IT8951_ROTATE_0;
     stLdImgInfo.ulImgBufBaseAddr = _gulImgBufAddr;
@@ -371,7 +369,7 @@ void TFT_eSPI::tconLoadImage(const TByte* pImgBuf, TWord usX, TWord usY, TWord u
 	
     //Setting Load image information
     stLdImgInfo.ulStartFBAddr    = (TDWord) pImgBuf;
-    stLdImgInfo.usEndianType     = IT8951_LDIMG_B_ENDIAN;
+    stLdImgInfo.usEndianType     = IT8951_LDIMG_L_ENDIAN;
     stLdImgInfo.usPixelFormat    = IT8951_4BPP; //we use 8bpp because IT8951 dose not support 1bpp mode for load image�Aso we use Load 8bpp mode ,but the transfer size needs to be reduced to Size/8
     stLdImgInfo.usRotate         = IT8951_ROTATE_0;
     stLdImgInfo.ulImgBufBaseAddr = _gulImgBufAddr;
