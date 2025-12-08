@@ -94,6 +94,7 @@
         digitalWrite(TFT_RST, HIGH); \
         delay(10);                   \
         writecommand(0x12);          \
+        delay(10);    /* mandatory */\
         CHECK_BUSY();                \
     } while (0)
 
