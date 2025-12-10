@@ -21,6 +21,9 @@
 // Define color depth (1 bit for e-ink display)
 #define EPD_COLOR_DEPTH 1
 
+#define USE_MUTIGRAY_EPAPER
+#define GRAY_LEVEL4 4
+
 // Define no operation command
 #define EPD_NOP 0xFF
 
@@ -65,6 +68,17 @@
         writecommand(0x20); \
         CHECK_BUSY();       \
     } while (0)
+
+#define EPD_UPDATE_FAST()        \
+    do                      \
+    {                       \
+        writecommand(0x22); \
+        writedata(0xCF);    \
+        writecommand(0x20); \
+        CHECK_BUSY();       \
+    } while (0)
+
+#define EPD_UPDATE_GRAY() EPD_UPDATE_FAST()
 
 // Macro to enter deep sleep
 #define EPD_SLEEP()         \
@@ -114,8 +128,34 @@
         CHECK_BUSY();                      \
     } while (0)
 
+#define EPD_INIT_GRAY()         \
+  do                            \
+  {                             \
+    digitalWrite(TFT_RST, LOW);  \
+    delay(10);                   \
+    digitalWrite(TFT_RST, HIGH); \
+    delay(10);                   \
+	writecommand(0x12);\
+	CHECK_BUSY();  \
+    writecommand(0x18); \
+	writedata(0x80);	\
+	writecommand(0x22); \
+	writedata(0xB1);	\
+    writecommand(0x20);	\
+    CHECK_BUSY();  \
+	writecommand(0x1A); \
+	writedata(0x5A);		\
+    writedata(0x00);		\
+	writecommand(0x22); \
+	writedata(0x91);		\
+    writecommand(0x20);	\
+	CHECK_BUSY();  \
+  } while (0)
+
 // Macro to wake up device
 #define EPD_WAKEUP() EPD_INIT()
+
+#define EPD_WAKEUP_GRAY() EPD_WAKEUP()
 
 // Macro to set display window
 #define EPD_SET_WINDOW(x1, y1, x2, y2) \
@@ -152,6 +192,110 @@
             }                                                          \
         }                                                              \
     } while (0)
+
+
+#define EPD_PUSH_NEW_GRAY_COLORS_FLIP(w, h, colors)                       \
+    do                                                                  \
+    {                                                                   \
+        EPD_INIT_GRAY();                                                \
+        uint16_t i, j, k;                                               \
+        uint8_t temp1, temp2, temp3;                                    \
+        writecommand(0x24);                                             \
+        for(i = 0; i < (TFT_WIDTH * TFT_HEIGHT) / 8; i++)                                      \
+        {                                                               \
+            /* Read 4 input bytes = 8 pixels */                         \
+            uint8_t c0 = colors[i * 4 + 0];                             \
+            uint8_t c1 = colors[i * 4 + 1];                             \
+            uint8_t c2 = colors[i * 4 + 2];                             \
+            uint8_t c3 = colors[i * 4 + 3];                             \
+            /* Extract 8 pixels from bit5-4 and bit1-0 of each byte */  \
+            uint8_t p0 = (c0 >> 4) & 0x03;                              \
+            uint8_t p1 = (c0 >> 0) & 0x03;                              \
+            uint8_t p2 = (c1 >> 4) & 0x03;                              \
+            uint8_t p3 = (c1 >> 0) & 0x03;                              \
+            uint8_t p4 = (c2 >> 4) & 0x03;                              \
+            uint8_t p5 = (c2 >> 0) & 0x03;                              \
+            uint8_t p6 = (c3 >> 4) & 0x03;                              \
+            uint8_t p7 = (c3 >> 0) & 0x03;                              \
+            /* Pack into original-style packed bytes (high 2-bit per pixel) */ \
+            uint8_t packed_byte0 = (p0 << 6) | (p1 << 4) | (p2 << 2) | p3; \
+            uint8_t packed_byte1 = (p4 << 6) | (p5 << 4) | (p6 << 2) | p7; \
+                                                                        \
+            temp3 = 0;                                                  \
+            for(j = 0; j < 2; j++)                                      \
+            {                                                           \
+                temp1 = (j == 0) ? packed_byte0 : packed_byte1;         \
+                for(k = 0; k < 4; k++)                                  \
+                {                                                       \
+                    temp2 = temp1 & 0xC0;                               \
+                    if(temp2 == 0xC0)                                   \
+                        temp3 |= 0x01;                                  \
+                    else if(temp2 == 0x00)                              \
+                        temp3 |= 0x00;                                  \
+                    else if((temp2 >= 0x80) && (temp2 < 0xC0))          \
+                        temp3 |= 0x00;                                  \
+                    else if(temp2 == 0x40)                              \
+                        temp3 |= 0x01;                                  \
+                    if((j == 0 && k <= 3) || (j == 1 && k <= 2))        \
+                    {                                                   \
+                        temp3 <<= 1;                                    \
+                        temp1 <<= 2;                                    \
+                    }                                                   \
+                }                                                       \
+            }                                                           \
+            writedata(~temp3);                                          \
+        }                                                               \
+                                                                        \
+        writecommand(0x26);                                             \
+        for(i = 0; i < (TFT_WIDTH * TFT_HEIGHT) / 8; i++)                                      \
+        {                                                               \
+            uint8_t c0 = colors[i * 4 + 0];                             \
+            uint8_t c1 = colors[i * 4 + 1];                             \
+            uint8_t c2 = colors[i * 4 + 2];                             \
+            uint8_t c3 = colors[i * 4 + 3];                             \
+            uint8_t p0 = (c0 >> 4) & 0x03;                              \
+            uint8_t p1 = (c0 >> 0) & 0x03;                              \
+            uint8_t p2 = (c1 >> 4) & 0x03;                              \
+            uint8_t p3 = (c1 >> 0) & 0x03;                              \
+            uint8_t p4 = (c2 >> 4) & 0x03;                              \
+            uint8_t p5 = (c2 >> 0) & 0x03;                              \
+            uint8_t p6 = (c3 >> 4) & 0x03;                              \
+            uint8_t p7 = (c3 >> 0) & 0x03;                              \
+            uint8_t packed_byte0 = (p0 << 6) | (p1 << 4) | (p2 << 2) | p3; \
+            uint8_t packed_byte1 = (p4 << 6) | (p5 << 4) | (p6 << 2) | p7; \
+                                                                        \
+            temp3 = 0;                                                  \
+            for(j = 0; j < 2; j++)                                      \
+            {                                                           \
+                temp1 = (j == 0) ? packed_byte0 : packed_byte1;         \
+                for(k = 0; k < 4; k++)                                  \
+                {                                                       \
+                    temp2 = temp1 & 0xC0;                               \
+                    if(temp2 == 0xC0)                                   \
+                        temp3 |= 0x01;                                  \
+                    else if(temp2 == 0x00)                              \
+                        temp3 |= 0x00;                                  \
+                    else if((temp2 >= 0x80) && (temp2 < 0xC0))          \
+                        temp3 |= 0x01;                                  \
+                    else if(temp2 == 0x40)                              \
+                        temp3 |= 0x00;                                  \
+                    if((j == 0 && k <= 3) || (j == 1 && k <= 2))        \
+                    {                                                   \
+                        temp3 <<= 1;                                    \
+                        temp1 <<= 2;                                    \
+                    }                                                   \
+                }                                                       \
+            }                                                           \
+            writedata(~temp3);                                          \
+        }                                                               \
+    } while (0)
+
+#define EPD_PUSH_NEW_GRAY_COLORS(w, h, colors)                    \
+    do                                                                 \
+    {                                                                  \
+        EPD_INIT_GRAY();                                               \
+    } while (0)
+
 
 // Macro to push old color data
 #define EPD_PUSH_OLD_COLORS(w, h, colors)        \
