@@ -1,4 +1,4 @@
-/*
+ /*
  * Supported Colors:
  * - TFT_WHITE  (White)
  * - TFT_BLACK  (Black)
