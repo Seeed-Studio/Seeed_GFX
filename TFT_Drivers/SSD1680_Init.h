@@ -64,4 +64,6 @@
 
     //set ic offset
     setViewport(COL_OFFSET ,ROW_OFFSET ,EPD_WIDTH ,EPD_HEIGHT);
+
+    setRotation(2);
 }
