@@ -33,13 +33,14 @@ void EPaper::begin(uint8_t tc)
 void EPaper::update()
 {
     wake();
-    EPD_SET_WINDOW(0, 0, (_width - 1), (_height - 1));
 
     if(!_grayLevel)
     {
         #ifdef EPD_HORIZONTAL_MIRROR
+            EPD_PUSH_OLD_COLORS_FLIP(_width, _height, _img8);
             EPD_PUSH_NEW_COLORS_FLIP(_width, _height, _img8);
         #else
+            EPD_PUSH_OLD_COLORS(_width, _height, _img8);
             EPD_PUSH_NEW_COLORS(_width, _height, _img8);
         #endif
             EPD_UPDATE();
@@ -58,7 +59,46 @@ void EPaper::update()
     sleep();
 }
 
+#ifdef USE_PARTIAL_EPAPER
+void EPaper::updataPartial(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
+{
+    uint16_t x0 = x & ~7;
+    uint16_t x1 = (x + w + 7) & ~7;
+    uint16_t w_aligned = x1 - x0;
 
+    uint16_t stride = _width >> 3;           
+    uint16_t win_bytes_per_row = w_aligned >> 3;
+
+    const uint8_t* src0 = _img8 + (y * stride) + (x0 >> 3);
+
+    size_t win_size = (size_t)win_bytes_per_row * h;
+    uint8_t* winbuf = (uint8_t*)malloc(win_size);
+    if (!winbuf) return;
+
+
+    for (uint16_t row = 0; row < h; row++) {
+        memcpy(winbuf + row * win_bytes_per_row,
+               src0  + row * stride,
+               win_bytes_per_row);
+    }
+
+    if (_sleep) { EPD_WAKEUP_PARTIAL(); _sleep = false; }
+
+#ifdef EPD_HORIZONTAL_MIRROR
+    EPD_SET_WINDOW(x0, y, x0 + w_aligned - 1, y + h - 1);
+    EPD_PUSH_NEW_COLORS_PART_FLIP(w_aligned, h, winbuf);
+#else
+    EPD_SET_WINDOW(x0, y, x0 + w_aligned - 1, y + h - 1);
+    EPD_PUSH_NEW_COLORS_PART(w_aligned, h, winbuf);
+#endif
+    EPD_UPDATE();
+
+    free(winbuf);
+    sleep();
+}
+
+
+#endif
 
 void EPaper::update(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t *data)
 {
@@ -77,7 +117,6 @@ void EPaper::update(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t *da
      pushImage(x, y, w, h / 2 , (uint16_t *)p);
     else
      pushImage(x, y, w, h , (uint16_t *)p);
-    EPD_SET_WINDOW(x, y, (x + w - 1), (y + h - 1));
 #ifdef EPD_HORIZONTAL_MIRROR
     EPD_PUSH_NEW_COLORS_FLIP(w, h, p);
 #else
