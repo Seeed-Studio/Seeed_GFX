@@ -7,3 +7,7 @@
 #endif  
     pinMode(TFT_CS1, OUTPUT); 
     digitalWrite(TFT_CS1, HIGH); 
+    digitalWrite(TFT_RST, LOW);
+    delay(20);                 
+    digitalWrite(TFT_RST, HIGH);
+    delay(20);   
