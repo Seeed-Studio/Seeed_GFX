@@ -17,6 +17,7 @@
 
 #define EPD_COLOR_DEPTH 1
 
+#define USE_PARTIAL_EPAPER
 #define USE_MUTIGRAY_EPAPER
 #define GRAY_LEVEL4 4
 
@@ -56,6 +57,7 @@
     do                      \
     {                       \
         writecommand(0x12); \
+        delay(1);           \
         CHECK_BUSY();       \
     } while (0)
 
@@ -162,6 +164,8 @@
 #define EPD_INIT_PARTIAL()           \
     do                               \
     {                                \
+        writecommand(0x00);          \
+        writedata(0x1F);             \
         writecommand(0x04);          \
         delay(100);                  \
         CHECK_BUSY();                \
@@ -169,8 +173,6 @@
         writedata(0x02);             \
         writecommand(0xE5);          \
         writedata(0x6E);             \
-        writecommand(0x00);          \
-        writedata(0x1F);             \
     } while (0)
 
 #define EPD_WAKEUP()                 \
@@ -186,10 +188,65 @@
 
 #define EPD_WAKEUP_GRAY EPD_WAKEUP
 
+#define EPD_WAKEUP_PARTIAL()        \
+    do                              \
+    {                               \
+        digitalWrite(TFT_RST, LOW);  \
+        delay(10);                   \
+        digitalWrite(TFT_RST, HIGH); \
+        delay(10);                   \
+        CHECK_BUSY();                \
+        EPD_INIT_PARTIAL();          \
+    } while (0);
+    
+
 #define EPD_SET_WINDOW(x1, y1, x2, y2)                  \
     do                                                  \
     {                                                   \
+        writecommand(0x50);     \
+        writedata(0xA9);        \
+        writedata(0x07);        \
+        writecommand(0x91);         \
+        writecommand(0x90);         \
+        writedata (x1 >> 8);     \
+        writedata (x1& 0xFF);             \
+        writedata (x2 >> 8);         \
+        writedata ((x2& 0xFF)-1);       \
+        writedata (y1 >> 8);         \
+        writedata (y1& 0xFF);             \
+        writedata (y2 >> 8);         \
+        writedata ((y2& 0xFF)-1);       \
+        writedata (0x01);       \
+        } while (0)
+
+#define EPD_PUSH_NEW_COLORS_PART(w, h, colors)   \
+    do                                      \
+    {                                       \
+        writecommand(0x13);                 \
+        for (int i = 0; i < w * h / 8; i++) \
+        {                                   \
+            writedata(colors[i]);           \
+        }                                   \
     } while (0)
+
+#define EPD_PUSH_NEW_COLORS_PART_FLIP(w, h, colors)                    \
+    do                                                                 \
+    {                                                                  \
+        writecommand(0x13);                                            \
+        uint16_t bytes_per_row = (w) / 8;                              \
+        for (uint16_t row = 0; row < (h); row++)                       \
+        {                                                              \
+            uint16_t start = row * bytes_per_row;                      \
+            for (uint16_t col = 0; col < bytes_per_row; col++)         \
+            {                                                          \
+                uint8_t b = colors[start + (bytes_per_row - 1 - col)]; \
+                b = ((b & 0xF0) >> 4) | ((b & 0x0F) << 4);             \
+                b = ((b & 0xCC) >> 2) | ((b & 0x33) << 2);             \
+                b = ((b & 0xAA) >> 1) | ((b & 0x55) << 1);             \
+                writedata(b);                                          \
+            }                                                          \
+        }                                                              \
+    } while (0)    
 
 #define EPD_PUSH_NEW_COLORS(w, h, colors)   \
     do                                      \
@@ -215,7 +272,7 @@
                 b = ((b & 0xF0) >> 4) | ((b & 0x0F) << 4);             \
                 b = ((b & 0xCC) >> 2) | ((b & 0x33) << 2);             \
                 b = ((b & 0xAA) >> 1) | ((b & 0x55) << 1);             \
-                writedata(b);                                          \
+                writedata(~b);                                          \
             }                                                          \
         }                                                              \
     } while (0)
@@ -342,7 +399,7 @@
         writecommand(0x10);                 \
         for (int i = 0; i < w * h / 8; i++) \
         {                                   \
-            writedata(~colors[i]);           \
+            writedata(colors[i]);           \
         }                                   \
     } while (0)
 
