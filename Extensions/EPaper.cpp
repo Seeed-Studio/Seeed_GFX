@@ -33,7 +33,7 @@ void EPaper::begin(uint8_t tc)
 void EPaper::update()
 {
     wake();
-
+    EPD_SET_WINDOW(0, 0, (_width - 1), (_height - 1));
     if(!_grayLevel)
     {
         #ifdef EPD_HORIZONTAL_MIRROR
@@ -122,10 +122,10 @@ void EPaper::updataPartial(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
 
 #ifdef EPD_HORIZONTAL_MIRROR
     EPD_SET_WINDOW(x0, yy, x0 + w_aligned - 1, yy + hh - 1);
-    EPD_PUSH_NEW_COLORS_PART_FLIP(w_aligned, hh, winbuf);
+    EPD_PUSH_NEW_COLORS_FLIP(w_aligned, hh, winbuf);
 #else
     EPD_SET_WINDOW(x0, yy, x0 + w_aligned - 1, yy + hh - 1);
-    EPD_PUSH_NEW_COLORS_PART(w_aligned, hh, winbuf);
+    EPD_PUSH_NEW_COLORS(w_aligned, hh, winbuf);
 #endif
     EPD_UPDATE();
 
