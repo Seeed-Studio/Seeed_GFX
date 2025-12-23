@@ -62,21 +62,57 @@ void EPaper::update()
 #ifdef USE_PARTIAL_EPAPER
 void EPaper::updataPartial(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
 {
-    uint16_t x0 = x & ~7;
-    uint16_t x1 = (x + w + 7) & ~7;
+    int32_t bx = x;
+    int32_t by = y;
+    int32_t bw = w;
+    int32_t bh = h;
+
+    // Map the rotated coordinate space back to the backing buffer.
+    switch (rotation & 3)
+    {
+    case 1:
+        bx = (int32_t)_width - y - h;
+        by = x;
+        bw = h;
+        bh = w;
+        break;
+    case 2:
+        bx = (int32_t)_width - x - w;
+        by = (int32_t)_height - y - h;
+        break;
+    case 3:
+        bx = y;
+        by = (int32_t)_height - x - w;
+        bw = h;
+        bh = w;
+        break;
+    default:
+        break;
+    }
+
+    if (bx < 0) { bw += bx; bx = 0; }
+    if (by < 0) { bh += by; by = 0; }
+    if ((bx + bw) > (int32_t)_width)  bw = (int32_t)_width - bx;
+    if ((by + bh) > (int32_t)_height) bh = (int32_t)_height - by;
+    if (bw < 1 || bh < 1) return;
+
+    uint16_t x0 = (uint16_t)bx & ~7;
+    uint16_t x1 = (uint16_t)(bx + bw + 7) & ~7;
     uint16_t w_aligned = x1 - x0;
+    uint16_t yy = (uint16_t)by;
+    uint16_t hh = (uint16_t)bh;
 
     uint16_t stride = _width >> 3;           
     uint16_t win_bytes_per_row = w_aligned >> 3;
 
-    const uint8_t* src0 = _img8 + (y * stride) + (x0 >> 3);
+    const uint8_t* src0 = _img8 + (yy * stride) + (x0 >> 3);
 
-    size_t win_size = (size_t)win_bytes_per_row * h;
+    size_t win_size = (size_t)win_bytes_per_row * hh;
     uint8_t* winbuf = (uint8_t*)malloc(win_size);
     if (!winbuf) return;
 
 
-    for (uint16_t row = 0; row < h; row++) {
+    for (uint16_t row = 0; row < hh; row++) {
         memcpy(winbuf + row * win_bytes_per_row,
                src0  + row * stride,
                win_bytes_per_row);
@@ -85,11 +121,11 @@ void EPaper::updataPartial(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
     if (_sleep) { EPD_WAKEUP_PARTIAL(); _sleep = false; }
 
 #ifdef EPD_HORIZONTAL_MIRROR
-    EPD_SET_WINDOW(x0, y, x0 + w_aligned - 1, y + h - 1);
-    EPD_PUSH_NEW_COLORS_PART_FLIP(w_aligned, h, winbuf);
+    EPD_SET_WINDOW(x0, yy, x0 + w_aligned - 1, yy + hh - 1);
+    EPD_PUSH_NEW_COLORS_PART_FLIP(w_aligned, hh, winbuf);
 #else
-    EPD_SET_WINDOW(x0, y, x0 + w_aligned - 1, y + h - 1);
-    EPD_PUSH_NEW_COLORS_PART(w_aligned, h, winbuf);
+    EPD_SET_WINDOW(x0, yy, x0 + w_aligned - 1, yy + hh - 1);
+    EPD_PUSH_NEW_COLORS_PART(w_aligned, hh, winbuf);
 #endif
     EPD_UPDATE();
 
