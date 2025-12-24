@@ -12,7 +12,7 @@
 #define EPD_WIDTH TFT_WIDTH
 #define EPD_HEIGHT TFT_HEIGHT
 
-#define EPD_HORIZONTAL_MIRROR
+//#define EPD_HORIZONTAL_MIRROR
 
 #ifdef ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include "EPaper_Board_Pins_Setups.h"

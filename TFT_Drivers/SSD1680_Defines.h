@@ -89,7 +89,7 @@
         delay(100);         \
     } while (0)
 
-#define EPD_INIT()                         \
+ #define EPD_INIT()                         \
     do                                     \
     {                                      \
         digitalWrite(TFT_RST, LOW);        \
@@ -99,44 +99,35 @@
         CHECK_BUSY();                      \
         writecommand(0x12);                \
         CHECK_BUSY();                      \
-        writecommand(0x01);                \
-        writedata((EPD_HEIGHT - 1) % 256); \
-        writedata((EPD_HEIGHT - 1) / 256); \
-        writedata(0x00);                   \
-        writecommand(0x11);                \
-        writedata(0x01);                   \
-        writecommand(0x44);                \
-        writedata(0x00);                   \
-        writedata(EPD_WIDTH / 8 - 1);      \
-        writecommand(0x45);                \
-        writedata((EPD_HEIGHT - 1) % 256); \
-        writedata((EPD_HEIGHT - 1) / 256); \
-        writedata(0x00);                   \
-        writedata(0x00);                   \
         writecommand(0x3C);                \
         writedata(0x05);                   \
-        writecommand(0x21);                \
+        writecommand(0x01);                \
+        writedata((EPD_HEIGHT - 1) % 256);  \
+        writedata((EPD_HEIGHT - 1) / 256);  \
         writedata(0x00);                   \
-        writedata(0x80);                   \
+        writecommand(0x11);                \
+        writedata(0x03);                   \
+        writecommand(0x44);                \
+        writedata(0x00);                   \
+        writedata((EPD_WIDTH / 8) - 1); \
+        writecommand(0x45);                \
+        writedata(0x00);                   \
+        writedata(0x00);                   \
+        writedata((EPD_HEIGHT - 1) % 256);  \
+        writedata((EPD_HEIGHT - 1) / 256);  \
         writecommand(0x18);                \
         writedata(0x80);                   \
         writecommand(0x4E);                \
-        writedata(0x00);                   \
+        writedata(0x00);    \
         writecommand(0x4F);                \
-        writedata((EPD_HEIGHT - 1) % 256); \
-        writedata((EPD_HEIGHT - 1) / 256); \
+        writedata(0x00);  \
+        writedata(0x00);  \
         CHECK_BUSY();                      \
-    } while (0)
+    } while (0) 
 
 #define EPD_INIT_GRAY()         \
   do                            \
   {                             \
-    digitalWrite(TFT_RST, LOW);  \
-    delay(10);                   \
-    digitalWrite(TFT_RST, HIGH); \
-    delay(10);                   \
-	writecommand(0x12);         \
-	CHECK_BUSY();  \
     writecommand(0x18); \
 	writedata(0x80);	\
 	writecommand(0x22); \
@@ -153,17 +144,7 @@
   } while (0)
 
 // Macro to wake up device
-#define EPD_WAKEUP()                 \
-    do                               \
-    {                                \
-        digitalWrite(TFT_RST, LOW);  \
-        delay(10);                   \
-        digitalWrite(TFT_RST, HIGH); \
-        delay(10);                   \
-        writecommand(0x12);          \
-        delay(10);                   \
-        CHECK_BUSY();                \
-    } while (0)
+#define EPD_WAKEUP()  EPD_INIT()
 
 #define EPD_WAKEUP_GRAY() EPD_WAKEUP()
 
@@ -204,7 +185,7 @@
     } while (0)
 
 
-#define EPD_PUSH_NEW_GRAY_COLORS_FLIP(w, h, colors)                       \
+#define EPD_PUSH_NEW_GRAY_COLORS(w, h, colors)                       \
     do                                                                  \
     {                                                                   \
         EPD_INIT_GRAY();                                                \
@@ -300,10 +281,10 @@
         }                                                               \
     } while (0)
 
-#define EPD_PUSH_NEW_GRAY_COLORS(w, h, colors)                    \
+#define EPD_PUSH_NEW_GRAY_COLORS_FLIP(w, h, colors)                    \
     do                                                                 \
     {                                                                  \
-        EPD_INIT_GRAY();                                               \
+        EPD_PUSH_NEW_GRAY_COLORS(w, h, colors);                        \
     } while (0)
 
 
