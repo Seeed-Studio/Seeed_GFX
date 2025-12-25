@@ -32,5 +32,14 @@ private:
     bool _entemp;
     float _temp;
     float _humi;
+
+    typedef struct 
+    {
+       uint16_t x1;
+       uint16_t x2;
+       uint16_t y1;
+       uint16_t y2;
+    } freshArea_t;
+    freshArea_t _freshArea;
 };
 

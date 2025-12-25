@@ -62,6 +62,7 @@
     } while (0)
 
 #define EPD_UPDATE_GRAY EPD_UPDATE 
+#define EPD_UPDATE_PARTIAL EPD_UPDATE 
 
 #define EPD_SLEEP()         \
     do                      \

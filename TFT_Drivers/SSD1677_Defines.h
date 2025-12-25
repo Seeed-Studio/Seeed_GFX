@@ -18,6 +18,7 @@
 #define TFT_HEIGHT EPD_HEIGHT
 #endif
 
+#define USE_PARTIAL_EPAPER
 #define EPD_COLOR_DEPTH 1
 
 #define EPD_NOP 0xFF
@@ -60,6 +61,15 @@
         CHECK_BUSY();       \
     } while (0)
 
+#define EPD_UPDATE_PARTIAL() \
+    do                      \
+    {                       \
+        writecommand(0x22); \
+        writedata(0xFF);    \
+        writecommand(0x20); \
+    } while (0);
+    
+
 #define EPD_SLEEP()         \
     do                      \
     {                       \
@@ -78,56 +88,79 @@
         CHECK_BUSY();                      \
         writecommand(0x12);                \
         CHECK_BUSY();                      \
-        writecommand(0x18);                \
-        writedata(0x80);                   \
-        writecommand(0x0C);                \
-        writedata(0xAE);                   \
-        writedata(0xC7);                   \
-        writedata(0xC3);                   \
-        writedata(0xC0);                   \
-        writedata(0x80);                   \
-        writecommand(0x01);                \
-        writedata((EPD_WIDTH - 1) % 256);  \
-        writedata((EPD_WIDTH - 1) / 256);  \
-        writedata(0x02);                   \
+        writecommand(0x0C);                 \
+        writedata(0xAE);                \
+        writedata(0xC7);                \
+        writedata(0XC3);                \
+        writedata(0XC0);                \
+        writedata(0X80);                \
         writecommand(0x3C);                \
-        writedata(0x01);                   \
+        writedata(0x05);                   \
+        writecommand(0x01);                \
+        writedata((EPD_HEIGHT - 1) % 256);  \
+        writedata((EPD_HEIGHT - 1) / 256);  \
+        writedata(0x02);                   \
         writecommand(0x11);                \
         writedata(0x03);                   \
         writecommand(0x44);                \
         writedata(0x00);                   \
         writedata(0x00);                   \
-        writedata((EPD_HEIGHT - 1) % 256); \
-        writedata((EPD_HEIGHT - 1) / 256); \
+        writedata((EPD_WIDTH - 1) % 256);  \
+        writedata((EPD_WIDTH - 1) / 256);  \
         writecommand(0x45);                \
         writedata(0x00);                   \
         writedata(0x00);                   \
-        writedata((EPD_WIDTH - 1) % 256);  \
-        writedata((EPD_WIDTH - 1) / 256);  \
+        writedata((EPD_HEIGHT - 1) % 256);  \
+        writedata((EPD_HEIGHT - 1) / 256);  \
+        writecommand(0x18);                \
+        writedata(0x80);                   \
         writecommand(0x4E);                \
-        writedata(0x00);                   \
-        writedata(0x00);                   \
+        writedata(0x00);  \
+        writedata(0x00);  \
         writecommand(0x4F);                \
-        writedata(0x00);                   \
-        writedata(0x00);                   \
+        writedata(0x00);  \
+        writedata(0x00);  \
         CHECK_BUSY();                      \
     } while (0)
 
+#define EPD_INIT_PARTIAL()          \
+    do                              \
+    {                               \
+    writecommand(0x18);             \
+    writedata(0x80);                \
+    writecommand(0x3C);             \
+    writedata(0x80);               \
+    } while (0);    
 #define EPD_WAKEUP() EPD_INIT()
+
+#define EPD_WAKEUP_PARTIAL()        \
+    do                              \
+    {                               \
+        EPD_INIT();                 \
+        EPD_INIT_PARTIAL();         \
+    } while (0);
+    
+
 
 #define EPD_SET_WINDOW(x1, y1, x2, y2) \
     do                                 \
     {                                  \
-        writecommand(0x44);            \
-        writedata((x1) % 256);         \
-        writedata((x1) / 256);         \
-        writedata((x2) % 256);         \
-        writedata((x2) / 256);         \
-        writecommand(0x45);            \
-        writedata((y1) % 256);         \
-        writedata((y1) / 256);         \
-        writedata((y2) % 256);         \
-        writedata((y2) / 256);         \
+            writecommand(0x44);\
+            writedata(x1 & 0xFF); \
+            writedata(x1 >> 8);\
+            writedata((x2) & 0xFF);\
+            writedata((x2) >> 8);  \
+            writecommand(0x45); \
+            writedata(y1 & 0xFF);\
+            writedata(y1 >> 8);\
+            writedata((y2) & 0xFF);  \
+            writedata((y2) >> 8); \
+            writecommand(0x4E);   \
+            writedata((x1) & 0xFF);\
+            writedata((x1) >> 8);  \
+            writecommand(0x4F);   \
+            writedata(y1 & 0xFF);\
+            writedata(y1 >> 8);\
     } while (0)
 
 #define EPD_PUSH_NEW_COLORS(w, h, colors)   \
@@ -172,12 +205,31 @@
 // Macro to push old color data (red RAM or background)
 #define EPD_PUSH_OLD_COLORS(w, h, colors) \
     do                                    \
-    {                                     \
+    {                                      \
+        writecommand(0x26);                 \
+        for (int i = 0; i < w * h / 8; i++) \
+        {                                   \
+            writedata(colors[i]);           \
+        }                                   \
     } while (0)
 
 #define EPD_PUSH_OLD_COLORS_FLIP(w, h, colors) \
     do                                         \
     {                                          \
+        writecommand(0x26);                                            \
+        uint16_t bytes_per_row = (w) / 8;                              \
+        for (uint16_t row = 0; row < (h); row++)                       \
+        {                                                              \
+            uint16_t start = row * bytes_per_row;                      \
+            for (uint16_t col = 0; col < bytes_per_row; col++)         \
+            {                                                          \
+                uint8_t b = colors[start + (bytes_per_row - 1 - col)]; \
+                b = ((b & 0xF0) >> 4) | ((b & 0x0F) << 4);             \
+                b = ((b & 0xCC) >> 2) | ((b & 0x33) << 2);             \
+                b = ((b & 0xAA) >> 1) | ((b & 0x55) << 1);             \
+                writedata(b);                                          \
+            }                                                          \
+        }                                                              \
     } while (0)
 
 #define EPD_SET_TEMP(temp)                  \

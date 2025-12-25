@@ -120,19 +120,22 @@ void EPaper::updataPartial(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
 
     if (_sleep) { EPD_WAKEUP_PARTIAL(); _sleep = false; }
 
-#ifdef EPD_HORIZONTAL_MIRROR
-    EPD_SET_WINDOW(x0, yy, x0 + w_aligned - 1, yy + hh - 1);
+    #ifdef EPD_HORIZONTAL_MIRROR
+    uint16_t x_end = x0 + w_aligned - 1;
+    uint16_t mx0 = (_width - 1) - x_end;
+    uint16_t mx1 = (_width - 1) - x0;
+
+    EPD_SET_WINDOW(mx0, yy, mx1, yy + hh - 1);
     EPD_PUSH_NEW_COLORS_FLIP(w_aligned, hh, winbuf);
-#else
+    #else
     EPD_SET_WINDOW(x0, yy, x0 + w_aligned - 1, yy + hh - 1);
     EPD_PUSH_NEW_COLORS(w_aligned, hh, winbuf);
-#endif
-    EPD_UPDATE();
+    #endif
+    EPD_UPDATE_PARTIAL();
 
     free(winbuf);
     sleep();
 }
-
 
 #endif
 
