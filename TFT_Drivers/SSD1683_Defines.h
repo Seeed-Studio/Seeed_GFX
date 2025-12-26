@@ -21,6 +21,7 @@
 // Define color depth (1 bit for e-ink display)
 #define EPD_COLOR_DEPTH 1
 
+#define USE_PARTIAL_EPAPER
 #define USE_MUTIGRAY_EPAPER
 #define GRAY_LEVEL4 4
 
@@ -80,6 +81,14 @@
 
 #define EPD_UPDATE_GRAY() EPD_UPDATE_FAST()
 
+#define EPD_UPDATE_PARTIAL() \
+    do                      \
+    {                       \
+        writecommand(0x22); \
+        writedata(0xFF);    \
+        writecommand(0x20); \
+    } while (0);
+
 // Macro to enter deep sleep
 #define EPD_SLEEP()         \
     do                      \
@@ -104,15 +113,15 @@
         writedata((EPD_HEIGHT - 1) / 256); \
         writedata(0x00);                   \
         writecommand(0x11);                \
-        writedata(0x01);                   \
+        writedata(0x03);                   \
         writecommand(0x44);                \
         writedata(0x00);                   \
         writedata(EPD_WIDTH / 8 - 1);      \
         writecommand(0x45);                \
+        writedata(0x00);                   \
+        writedata(0x00);                   \
         writedata((EPD_HEIGHT - 1) % 256); \
         writedata((EPD_HEIGHT - 1) / 256); \
-        writedata(0x00);                   \
-        writedata(0x00);                   \
         writecommand(0x3C);                \
         writedata(0x05);                   \
         writecommand(0x21);                \
@@ -123,20 +132,17 @@
         writecommand(0x4E);                \
         writedata(0x00);                   \
         writecommand(0x4F);                \
-        writedata((EPD_HEIGHT - 1) % 256); \
-        writedata((EPD_HEIGHT - 1) / 256); \
+        writedata(0x00);                   \
+        writedata(0x00);                   \
         CHECK_BUSY();                      \
     } while (0)
 
 #define EPD_INIT_GRAY()         \
   do                            \
   {                             \
-    digitalWrite(TFT_RST, LOW);  \
-    delay(10);                   \
-    digitalWrite(TFT_RST, HIGH); \
-    delay(10);                   \
-	writecommand(0x12);\
-	CHECK_BUSY();  \
+    writecommand(0x21);                \
+    writedata(0x00);                   \
+    writedata(0x00);                   \
     writecommand(0x18); \
 	writedata(0x80);	\
 	writecommand(0x22); \
@@ -152,15 +158,51 @@
 	CHECK_BUSY();  \
   } while (0)
 
+#define EPD_INIT_PARTIAL()          \
+    do                              \
+    {                               \
+    writecommand(0x21);             \
+    writedata(0x00);                \
+    writedata(0x00);                \
+    writecommand(0x18);             \
+    writedata(0x80);                \
+    writecommand(0x3C);             \
+    writedata(0x80);                \
+    } while (0);      
+
 // Macro to wake up device
 #define EPD_WAKEUP() EPD_INIT()
 
-#define EPD_WAKEUP_GRAY() EPD_WAKEUP()
+#define EPD_WAKEUP_GRAY()           \
+    do                              \
+    {                               \
+        EPD_INIT();                 \
+    } while (0);
+
+#define EPD_WAKEUP_PARTIAL()        \
+    do                              \
+    {                               \
+        EPD_INIT();                 \
+        EPD_INIT_PARTIAL();         \
+    } while (0);
 
 // Macro to set display window
 #define EPD_SET_WINDOW(x1, y1, x2, y2) \
     do                                 \
     {                                  \
+            writecommand(0x44);\
+            writedata((x1 + 1) / 8); \
+            writedata((x2 + 1) / 8 - 1);\
+            writecommand(0x45); \
+            writedata((y1) & 0xFF);  \
+            writedata((y1) >> 8); \
+            writedata(y2 & 0xFF);\
+            writedata(y2 >> 8);\
+            writecommand(0x4E);   \
+            writedata((x1 + 1) / 8);\
+            writecommand(0x4F);   \
+            writedata(y1 & 0xFF);\
+            writedata(y1 >> 8);\
     } while (0)
 
 // Macro to push new color data
@@ -194,7 +236,7 @@
     } while (0)
 
 
-#define EPD_PUSH_NEW_GRAY_COLORS_FLIP(w, h, colors)                       \
+#define EPD_PUSH_NEW_GRAY_COLORS(w, h, colors)                       \
     do                                                                  \
     {                                                                   \
         EPD_INIT_GRAY();                                                \
@@ -243,7 +285,7 @@
                     }                                                   \
                 }                                                       \
             }                                                           \
-            writedata(~temp3);                                          \
+            writedata(temp3);                                          \
         }                                                               \
                                                                         \
         writecommand(0x26);                                             \
@@ -286,14 +328,14 @@
                     }                                                   \
                 }                                                       \
             }                                                           \
-            writedata(~temp3);                                          \
+            writedata(temp3);                                          \
         }                                                               \
     } while (0)
 
-#define EPD_PUSH_NEW_GRAY_COLORS(w, h, colors)                    \
+#define EPD_PUSH_NEW_GRAY_COLORS_FLIP(w, h, colors)                    \
     do                                                                 \
     {                                                                  \
-        EPD_INIT_GRAY();                                               \
+        EPD_PUSH_NEW_GRAY_COLORS(w, h, colors);                        \
     } while (0)
 
 

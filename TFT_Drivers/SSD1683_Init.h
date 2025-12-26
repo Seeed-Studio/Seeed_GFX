@@ -27,7 +27,7 @@
 
     // Set data entry mode
     writecommand(0x11);
-    writedata(0x01);
+    writedata(0x03);
 
     // Set RAM X address range
     writecommand(0x44);
@@ -36,10 +36,10 @@
 
     // Set RAM Y address range
     writecommand(0x45);
+    writedata(0x00);
+    writedata(0x00);
     writedata((EPD_HEIGHT - 1) % 256);
     writedata((EPD_HEIGHT - 1) / 256);
-    writedata(0x00);
-    writedata(0x00);
 
     // Set border waveform
     writecommand(0x3C);
@@ -58,9 +58,8 @@
     writecommand(0x4E);
     writedata(0x00);
     writecommand(0x4F);
-    writedata((EPD_HEIGHT - 1) % 256);
-    writedata((EPD_HEIGHT - 1) / 256);
+    writedata(0x00);
+    writedata(0x00);
     CHECK_BUSY();
 
-    setRotation(2);
 }
