@@ -273,9 +273,9 @@ void TFT_eSPI::tconHostAreaPackedPixelWrite(TCONLdImgInfo* pstLdImgInfo,TCONArea
     uint16_t height = pstAreaImgInfo->usHeight;
     uint16_t width = pstAreaImgInfo->usWidth; 
     if(pstLdImgInfo->usPixelFormat == IT8951_4BPP)
-            width = width / 4;
+            width = (width + 3) / 4;
     else if(pstLdImgInfo->usPixelFormat == IT8951_8BPP)
-            width = width / 2;
+            width = (width + 1) / 2;
 
 	TWord *mirroredFrameBuf = (TWord *)malloc(width * height * sizeof(TWord));
     if(mirroredFrameBuf == NULL) {
@@ -361,9 +361,9 @@ void TFT_eSPI::tconLoad1bppImage(const TByte* p1bppImgBuf, TWord usX, TWord usY,
     stLdImgInfo.ulImgBufBaseAddr = _gulImgBufAddr;
 	stLdImgInfo.usFilp           = enFilp;
     //Set Load Area
-    stAreaImgInfo.usX      = usX/8;
+    stAreaImgInfo.usX      = (usX + 7)/8;
     stAreaImgInfo.usY      = usY;
-    stAreaImgInfo.usWidth  = usW/8;//1bpp, Chaning Transfer size setting to 1/8X of 8bpp mode 
+    stAreaImgInfo.usWidth  = (usW + 7)/8;//1bpp, Chaning Transfer size setting to 1/8X of 8bpp mode 
     stAreaImgInfo.usHeight = usH;
     //printf("IT8951HostAreaPackedPixelWrite [wait]\n\r");
     //Load Image from Host to IT8951 Image Buffer
@@ -431,6 +431,13 @@ void TFT_eSPI::hostTconInit()
 	tconWriteReg(I80CPCR, 0x0001);  
 }
 
+void TFT_eSPI::hostTconInitFast()
+{
+    setTconVcom(1400); 
+    _gulImgBufAddr = 0XBE78 | (0X003D << 16);
+    tconWriteReg(I80CPCR, 0x0001);  
+}
+
 void TFT_eSPI::setTconWindowsData(TWord x1, TWord y1, TWord x2, TWord y2)
 {
     _imgAreaInfo.usX = x1;
@@ -466,7 +473,7 @@ TWord TFT_eSPI::getTconVcom()
  void TFT_eSPI::setTconVcom(TWord vcom)
  {
     tconWriteCmdCode(0x0039);
-	tconWirteData(0x01);
+	tconWirteData(0x02);
 	tconWirteData(vcom);
  }
 

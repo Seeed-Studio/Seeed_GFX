@@ -10,7 +10,8 @@
     digitalWrite(ITE_ENABLE, HIGH);
 #endif
     digitalWrite(TFT_RST, LOW);  
-    delay(20);                   
+    delay(10);                   
     digitalWrite(TFT_RST, HIGH); 
     delay(10);  
+    //hostTconInitFast();
     hostTconInit();   

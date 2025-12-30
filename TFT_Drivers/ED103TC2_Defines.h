@@ -17,6 +17,7 @@
 
 #define EPD_COLOR_DEPTH 1
 
+#define USE_PARTIAL_EPAPER
 #define USE_MUTIGRAY_EPAPER
 #define GRAY_LEVEL16 16
 
@@ -60,6 +61,12 @@
 #define CHECK_BUSY()
 #endif
 
+#define EPD_UPDATE_PARTIAL() \
+    do                      \
+    {                       \
+        tconDisplayArea1bpp(_imgAreaInfo.usX,_imgAreaInfo.usY, _imgAreaInfo.usWidth, _imgAreaInfo.usHeight, 0x01, 0x00, 0xff); \
+    } while (0);
+
 #define EPD_UPDATE()        \
     do                      \
     {                       \
@@ -99,6 +106,7 @@
     } while (0)
 
 #define EPD_WAKEUP_GRAY EPD_WAKEUP
+#define EPD_WAKEUP_PARTIAL EPD_WAKEUP
 
 #define EPD_SET_WINDOW(x1, y1, x2, y2)                  \
     do                                                  \

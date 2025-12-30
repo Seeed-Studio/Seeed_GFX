@@ -79,6 +79,7 @@ public:
     void getTconInfo(void* pBuf);
     void setTconWindowsData(TWord x1, TWord y1, TWord x2, TWord y2);
     void hostTconInit();
+    void hostTconInitFast();
 
     void tconSleep();
     void tconWake();
