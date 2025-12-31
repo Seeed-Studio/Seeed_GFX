@@ -328,6 +328,7 @@ void TFT_eSPI::tconDisplayArea(TWord usX, TWord usY, TWord usW, TWord usH, TWord
 
 void TFT_eSPI::tconDisplayArea1bpp(TWord usX, TWord usY, TWord usW, TWord usH, TWord usDpyMode, TByte ucBGGrayVal, TByte ucFGGrayVal)
 {
+    usX = (_gstI80DevInfo.usPanelW - 1) - usX - usW + 1;
     //Set Display mode to 1 bpp mode - Set 0x18001138 Bit[18](0x1800113A Bit[2])to 1
     tconWriteReg(UP1SR+2, tconReadReg(UP1SR+2) | (1<<2));
 
@@ -350,6 +351,7 @@ void TFT_eSPI::tconDisplayArea1bpp(TWord usX, TWord usY, TWord usW, TWord usH, T
 
 void TFT_eSPI::tconLoad1bppImage(const TByte* p1bppImgBuf, TWord usX, TWord usY, TWord usW, TWord usH, TByte enFilp)
 {
+    usX = (_gstI80DevInfo.usPanelW - 1) - usX - usW + 1;
 	TCONLdImgInfo stLdImgInfo;
     TCONAreaImgInfo stAreaImgInfo;
 	
@@ -434,7 +436,13 @@ void TFT_eSPI::hostTconInit()
 void TFT_eSPI::hostTconInitFast()
 {
     //setTconVcom(1400); 
-    _gulImgBufAddr = 0XBE78 | (0X003D << 16);
+    getTconInfo(&_gstI80DevInfo);
+    if (_gstI80DevInfo.usPanelW == 0 || _gstI80DevInfo.usPanelH == 0) {
+        println("Invalid panel size! Communication with IT8951 may have failed.");
+        return;
+    }
+
+    _gulImgBufAddr = _gstI80DevInfo.usImgBufAddrL | (_gstI80DevInfo.usImgBufAddrH << 16);
     //tconWriteReg(I80CPCR, 0x0001);  
 }
 

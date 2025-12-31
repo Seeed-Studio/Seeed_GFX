@@ -104,8 +104,13 @@ void EPaper::updataPartial(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
     if ((by + bh) > (int32_t)_height) bh = (int32_t)_height - by;
     if (bw < 1 || bh < 1) return;
 
-    uint16_t x0 = (uint16_t)bx & ~7;
-    uint16_t x1 = (uint16_t)(bx + bw + 7) & ~7;
+    uint16_t align_px = 8;
+#ifdef TCON_ENABLE
+    align_px = 16;
+#endif
+
+    uint16_t x0 = ((uint16_t)bx) & ~(align_px - 1);
+    uint16_t x1 = ((uint16_t)(bx + bw + (align_px - 1))) & ~(align_px - 1);
     uint16_t w_aligned = x1 - x0;
     uint16_t yy = (uint16_t)by;
     uint16_t hh = (uint16_t)bh;
