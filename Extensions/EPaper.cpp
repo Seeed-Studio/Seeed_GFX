@@ -5,12 +5,20 @@ EPaper::EPaper() : _sleep(false), _entemp(true), _temp(16.00), _humi(50.00), _gr
     //createPalette(cmap, 16);
 }
 
-void EPaper::begin(uint8_t tc)
+void EPaper::begin(uint8_t wake)
 {
     setBitmapColor(1, 0);
     setTextFont(1);
     setTextColor(TFT_BLACK, TFT_WHITE, true);
-    init(tc);
+    if(wake)
+    {
+        initFromSleep();
+    }
+    else
+    {
+        init();
+        EPD_WAKEUP();
+    }  
 //     fillSprite(1);
 // #ifdef EPD_HORIZONTAL_MIRROR
 //     EPD_PUSH_OLD_COLORS_FLIP(_width, _height, _img8);
@@ -22,7 +30,7 @@ void EPaper::begin(uint8_t tc)
 //     EPD_PUSH_NEW_COLORS(_width, _height, _img8);
 // #endif
 //     EPD_UPDATE();
-    EPD_WAKEUP();
+    
 }
 
  void EPaper::drawBufferPixel(int32_t x, int32_t y, uint32_t color, uint8_t bpp)

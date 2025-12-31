@@ -433,9 +433,9 @@ void TFT_eSPI::hostTconInit()
 
 void TFT_eSPI::hostTconInitFast()
 {
-    setTconVcom(1400); 
+    //setTconVcom(1400); 
     _gulImgBufAddr = 0XBE78 | (0X003D << 16);
-    tconWriteReg(I80CPCR, 0x0001);  
+    //tconWriteReg(I80CPCR, 0x0001);  
 }
 
 void TFT_eSPI::setTconWindowsData(TWord x1, TWord y1, TWord x2, TWord y2)
