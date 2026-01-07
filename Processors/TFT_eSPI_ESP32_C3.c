@@ -42,12 +42,16 @@
       spi_host_device_t spi_host = SPI2_HOST;
     #endif
   #else
-    #ifdef USE_HSPI_PORT
-      #define DMA_CHANNEL 2
-      spi_host_device_t spi_host = (spi_host_device_t) DMA_CHANNEL; // Draws once then freezes
-    #else // use FSPI port
-      #define DMA_CHANNEL 1
-      spi_host_device_t spi_host = (spi_host_device_t) DMA_CHANNEL; // Draws once then freezes
+    // ESP32-C3/C6/S2/S3 class targets only support auto-allocated DMA channel
+    #define DMA_CHANNEL SPI_DMA_CH_AUTO
+    #if defined(CONFIG_IDF_TARGET_ESP32C3) || defined(CONFIG_IDF_TARGET_ESP32C6)
+      spi_host_device_t spi_host = SPI2_HOST;
+    #else
+      #ifdef USE_HSPI_PORT
+        spi_host_device_t spi_host = SPI3_HOST;
+      #else // use FSPI port
+        spi_host_device_t spi_host = SPI2_HOST;
+      #endif
     #endif
   #endif
 #endif
