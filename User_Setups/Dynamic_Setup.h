@@ -325,6 +325,10 @@
 #elif BOARD_SCREEN_COMBO == 515
 #define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup515_Seeed_XIAO_EPaper_3inch97.h>
+#elif BOARD_SCREEN_COMBO == 516
+#define ENABLE_EPAPER_BOARD_PIN_SETUPS
+#define USE_COLORFULL_EPAPER
+#include <User_Setups/Setup516_Seeed_XIAO_EPaper_3inch97_BWRY.h>
 #elif BOARD_SCREEN_COMBO == 520
 #define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup520_Seeed_reTerminal_E1001.h>

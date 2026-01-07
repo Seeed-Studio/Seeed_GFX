@@ -165,7 +165,9 @@
 #elif defined (JD79676_DRIVER)
      #include "TFT_Drivers/JD79676_Defines.h"  
      #define  TFT_DRIVER 0x2134  
-     
+#elif defined (SSD2677_DRIVER)
+     #include "TFT_Drivers/SSD2677_Defines.h"  
+     #define  TFT_DRIVER 0x2677      
                               // <<<<<<<<<<<<<<<<<<<<<<<< ADD NEW DRIVER HERE
                               // XYZZY_init.h and XYZZY_rotation.h must also be added in TFT_eSPI.cpp
 #elif defined (XYZZY_DRIVER)

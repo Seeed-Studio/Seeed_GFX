@@ -743,8 +743,10 @@ void TFT_eSPI::initFromSleep(uint8_t tc)
      #include "TFT_Drivers/JD79667_Init.h"  
   
 #elif defined (JD79676_DRIVER)
-     #include "TFT_Drivers/JD79676_Init.h"       
+     #include "TFT_Drivers/JD79676_Init.h"
 
+#elif defined (SSD2677_DRIVER)
+     #include "TFT_Drivers/SSD2677_Init.h"    
 #endif
 
 #if defined (TFT_BL) && defined (TFT_BACKLIGHT_ON)
@@ -950,8 +952,10 @@ void TFT_eSPI::init(uint8_t tc)
      #include "TFT_Drivers/JD79667_Init.h"  
   
 #elif defined (JD79676_DRIVER)
-     #include "TFT_Drivers/JD79676_Init.h"       
-
+     #include "TFT_Drivers/JD79676_Init.h"
+            
+#elif defined (SSD2677_DRIVER)
+     #include "TFT_Drivers/SSD2677_Init.h"  
 #endif
 
 #ifdef TFT_INVERSION_ON
@@ -1089,6 +1093,8 @@ void TFT_eSPI::setRotation(uint8_t m)
 #elif defined (JD79676_DRIVER)
      #include "TFT_Drivers/JD79676_Rotation.h" 
 
+#elif defined (SSD2677_DRIVER)
+     #include "TFT_Drivers/SSD2677_Rotation.h"      
 #endif
 
   delayMicroseconds(10);
