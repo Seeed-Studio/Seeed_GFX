@@ -183,7 +183,7 @@
 #if defined (TFT_SDA_READ)
   #define TFT_eSPI_ENABLE_8_BIT_READ
   #define SCLK_L digitalWrite(TFT_SCLK, LOW)
-  #define SCLK_H digitalWrite(TFT_SCLK, LOW)
+  #define SCLK_H digitalWrite(TFT_SCLK, HIGH)
 #else
   #define tft_Read_8() spi.transfer(0)
 #endif
