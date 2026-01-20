@@ -154,7 +154,7 @@
         writecommand(0x06); \
         writedata(0x27);    \
         writedata(0x27);    \
-        writedata(0x18);    \
+        writedata(0x28);    \
         writedata(0x17);    \
         writecommand(0xE0); \
         writedata(0x02);    \
