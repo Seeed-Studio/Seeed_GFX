@@ -621,7 +621,42 @@ void TFT_eSPI::initFromSleep(uint8_t tc)
 
   initBus();
 
-  spi.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, -1);
+#if !defined (ESP32) && !defined(TFT_PARALLEL_8_BIT) && !defined(ARDUINO_ARCH_RP2040) && !defined (ARDUINO_ARCH_MBED) && !defined (EFR32MG24B220F1536IM48)
+  // Legacy bitmasks for GPIO
+  #if defined (TFT_CS) && (TFT_CS >= 0)
+    cspinmask = (uint32_t) digitalPinToBitMask(TFT_CS);
+  #endif
+
+  #if defined (TFT_DC) && (TFT_DC >= 0)
+    dcpinmask = (uint32_t) digitalPinToBitMask(TFT_DC);
+  #endif
+
+  #if defined (TFT_WR) && (TFT_WR >= 0)
+    wrpinmask = (uint32_t) digitalPinToBitMask(TFT_WR);
+  #endif
+
+  #if defined (TFT_SCLK) && (TFT_SCLK >= 0)
+    sclkpinmask = (uint32_t) digitalPinToBitMask(TFT_SCLK);
+  #endif
+
+  #if defined (TFT_SPI_OVERLAP) && defined (ARDUINO_ARCH_ESP8266)
+    // Overlap mode SD0=MISO, SD1=MOSI, CLK=SCLK must use D3 as CS
+    //    pins(int8_t sck, int8_t miso, int8_t mosi, int8_t ss);
+    //spi.pins(        6,          7,           8,          0);
+    spi.pins(6, 7, 8, 0);
+  #endif
+
+  spi.begin(); // This will set HMISO to input
+
+#else
+  #if !defined(TFT_PARALLEL_8_BIT) && !defined(RP2040_PIO_INTERFACE)
+    #if defined (TFT_MOSI) && !defined (TFT_SPI_OVERLAP) && !defined(ARDUINO_ARCH_RP2040) && !defined (ARDUINO_ARCH_MBED) && !defined (EFR32MG24B220F1536IM48)
+      spi.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, -1); // This will set MISO to input
+    #else
+      spi.begin(); // This will set MISO to input
+    #endif
+  #endif
+#endif
 
   lockTransaction = false;
   inTransaction   = false;

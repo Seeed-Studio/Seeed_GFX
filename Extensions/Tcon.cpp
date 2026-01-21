@@ -104,7 +104,6 @@ void TFT_eSPI::tconWirteNData(TWord* pwBuf, TDWord ulSizeWordCnt)
         b += chunk_size;
     }
 
-    // 处理剩余部分
     TDWord remainder = ulSizeWordCnt % chunk_size;
     if (remainder > 0)
     {

@@ -106,7 +106,12 @@
     } while (0)
 
 #define EPD_WAKEUP_GRAY EPD_WAKEUP
-#define EPD_WAKEUP_PARTIAL EPD_WAKEUP
+#define EPD_WAKEUP_PARTIAL()   \
+    do                  \
+    {                       \
+        tconWake();    \
+    } while (0)
+
 
 #define EPD_SET_WINDOW(x1, y1, x2, y2)                  \
     do                                                  \

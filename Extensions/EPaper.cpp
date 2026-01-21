@@ -18,7 +18,7 @@ void EPaper::begin(uint8_t wake)
     {
         init();
         EPD_WAKEUP();
-    }  
+    } 
 //     fillSprite(1);
 // #ifdef EPD_HORIZONTAL_MIRROR
 //     EPD_PUSH_OLD_COLORS_FLIP(_width, _height, _img8);
@@ -70,11 +70,11 @@ void EPaper::update()
 #ifdef USE_PARTIAL_EPAPER
 void EPaper::updataPartial(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
 {
+
     int32_t bx = x;
     int32_t by = y;
     int32_t bw = w;
     int32_t bh = h;
-
     // Map the rotated coordinate space back to the backing buffer.
     switch (rotation & 3)
     {
@@ -107,6 +107,10 @@ void EPaper::updataPartial(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
     uint16_t align_px = 8;
 #ifdef TCON_ENABLE
     align_px = 16;
+    wake();
+    _sleep = false;
+#else
+    if (_sleep) { EPD_WAKEUP_PARTIAL(); _sleep = false; }
 #endif
 
     uint16_t x0 = ((uint16_t)bx) & ~(align_px - 1);
@@ -131,7 +135,7 @@ void EPaper::updataPartial(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
                win_bytes_per_row);
     }
 
-    if (_sleep) { EPD_WAKEUP_PARTIAL(); _sleep = false; }
+
 
     #ifdef EPD_HORIZONTAL_MIRROR
     uint16_t x_end = x0 + w_aligned - 1;
