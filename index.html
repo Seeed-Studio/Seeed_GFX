@@ -445,8 +445,16 @@
                     <span data-lang-key="epaper_option_monitor_ee04">XIAO ePaper Display Board EE04</span>
                 </label>
                 <label>
+                    <input type="radio" name="driverBoard" value="monitor_ee05" onchange="generateConfig()">
+                    <span data-lang-key="epaper_option_monitor_ee05">XIAO ePaper Display Board EE05</span>
+                </label>
+                <label>
                     <input type="radio" name="driverBoard" value="monitor_en04" onchange="generateConfig()">
                     <span data-lang-key="epaper_option_monitor_en04">XIAO ePaper Display Board EN04</span>
+                </label>
+                <label>
+                    <input type="radio" name="driverBoard" value="monitor_en05" onchange="generateConfig()">
+                    <span data-lang-key="epaper_option_monitor_en05">XIAO ePaper Display Board EN05</span>
                 </label>
             </div>
         </div>
@@ -482,8 +490,9 @@
                 epaper_option_breakout: "ePaper Breakout Board for XIAO",
                 epaper_option_monitor_ee02: "XIAO ePaper Display Board EE02",
                 epaper_option_monitor_ee03: "XIAO ePaper Display Board EE03",
-                epaper_option_monitor_ee04: "XIAO ePaper Display Board EE04",
+                epaper_option_monitor_ee05: "XIAO ePaper Display Board EE05",
                 epaper_option_monitor_en04: "XIAO ePaper Display Board EN04",
+                epaper_option_monitor_en05: "XIAO ePaper Display Board EN05",
             },
             zh: {
                 title: "Seeed GFX Library - 在线配置生成器 (Online Configuration Generator)",
@@ -502,7 +511,9 @@
                 epaper_option_monitor_ee02: "XIAO ePaper Display Board EE02",
                 epaper_option_monitor_ee03: "XIAO ePaper Display Board EE03",
                 epaper_option_monitor_ee04: "XIAO ePaper Display Board EE04",
+                epaper_option_monitor_ee05: "XIAO ePaper Display Board EE05",
                 epaper_option_monitor_en04: "XIAO ePaper Display Board EN04",
+                epaper_option_monitor_en05: "XIAO ePaper Display Board EN05",
             }
         };
 
@@ -666,8 +677,12 @@
                         outputString += '\n#define USE_XIAO_EPAPER_DISPLAY_BOARD_EE03';
                     } else if (selectedDriver === 'monitor_ee04') {
                         outputString += '\n#define USE_XIAO_EPAPER_DISPLAY_BOARD_EE04';
+                    } else if (selectedDriver === 'monitor_ee05') {
+                        outputString += '\n#define USE_XIAO_EPAPER_DISPLAY_BOARD_EE05';
                     } else if (selectedDriver === 'monitor_en04') {
                         outputString += '\n#define USE_XIAO_EPAPER_DISPLAY_BOARD_EN04';
+                    } else if (selectedDriver === 'monitor_en05') {
+                        outputString += '\n#define USE_XIAO_EPAPER_DISPLAY_BOARD_EN05';
                     } else if (selectedDriver === 'breakout') {
                         outputString += '\n#define USE_XIAO_EPAPER_BREAKOUT_BOARD';
                     }
