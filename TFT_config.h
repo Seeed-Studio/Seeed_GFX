@@ -35,7 +35,6 @@
 **                         TFT_eSPI Configuration defines
 ***************************************************************************************/
 // Override defaults
-#define USER_SETUP_LOADED
 
 /***************************************************************************************
 **                         Section 1: Load TFT driver
@@ -80,6 +79,8 @@
     #define ILI9225_DRIVER
 #elif defined (CONFIG_TFT_GC9A01_DRIVER)
     #define GC9A01_DRIVER
+#elif defined (CONFIG_EPAPER_DRIVER)
+
 #endif
 
 #ifdef CONFIG_TFT_RGB_ORDER
@@ -128,40 +129,7 @@
     #define TFT_INVERSION_OFF
 #endif
 
-/***************************************************************************************
-**                         Section 2: General Pin configuration
-***************************************************************************************/
-// General pins
-#if CONFIG_TFT_CS == -1
-    #error "Invalid Chip Select pin. Check TFT_eSPI configuration"
-#else
-    #define TFT_CS          CONFIG_TFT_CS
-#endif
 
-#if CONFIG_TFT_DC == -1
-    #error "Invalid Data/Command pin. Check TFT_eSPI configuration"
-#else
-    #define TFT_DC          CONFIG_TFT_DC
-#endif
-
-#if CONFIG_TFT_RST == -1
-    #if !defined(DISABLE_ALL_LIBRARY_WARNINGS)
-        #warning "Invalid Reset pin. Check TFT_eSPI configuration"
-    #endif
-#else
-    #define TFT_RST         CONFIG_TFT_RST
-#endif
-
-// Backlight config
-#ifdef CONFIG_ENABLE_BL
-    #if CONFIG_TFT_BL == -1
-        #error "Invalid backlight control pin. Check TFT_eSPI configuration"
-    #else
-        #define TFT_BL      CONFIG_TFT_BL
-    #endif
-
-    #define TFT_BACKLIGHT_ON CONFIG_TFT_BACKLIGHT_ON
-#endif
 
 
 /***************************************************************************************

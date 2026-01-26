@@ -10,10 +10,14 @@ menu "TFT_eSPI"
         
     choice TFT_DRIVER
         prompt "Select TFT driver"
-        default TFT_ILI9341_DRIVER
+        default EPAPER_DRIVER
         help
             Driver for the TFT LCD screen
-
+        
+        config EPAPER_DRIVER
+            bool "EPAPER DRIVER"
+            help
+                Generic driver for common displays
         config TFT_ILI9341_DRIVER
             bool "ILI9341 - 1"
             help
@@ -305,6 +309,13 @@ menu "TFT_eSPI"
     
         config TFT_RST
             int "TFT Reset pin"
+            default -1
+            range -1 33 if IDF_TARGET_ESP32
+            range -1 45 if IDF_TARGET_ESP32S2
+            range -1 48 if IDF_TARGET_ESP32S3
+        
+        config TFT_BUSY
+            int "EPAPER BUSY pin"
             default -1
             range -1 33 if IDF_TARGET_ESP32
             range -1 45 if IDF_TARGET_ESP32S2
