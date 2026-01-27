@@ -1,4 +1,4 @@
-EPaper::EPaper() : _sleep(false), _entemp(true), _temp(16.00), _humi(50.00), _grayLevel(0), TFT_eSprite(this)
+EPaper::EPaper() : TFT_eSprite(this), _sleep(false), _entemp(true), _temp(16.00), _humi(50.00)
 {
     setColorDepth(EPD_COLOR_DEPTH);
     createSprite(_width, _height, 1);
