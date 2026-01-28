@@ -22,7 +22,7 @@ To simplify the hardware setup, we provide an online tool that helps you quickly
 - Wio Terminal
 - XIAO SAMD21
 - XIAO RP2040/RP2350
-- XIAO ESP32C3/ESP32S3/ESP32C6
+- XIAO ESP32C3/ESP32S3/ESP32C5/ESP32C6
 - XIAO NRF52840
 - XIAO MG24
 - XIAO RA4M1
@@ -30,13 +30,18 @@ To simplify the hardware setup, we provide an online tool that helps you quickly
 ### Display Technologies
 - Standard TFT LCD displays (inherited from TFT_eSPI)
 - E-Paper displays (new implementation)
+  - SSD1677-based displays
   - SSD1680-based displays
   - SSD1681-based displays
-  - JD79686B-based displays
+  - SSD1683-based displays
+  - UC8179-based displays
   - ED2208-based displays
   - ED103TC2-based displays
   - T133A01-based displays
+  - IT8951(tcon)-based displays
   - JD79667_based displays
+  - JD79686B-based displays
+  - JD79660-based displays
 > Note: When using a large-sized screen(larger than or equal to 10.3inch), please make sure to enable the PSRAM option in time. Otherwise, you will receive a prompt indicating a memory error! 
 ## E-Paper Implementation
 
