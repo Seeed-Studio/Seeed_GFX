@@ -784,6 +784,8 @@ void TFT_eSPI::initFromSleep(uint8_t tc)
 
 #elif defined (SSD2677_DRIVER)
      #include "TFT_Drivers/SSD2677_Init.h"    
+#elif defined (JD79660_DRIVER)
+     #include "TFT_Drivers/JD79660_Init.h"    
 #endif
 
 #if defined (TFT_BL) && defined (TFT_BACKLIGHT_ON)
@@ -1132,6 +1134,8 @@ void TFT_eSPI::setRotation(uint8_t m)
 
 #elif defined (SSD2677_DRIVER)
      #include "TFT_Drivers/SSD2677_Rotation.h"      
+#elif defined (JD79660_DRIVER)
+     #include "TFT_Drivers/JD79660_Rotation.h"      
 #endif
 
   delayMicroseconds(10);
