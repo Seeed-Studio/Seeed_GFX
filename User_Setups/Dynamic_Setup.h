@@ -348,6 +348,13 @@
 #define USE_COLORFULL_EPAPER
 #define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup523_Seeed_reTerminal_E1004.h>
+#elif BOARD_SCREEN_COMBO == 524
+#define ENABLE_EPAPER_BOARD_PIN_SETUPS
+#include <User_Setups/Setup524_Seeed_reTerminal_E1005.h>
+#elif BOARD_SCREEN_COMBO == 525
+#define USE_COLORFULL_EPAPER
+#define ENABLE_EPAPER_BOARD_PIN_SETUPS
+#include <User_Setups/Setup525_Seeed_reTerminal_E1005_BWRY.h>
 #elif BOARD_SCREEN_COMBO == 666
 #include <User_Setups/Setup666_XIAO_ILI9341.h>
 
