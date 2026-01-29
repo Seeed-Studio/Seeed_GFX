@@ -59,19 +59,35 @@
 #define CHECK_BUSY()
 #endif
 
-#define EPD_INIT()          \
-    do                      \
-    {                       \
-    writecommand(0x4D); writedata(0x78);\
-    writecommand(0x00); writedata(0x0F); writedata(0x29); \
-    writecommand(0x06); writedata(0x0D); writedata(0x12); writedata(0x30); writedata(0x20); writedata(0x19); writedata(0x2A); writedata(0x22);\
-    writecommand(0x50); writedata(0x37); \
-    writecommand(0x30); writedata(0x08); \
-    writecommand(0x61); writedata(200/256); writedata(200%256); writedata(200/256); writedata(200%256); \
-    writecommand(0xE9); writedata(0x01); \
-    writecommand(0x04);                  \
-    delay(100);            \
-    } while (0)
+#if defined(TFT_ENABLE)
+    #define EPD_INIT() \
+        do { \
+            pinMode(TFT_ENABLE, OUTPUT); \
+            digitalWrite(TFT_ENABLE, HIGH); \
+            writecommand(0x4D); writedata(0x78); \
+            writecommand(0x00); writedata(0x0F); writedata(0x29); \
+            writecommand(0x06); writedata(0x0D); writedata(0x12); writedata(0x30); writedata(0x20); writedata(0x19); writedata(0x2A); writedata(0x22); \
+            writecommand(0x50); writedata(0x37); \
+            writecommand(0x30); writedata(0x08); \
+            writecommand(0x61); writedata(200/256); writedata(200%256); writedata(200/256); writedata(200%256); \
+            writecommand(0xE9); writedata(0x01); \
+            writecommand(0x04); \
+            delay(100); \
+        } while(0)
+#else
+    #define EPD_INIT() \
+        do { \
+            writecommand(0x4D); writedata(0x78); \
+            writecommand(0x00); writedata(0x0F); writedata(0x29); \
+            writecommand(0x06); writedata(0x0D); writedata(0x12); writedata(0x30); writedata(0x20); writedata(0x19); writedata(0x2A); writedata(0x22); \
+            writecommand(0x50); writedata(0x37); \
+            writecommand(0x30); writedata(0x08); \
+            writecommand(0x61); writedata(200/256); writedata(200%256); writedata(200/256); writedata(200%256); \
+            writecommand(0xE9); writedata(0x01); \
+            writecommand(0x04); \
+            delay(100); \
+        } while(0)
+#endif
 
 #define EPD_UPDATE()        \
     do                      \
