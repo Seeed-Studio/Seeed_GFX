@@ -238,10 +238,13 @@ void EPaper::wake()
     if(!_grayLevel)
         EPD_WAKEUP();
     else
-#ifdef USE_MUTIGRAY_EPAPER  
+    {
+        #ifdef USE_MUTIGRAY_EPAPER  
         EPD_WAKEUP_GRAY();
-#endif
-    _sleep = false;
+        #endif
+        _sleep = false;
+    }
+
 }
 
 void  EPaper::setTemp(GetTempCallback callback)
