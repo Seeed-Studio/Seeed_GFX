@@ -242,8 +242,8 @@ void EPaper::wake()
         #ifdef USE_MUTIGRAY_EPAPER  
         EPD_WAKEUP_GRAY();
         #endif
+    }    
         _sleep = false;
-    }
 
 }
 
