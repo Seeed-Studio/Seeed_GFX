@@ -41,7 +41,73 @@
 
 #define TFT_INIT_DELAY 0
 
+
+
 const unsigned char LUT_VCOM[]={ 						
+0x26,	0x0F,	0x18,	0x18,	0x14,	0x01,	
+0x00,	0x0A,	0x00,	0x00,	0x00,	0x01,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+						
+						
+						
+};				
+const unsigned char LUT_WW[]={ 						
+0x55,	0x06,	0x0C,	0x17,	0x02,	0x01,	
+0x2A,	0x02,	0x1C,	0x02,	0x0D,	0x01,	
+0x80,	0x02,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+						
+						
+						
+};						
+						
+const unsigned char LUT_KW[]={ 						
+0x55,	0x06,	0x0C,	0x17,	0x02,	0x01,	
+0x2A,	0x02,	0x1C,	0x02,	0x0D,	0x01,	
+0x80,	0x02,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+						
+						
+						
+};						
+const unsigned char LUT_WK[]={ 						
+0xAA,	0x06,	0x0C,	0x17,	0x02,	0x01,	
+0x15,	0x02,	0x1C,	0x02,	0x0D,	0x01,	
+0x40,	0x02,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+						
+						
+						
+};						
+const unsigned char LUT_KK[]={ 						
+0xAA,	0x06,	0x0C,	0x17,	0x02,	0x01,	
+0x15,	0x02,	0x1C,	0x02,	0x0D,	0x01,	
+0x40,	0x02,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+};						
+const unsigned char CMD_USER[]={						
+0X17,	0X3F,	0X3F,	0X09,	0X06,	0X16	
+};						
+
+
+
+const unsigned char LUT_VCOM_GRAY[]={ 						
 0x00,	0x0C,	0x19,	0x15,	0x07,	0x01,	
 0x00,	0x05,	0x09,	0x0E,	0x16,	0x01,	
 0x00,	0x08,	0x13,	0x03,	0x01,	0x01,	
@@ -53,7 +119,7 @@ const unsigned char LUT_VCOM[]={
 						
 						
 };						
-const unsigned char LUT_WW[]={ 						
+const unsigned char LUT_WW_GRAY[]={ 						
 0x44,	0x0C,	0x19,	0x15,	0x07,	0x01,	
 0x28,	0x05,	0x09,	0x0E,	0x16,	0x01,	
 0x82,	0x08,	0x13,	0x03,	0x01,	0x01,	
@@ -66,7 +132,7 @@ const unsigned char LUT_WW[]={
 						
 };						
 						
-const unsigned char LUT_KW[]={ 						
+const unsigned char LUT_KW_GRAY[]={ 						
 0x40,	0x0C,	0x19,	0x15,	0x07,	0x01,	
 0xA9,	0x05,	0x09,	0x0E,	0x16,	0x01,	
 0x84,	0x08,	0x13,	0x03,	0x01,	0x01,	
@@ -78,7 +144,7 @@ const unsigned char LUT_KW[]={
 						
 						
 };						
-const unsigned char LUT_WK[]={ 						
+const unsigned char LUT_WK_GRAY[]={ 						
 0x25,	0x0C,	0x19,	0x15,	0x07,	0x01,	
 0x98,	0x05,	0x09,	0x0E,	0x16,	0x01,	
 0x42,	0x08,	0x13,	0x03,	0x01,	0x01,	
@@ -90,7 +156,7 @@ const unsigned char LUT_WK[]={
 						
 						
 };						
-const unsigned char LUT_KK[]={ 						
+const unsigned char LUT_KK_GRAY[]={ 						
 0xA0,	0x0C,	0x19,	0x15,	0x07,	0x01,	
 0x61,	0x05,	0x09,	0x0E,	0x16,	0x01,	
 0x10,	0x08,	0x13,	0x03,	0x01,	0x01,	
@@ -99,7 +165,7 @@ const unsigned char LUT_KK[]={
 0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
 0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
 };						
-const unsigned char CMD_USER[]={						
+const unsigned char CMD_USER_GRAY[]={						
 0X17,	0X3F,	0X3F,	0X07,	0X06,	0X26,	
 };
 
@@ -147,6 +213,41 @@ const unsigned char CMD_USER[]={
         for (count = 0; count < 42; count++) \
         {                               \
             writedata(LUT_KK[count]);   \
+        }                               \
+    } while (0)
+
+#define EPD_WRITE_LUT_GRAY()                 \
+    do                                  \
+    {                                   \
+        uint16_t count;                 \
+        CHECK_BUSY();                   \
+        writecommand(0x20);             \
+        for (count = 0; count < 42; count++) \
+        {                               \
+            writedata(LUT_VCOM_GRAY[count]); \
+        }                               \
+        CHECK_BUSY();                   \
+        writecommand(0x21);             \
+        for (count = 0; count < 42; count++) \
+        {                               \
+            writedata(LUT_WW_GRAY[count]);   \
+        }                               \
+        CHECK_BUSY();                   \
+        writecommand(0x22);             \
+        for (count = 0; count < 42; count++) \
+        {                               \
+            writedata(LUT_KW_GRAY[count]);   \
+        }                               \
+        CHECK_BUSY();                   \
+        writecommand(0x23);             \
+        for (count = 0; count < 42; count++) \
+        {                               \
+            writedata(LUT_WK_GRAY[count]);   \
+        }                               \
+        writecommand(0x24);             \
+        for (count = 0; count < 42; count++) \
+        {                               \
+            writedata(LUT_KK_GRAY[count]);   \
         }                               \
     } while (0)
 
@@ -203,40 +304,6 @@ const unsigned char CMD_USER[]={
 #define EPD_INIT_FAST()     \
     do                      \
     {                       \
-        writecommand(0x01);      \
-        writedata(0x07);         \
-        writedata(0x07);         \
-        writedata(0x3f);         \
-        writedata(0x3f);         \
-        writecommand(0x06);      \
-        writedata(0x17);         \
-        writedata(0x17);         \
-        writedata(0x28);         \
-        writedata(0x17);         \
-        writecommand(0x04);      \
-        delay(100);              \
-        CHECK_BUSY();            \
-        writecommand(0x00);      \
-        writedata(0x1F);         \
-        writecommand(0x61);      \
-        writedata(EPD_WIDTH >> 8); \
-        writedata(EPD_WIDTH & 0xFF); \
-        writedata(EPD_HEIGHT >> 8); \
-        writedata(EPD_HEIGHT & 0xFF); \
-        writecommand(0x50);      \
-        writedata(0x10);         \
-        writedata(0x07);         \
-        writecommand(0xE0); \
-        writedata(0x02);    \
-        writecommand(0xE5); \
-        writedata(0x55);    \
-    } while (0)
-
-#define EPD_INIT_GRAY()     \
-    do                      \
-    {                       \
-        writecommand(0x00); \
-        writedata(0x3F);    \
         writecommand(0x01); \
         writedata(0x07);    \
         writedata(CMD_USER[0]); \
@@ -247,11 +314,50 @@ const unsigned char CMD_USER[]={
         writedata(CMD_USER[4]); \
         writecommand(0x82); \
         writedata(CMD_USER[5]); \
+        writecommand(0x06);      \
+        writedata(0x17);         \
+        writedata(0x17);         \
+        writedata(0x28);         \
+        writedata(0x17);         \
+        writecommand(0x04);      \
+        delay(100);              \
+        CHECK_BUSY();            \
+        writecommand(0x00); \
+        writedata(0x3F);    \
+        writecommand(0x61);      \
+        writedata(EPD_WIDTH >> 8); \
+        writedata(EPD_WIDTH & 0xFF); \
+        writedata(EPD_HEIGHT >> 8); \
+        writedata(EPD_HEIGHT & 0xFF); \
+        writecommand(0x50);      \
+        writedata(0x10);         \
+        writedata(0x07);         \
+        EPD_WRITE_LUT();    \
+    } while (0)
+
+#define EPD_INIT_GRAY()     \
+    do                      \
+    {                       \
+        writecommand(0x01); \
+        writedata(0x07);    \
+        writedata(CMD_USER_GRAY[0]); \
+        writedata(CMD_USER_GRAY[1]); \
+        writedata(CMD_USER_GRAY[2]); \
+        writedata(CMD_USER_GRAY[3]); \
+        writecommand(0x30); \
+        writedata(CMD_USER_GRAY[4]); \
+        writecommand(0x82); \
+        writedata(CMD_USER_GRAY[5]); \
         writecommand(0x06); \
         writedata(0x27);    \
         writedata(0x27);    \
         writedata(0x28);    \
         writedata(0x17);    \
+        writecommand(0x04);      \
+        delay(100);              \
+        CHECK_BUSY();            \
+        writecommand(0x00); \
+        writedata(0x3F);    \
         writecommand(0xE3); \
         writedata(0x88);    \
         writecommand(0x50); \
@@ -260,11 +366,11 @@ const unsigned char CMD_USER[]={
         writecommand(0x52); \
         writedata(0x0A);    \
         writecommand(0x61); \
-        writedata(0x03);    \
-        writedata(0x20);    \
-        writedata(0x01);    \
-        writedata(0xE0);    \
-        EPD_WRITE_LUT();    \
+        writedata(EPD_WIDTH >> 8); \
+        writedata(EPD_WIDTH & 0xFF); \
+        writedata(EPD_HEIGHT >> 8); \
+        writedata(EPD_HEIGHT & 0xFF); \
+        EPD_WRITE_LUT_GRAY();    \
     } while (0)
     
 #define EPD_INIT_PARTIAL()           \
@@ -292,7 +398,17 @@ const unsigned char CMD_USER[]={
         EPD_INIT_FAST();             \
     } while (0)
 
-#define EPD_WAKEUP_GRAY EPD_WAKEUP
+#define EPD_WAKEUP_GRAY()              \
+    do                               \
+    {                                \
+        digitalWrite(TFT_RST, LOW);  \
+        delay(10);                   \
+        digitalWrite(TFT_RST, HIGH); \
+        delay(10);                   \
+        CHECK_BUSY();                \
+        EPD_INIT_GRAY();             \
+    } while (0)
+
 
 #define EPD_WAKEUP_PARTIAL()        \
     do                              \
@@ -357,7 +473,6 @@ const unsigned char CMD_USER[]={
 #define EPD_PUSH_NEW_GRAY_COLORS(w, h, colors)                       \
     do                                                                  \
     {                                                                   \
-        EPD_INIT_GRAY();                                                \
         uint16_t i, j, k;                                               \
         uint8_t temp1, temp2, temp3;                                    \
         writecommand(0x10);                                             \
@@ -403,7 +518,7 @@ const unsigned char CMD_USER[]={
                     }                                                   \
                 }                                                       \
             }                                                           \
-            writedata(~temp3);                                          \
+            writedata(temp3);                                          \
         }                                                               \
                                                                         \
         writecommand(0x13);                                             \
@@ -446,7 +561,7 @@ const unsigned char CMD_USER[]={
                     }                                                   \
                 }                                                       \
             }                                                           \
-            writedata(~temp3);                                          \
+            writedata(temp3);                                          \
         }                                                               \
     } while (0)
 
