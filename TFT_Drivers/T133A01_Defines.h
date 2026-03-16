@@ -92,7 +92,7 @@ const unsigned char PWS_V[1] = {
 	0x22
 };
 
-unsigned char DCDC_V[3] = {
+const unsigned char DCDC_V[3] = {
 	0x44, 0x54, 0x00
 };
 
