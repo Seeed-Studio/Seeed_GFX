@@ -47,6 +47,7 @@
 #define RE0_CCSET           0xE0
 #define RE3_PWS             0xE3
 #define RE5_TSSET           0xE5
+#define RA5_DCDC            0xA5
 
 #define TFT_SWRST 0xFF
 #define TFT_CASET 0xFF
@@ -91,18 +92,22 @@ const unsigned char PWS_V[1] = {
 	0x22
 };
 
+unsigned char DCDC_V[3] = {
+	0x44, 0x54, 0x00
+};
+
 const unsigned char BTST_P_V[2] = {
-	0xD8, 0x18
+	0xE0, 0x20
 };
 const unsigned char BTST_N_V[2] = {
-	0xD8, 0x18
+	0xE0, 0x20
 };
 const unsigned char Sleep_V[1] = {
 	0xa5
 };
 
 const unsigned char r74DataBuf[9]={
-    0xC0, 0x1C, 0x1C, 0xCC, 0xCC, 0xCC, 0x15, 0x15, 0x55
+    0x00, 0x0C, 0x0C, 0xD9, 0xDD, 0xDD, 0x15, 0x15, 0x55
 };
 const unsigned char rf0DataBuf[6]={
     0x49, 0x55, 0x13, 0x5D, 0x05, 0x10
@@ -181,6 +186,8 @@ const unsigned char rb1DataBuf[1]={
         digitalWrite(TFT_CS1, LOW);                             \
         writecommanddata(R00_PSR,PSR_V,sizeof(PSR_V));          \
         digitalWrite(TFT_CS1, HIGH); delay(10);                  \
+        writecommanddata(RA5_DCDC,DCDC_V,sizeof(DCDC_V));          \
+        delay(10);                  \
         digitalWrite(TFT_CS1, LOW);                             \
         writecommanddata(R50_CDI,CDI_V,sizeof(CDI_V));          \
         digitalWrite(TFT_CS1, HIGH); delay(10);                  \
