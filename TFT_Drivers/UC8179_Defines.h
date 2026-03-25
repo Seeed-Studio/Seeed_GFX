@@ -374,6 +374,10 @@ const unsigned char CMD_USER_GRAY[]={
 #define EPD_INIT_GRAY()     \
     do                      \
     {                       \
+        if (!_uc8179_has_checked_otp)   \
+        {                               \
+            uc8179ProbeOtpSupport();    \
+        }                               \
         if (UC8179_USE_INTERNAL_OTP())  \
         {                               \
             UC8179_INIT_GRAY_OTP();     \

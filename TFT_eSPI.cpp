@@ -1433,15 +1433,83 @@ uint32_t TFT_eSPI::readcommand32(uint8_t cmd_function, uint8_t index)
 }
 
 #if defined(UC8179_DRIVER)
-static inline void uc8179_wait_busy_ready(void)
+static inline bool uc8179_wait_busy_ready(uint32_t timeout_ms = 3000)
 {
 #ifdef TFT_BUSY
+  uint32_t start_ms = millis();
   do
   {
     delay(10);
     if (digitalRead(TFT_BUSY)) break;
+    if ((millis() - start_ms) >= timeout_ms) return false;
   } while (true);
 #endif
+  return true;
+}
+
+static inline void uc8179_spi_end_for_gpio_read(void)
+{
+#if !defined(TFT_PARALLEL_8_BIT) && !defined(RP2040_PIO_INTERFACE)
+  spi.end();
+#endif
+}
+
+static inline void uc8179_spi_restore_after_gpio_read(void)
+{
+#if !defined(TFT_PARALLEL_8_BIT) && !defined(RP2040_PIO_INTERFACE)
+  #if defined(TFT_MOSI) && !defined(TFT_SPI_OVERLAP) && !defined(ARDUINO_ARCH_RP2040) && !defined(ARDUINO_ARCH_MBED) && !defined(EFR32MG24B220F1536IM48)
+    spi.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, -1);
+  #else
+    spi.begin();
+  #endif
+#endif
+}
+
+static inline void uc8179_gpio_write_command(uint8_t command)
+{
+  pinMode(TFT_SCLK, OUTPUT);
+  pinMode(TFT_MOSI, OUTPUT);
+  pinMode(TFT_DC, OUTPUT);
+  pinMode(TFT_CS, OUTPUT);
+
+  digitalWrite(TFT_CS, HIGH);
+  digitalWrite(TFT_CS, LOW);
+  digitalWrite(TFT_SCLK, LOW);
+  digitalWrite(TFT_DC, LOW);
+
+  for (uint8_t bit = 0; bit < 8; bit++)
+  {
+    digitalWrite(TFT_MOSI, (command & 0x80) ? HIGH : LOW);
+    digitalWrite(TFT_SCLK, HIGH);
+    digitalWrite(TFT_SCLK, LOW);
+    command <<= 1;
+  }
+
+  digitalWrite(TFT_CS, HIGH);
+}
+
+static inline uint8_t uc8179_gpio_read_byte(void)
+{
+  uint8_t data = 0;
+
+  digitalWrite(TFT_CS, LOW);
+  digitalWrite(TFT_DC, HIGH);
+  digitalWrite(TFT_SCLK, LOW);
+
+  pinMode(TFT_MOSI, INPUT);
+  for (uint8_t bit = 0; bit < 8; bit++)
+  {
+    data <<= 1;
+    digitalWrite(TFT_SCLK, HIGH);
+    if (digitalRead(TFT_MOSI) == HIGH) data |= 0x01;
+    digitalWrite(TFT_SCLK, LOW);
+  }
+
+  pinMode(TFT_MOSI, OUTPUT);
+  digitalWrite(TFT_MOSI, HIGH);
+  digitalWrite(TFT_CS, HIGH);
+
+  return data;
 }
 
 void TFT_eSPI::uc8179ReadTemperatureRaw(uint8_t *temp1, uint8_t *temp2)
@@ -1449,8 +1517,8 @@ void TFT_eSPI::uc8179ReadTemperatureRaw(uint8_t *temp1, uint8_t *temp2)
   if (temp1) *temp1 = 0;
   if (temp2) *temp2 = 0;
 
-  writecommand(0x40);
-  uc8179_wait_busy_ready();
+  uc8179_gpio_write_command(0x40);
+  if (!uc8179_wait_busy_ready()) return;
 
 #if defined(TFT_PARALLEL_8_BIT) || defined(RP2040_PIO_INTERFACE)
   busDir(GPIO_DIR_MASK, INPUT);
@@ -1461,11 +1529,8 @@ void TFT_eSPI::uc8179ReadTemperatureRaw(uint8_t *temp1, uint8_t *temp2)
   busDir(GPIO_DIR_MASK, OUTPUT);
   CS_H;
 #else
-  begin_tft_read();
-  DC_D;
-  if (temp1) *temp1 = tft_Read_8();
-  if (temp2) *temp2 = tft_Read_8();
-  end_tft_read();
+  if (temp1) *temp1 = uc8179_gpio_read_byte();
+  if (temp2) *temp2 = uc8179_gpio_read_byte();
 #endif
 }
 
@@ -1474,7 +1539,7 @@ void TFT_eSPI::uc8179ReadOtpUserData(uint16_t read_len, uint16_t data_offset, ui
   if (!buf || !buf_len) return;
 
   memset(buf, 0, buf_len);
-  writecommand(0xA2);
+  uc8179_gpio_write_command(0xA2);
 
 #if defined(TFT_PARALLEL_8_BIT) || defined(RP2040_PIO_INTERFACE)
   uint8_t count = 0;
@@ -1493,17 +1558,14 @@ void TFT_eSPI::uc8179ReadOtpUserData(uint16_t read_len, uint16_t data_offset, ui
   CS_H;
 #else
   uint8_t count = 0;
-  begin_tft_read();
-  DC_D;
   for (uint16_t row = 0; row < read_len; row++)
   {
-    uint8_t temp = tft_Read_8();
+    uint8_t temp = uc8179_gpio_read_byte();
     if (row >= data_offset && count < buf_len)
     {
       buf[count++] = temp;
     }
   }
-  end_tft_read();
 #endif
 
   delay(20);
@@ -1521,6 +1583,7 @@ void TFT_eSPI::uc8179ProbeOtpSupport(void)
   _uc8179_use_otp_lut = false;
 
   if (resume_write) end_nin_write();
+  uc8179_spi_end_for_gpio_read();
 
 #ifdef TFT_RST
   if (TFT_RST >= 0)
@@ -1531,7 +1594,12 @@ void TFT_eSPI::uc8179ProbeOtpSupport(void)
     delay(20);
   }
 #endif
-  uc8179_wait_busy_ready();
+  if (!uc8179_wait_busy_ready())
+  {
+    uc8179_spi_restore_after_gpio_read();
+    if (resume_write) begin_nin_write();
+    return;
+  }
   uc8179ReadTemperatureRaw(&_uc8179_temp_raw_int, &_uc8179_temp_raw_frac);
 
 #ifdef TFT_RST
@@ -1543,7 +1611,12 @@ void TFT_eSPI::uc8179ProbeOtpSupport(void)
     delay(20);
   }
 #endif
-  uc8179_wait_busy_ready();
+  if (!uc8179_wait_busy_ready())
+  {
+    uc8179_spi_restore_after_gpio_read();
+    if (resume_write) begin_nin_write();
+    return;
+  }
   uc8179ReadOtpUserData(0x0BED, 0x0BE3, usrdata1, sizeof(usrdata1));
 
 #ifdef TFT_RST
@@ -1555,11 +1628,17 @@ void TFT_eSPI::uc8179ProbeOtpSupport(void)
     delay(20);
   }
 #endif
-  uc8179_wait_busy_ready();
+  if (!uc8179_wait_busy_ready())
+  {
+    uc8179_spi_restore_after_gpio_read();
+    if (resume_write) begin_nin_write();
+    return;
+  }
   uc8179ReadOtpUserData(0x17ED, 0x17E3, usrdata2, sizeof(usrdata2));
 
   _uc8179_use_otp_lut = (usrdata1[0] == 0x01) || (usrdata2[0] == 0x01);
 
+  uc8179_spi_restore_after_gpio_read();
   if (resume_write) begin_nin_write();
 }
 #endif

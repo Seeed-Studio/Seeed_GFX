@@ -10,7 +10,6 @@
     pinMode(TFT_ENABLE, OUTPUT);
     digitalWrite(TFT_ENABLE, HIGH);
 #endif  
-    uc8179ProbeOtpSupport();
     writecommand(0x01); // POWER SETTING
     writedata(0x07);
     writedata(0x07); // VGH=20V,VGL=-20V
