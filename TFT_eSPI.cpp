@@ -496,6 +496,13 @@ TFT_eSPI::TFT_eSPI(int16_t w, int16_t h)
   _xPivot = 0;
   _yPivot = 0;
 
+#if defined(UC8179_DRIVER)
+  _uc8179_has_checked_otp = false;
+  _uc8179_use_otp_lut = false;
+  _uc8179_temp_raw_int = 0;
+  _uc8179_temp_raw_frac = 0;
+#endif
+
 // Legacy support for bit GPIO masks
   cspinmask = 0;
   dcpinmask = 0;
@@ -1424,6 +1431,138 @@ uint32_t TFT_eSPI::readcommand32(uint8_t cmd_function, uint8_t index)
 
   return reg;
 }
+
+#if defined(UC8179_DRIVER)
+static inline void uc8179_wait_busy_ready(void)
+{
+#ifdef TFT_BUSY
+  do
+  {
+    delay(10);
+    if (digitalRead(TFT_BUSY)) break;
+  } while (true);
+#endif
+}
+
+void TFT_eSPI::uc8179ReadTemperatureRaw(uint8_t *temp1, uint8_t *temp2)
+{
+  if (temp1) *temp1 = 0;
+  if (temp2) *temp2 = 0;
+
+  writecommand(0x40);
+  uc8179_wait_busy_ready();
+
+#if defined(TFT_PARALLEL_8_BIT) || defined(RP2040_PIO_INTERFACE)
+  busDir(GPIO_DIR_MASK, INPUT);
+  CS_L;
+  DC_D;
+  if (temp1) *temp1 = readByte();
+  if (temp2) *temp2 = readByte();
+  busDir(GPIO_DIR_MASK, OUTPUT);
+  CS_H;
+#else
+  begin_tft_read();
+  DC_D;
+  if (temp1) *temp1 = tft_Read_8();
+  if (temp2) *temp2 = tft_Read_8();
+  end_tft_read();
+#endif
+}
+
+void TFT_eSPI::uc8179ReadOtpUserData(uint16_t read_len, uint16_t data_offset, uint8_t *buf, uint8_t buf_len)
+{
+  if (!buf || !buf_len) return;
+
+  memset(buf, 0, buf_len);
+  writecommand(0xA2);
+
+#if defined(TFT_PARALLEL_8_BIT) || defined(RP2040_PIO_INTERFACE)
+  uint8_t count = 0;
+  busDir(GPIO_DIR_MASK, INPUT);
+  CS_L;
+  DC_D;
+  for (uint16_t row = 0; row < read_len; row++)
+  {
+    uint8_t temp = readByte();
+    if (row >= data_offset && count < buf_len)
+    {
+      buf[count++] = temp;
+    }
+  }
+  busDir(GPIO_DIR_MASK, OUTPUT);
+  CS_H;
+#else
+  uint8_t count = 0;
+  begin_tft_read();
+  DC_D;
+  for (uint16_t row = 0; row < read_len; row++)
+  {
+    uint8_t temp = tft_Read_8();
+    if (row >= data_offset && count < buf_len)
+    {
+      buf[count++] = temp;
+    }
+  }
+  end_tft_read();
+#endif
+
+  delay(20);
+}
+
+void TFT_eSPI::uc8179ProbeOtpSupport(void)
+{
+  if (_uc8179_has_checked_otp) return;
+
+  const bool resume_write = !locked;
+  uint8_t usrdata1[10];
+  uint8_t usrdata2[10];
+
+  _uc8179_has_checked_otp = true;
+  _uc8179_use_otp_lut = false;
+
+  if (resume_write) end_nin_write();
+
+#ifdef TFT_RST
+  if (TFT_RST >= 0)
+  {
+    digitalWrite(TFT_RST, LOW);
+    delay(20);
+    digitalWrite(TFT_RST, HIGH);
+    delay(20);
+  }
+#endif
+  uc8179_wait_busy_ready();
+  uc8179ReadTemperatureRaw(&_uc8179_temp_raw_int, &_uc8179_temp_raw_frac);
+
+#ifdef TFT_RST
+  if (TFT_RST >= 0)
+  {
+    digitalWrite(TFT_RST, LOW);
+    delay(20);
+    digitalWrite(TFT_RST, HIGH);
+    delay(20);
+  }
+#endif
+  uc8179_wait_busy_ready();
+  uc8179ReadOtpUserData(0x0BED, 0x0BE3, usrdata1, sizeof(usrdata1));
+
+#ifdef TFT_RST
+  if (TFT_RST >= 0)
+  {
+    digitalWrite(TFT_RST, LOW);
+    delay(20);
+    digitalWrite(TFT_RST, HIGH);
+    delay(20);
+  }
+#endif
+  uc8179_wait_busy_ready();
+  uc8179ReadOtpUserData(0x17ED, 0x17E3, usrdata2, sizeof(usrdata2));
+
+  _uc8179_use_otp_lut = (usrdata1[0] == 0x01) || (usrdata2[0] == 0x01);
+
+  if (resume_write) begin_nin_write();
+}
+#endif
 
 
 /***************************************************************************************

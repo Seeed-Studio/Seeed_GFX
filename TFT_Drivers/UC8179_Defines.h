@@ -183,6 +183,40 @@ const unsigned char CMD_USER_GRAY[]={
 #define CHECK_BUSY()
 #endif
 
+#define UC8179_USE_INTERNAL_OTP() (_uc8179_use_otp_lut)
+
+#define UC8179_INIT_GRAY_OTP()         \
+    do                                 \
+    {                                  \
+        writecommand(0x01);            \
+        writedata(0x07);               \
+        writedata(0x07);               \
+        writedata(0x3F);               \
+        writedata(0x3F);               \
+        writecommand(0x06);            \
+        writedata(0x27);               \
+        writedata(0x27);               \
+        writedata(0x18);               \
+        writedata(0x17);               \
+        writecommand(0x04);            \
+        delay(100);                    \
+        CHECK_BUSY();                  \
+        writecommand(0x00);            \
+        writedata(0x1F);               \
+        writecommand(0x61);            \
+        writedata(EPD_WIDTH >> 8);     \
+        writedata(EPD_WIDTH & 0xFF);   \
+        writedata(EPD_HEIGHT >> 8);    \
+        writedata(EPD_HEIGHT & 0xFF);  \
+        writecommand(0x50);            \
+        writedata(0x10);               \
+        writedata(0x07);               \
+        writecommand(0xE0);            \
+        writedata(0x02);               \
+        writecommand(0xE5);            \
+        writedata(0x5F);               \
+    } while (0)
+
 #define EPD_WRITE_LUT()                 \
     do                                  \
     {                                   \
@@ -306,73 +340,80 @@ const unsigned char CMD_USER_GRAY[]={
 #define EPD_INIT_FAST()     \
     do                      \
     {                       \
-        writecommand(0x01); \
-        writedata(0x07);    \
-        writedata(CMD_USER[0]); \
-        writedata(CMD_USER[1]); \
-        writedata(CMD_USER[2]); \
-        writedata(CMD_USER[3]); \
-        writecommand(0x30); \
-        writedata(CMD_USER[4]); \
-        writecommand(0x82); \
-        writedata(CMD_USER[5]); \
-        writecommand(0x06);      \
-        writedata(0x17);         \
-        writedata(0x17);         \
-        writedata(0x28);         \
-        writedata(0x17);         \
-        writecommand(0x04);      \
-        delay(100);              \
-        CHECK_BUSY();            \
-        writecommand(0x00); \
-        writedata(0x3F);    \
-        writecommand(0x61);      \
-        writedata(EPD_WIDTH >> 8); \
+        writecommand(0x01);         \
+        writedata(0x07);            \
+        writedata(CMD_USER[0]);     \
+        writedata(CMD_USER[1]);     \
+        writedata(CMD_USER[2]);     \
+        writedata(CMD_USER[3]);     \
+        writecommand(0x30);         \
+        writedata(CMD_USER[4]);     \
+        writecommand(0x82);         \
+        writedata(CMD_USER[5]);     \
+        writecommand(0x06);         \
+        writedata(0x17);            \
+        writedata(0x17);            \
+        writedata(0x28);            \
+        writedata(0x17);            \
+        writecommand(0x04);         \
+        delay(100);                 \
+        CHECK_BUSY();               \
+        writecommand(0x00);         \
+        writedata(0x3F);            \
+        writecommand(0x61);         \
+        writedata(EPD_WIDTH >> 8);  \
         writedata(EPD_WIDTH & 0xFF); \
         writedata(EPD_HEIGHT >> 8); \
         writedata(EPD_HEIGHT & 0xFF); \
-        writecommand(0x50);      \
-        writedata(0x10);         \
-        writedata(0x07);         \
-        EPD_WRITE_LUT();    \
+        writecommand(0x50);         \
+        writedata(0x10);            \
+        writedata(0x07);            \
+        EPD_WRITE_LUT();            \
     } while (0)
 
 #define EPD_INIT_GRAY()     \
     do                      \
     {                       \
-        writecommand(0x01); \
-        writedata(0x07);    \
-        writedata(CMD_USER_GRAY[0]); \
-        writedata(CMD_USER_GRAY[1]); \
-        writedata(CMD_USER_GRAY[2]); \
-        writedata(CMD_USER_GRAY[3]); \
-        writecommand(0x30); \
-        writedata(CMD_USER_GRAY[4]); \
-        writecommand(0x82); \
-        writedata(CMD_USER_GRAY[5]); \
-        writecommand(0x06); \
-        writedata(0x27);    \
-        writedata(0x27);    \
-        writedata(0x28);    \
-        writedata(0x17);    \
-        writecommand(0x04);      \
-        delay(100);              \
-        CHECK_BUSY();            \
-        writecommand(0x00); \
-        writedata(0x3F);    \
-        writecommand(0xE3); \
-        writedata(0x88);    \
-        writecommand(0x50); \
-        writedata(0x10);    \
-        writedata(0x07);    \
-        writecommand(0x52); \
-        writedata(0x00);    \
-        writecommand(0x61); \
-        writedata(EPD_WIDTH >> 8); \
-        writedata(EPD_WIDTH & 0xFF); \
-        writedata(EPD_HEIGHT >> 8); \
-        writedata(EPD_HEIGHT & 0xFF); \
-        EPD_WRITE_LUT_GRAY();    \
+        if (UC8179_USE_INTERNAL_OTP())  \
+        {                               \
+            UC8179_INIT_GRAY_OTP();     \
+        }                               \
+        else                            \
+        {                               \
+            writecommand(0x01);         \
+            writedata(0x07);            \
+            writedata(CMD_USER_GRAY[0]); \
+            writedata(CMD_USER_GRAY[1]); \
+            writedata(CMD_USER_GRAY[2]); \
+            writedata(CMD_USER_GRAY[3]); \
+            writecommand(0x30);         \
+            writedata(CMD_USER_GRAY[4]); \
+            writecommand(0x82);         \
+            writedata(CMD_USER_GRAY[5]); \
+            writecommand(0x06);         \
+            writedata(0x27);            \
+            writedata(0x27);            \
+            writedata(0x28);            \
+            writedata(0x17);            \
+            writecommand(0x04);         \
+            delay(100);                 \
+            CHECK_BUSY();               \
+            writecommand(0x00);         \
+            writedata(0x3F);            \
+            writecommand(0xE3);         \
+            writedata(0x88);            \
+            writecommand(0x50);         \
+            writedata(0x10);            \
+            writedata(0x07);            \
+            writecommand(0x52);         \
+            writedata(0x00);            \
+            writecommand(0x61);         \
+            writedata(EPD_WIDTH >> 8);  \
+            writedata(EPD_WIDTH & 0xFF); \
+            writedata(EPD_HEIGHT >> 8); \
+            writedata(EPD_HEIGHT & 0xFF); \
+            EPD_WRITE_LUT_GRAY();       \
+        }                               \
     } while (0)
     
 #define EPD_INIT_PARTIAL()           \
