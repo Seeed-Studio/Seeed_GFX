@@ -20,8 +20,8 @@ void setup()
   delay(1000);
   
   // Display bitmap image using drawBitmap API
-  // drawBitmap(x, y, bitmap_data, width, height, color)
-  epaper.drawBitmap(0, 0, gImage_3inch97, 800, 480, TFT_BLACK);
+  // drawBitmap(x, y, bitmap_data, width, height, fgcolor, bgcolor)
+  epaper.drawBitmap(0, 0, gImage_3inch97, 800, 480, TFT_WHITE, TFT_BLACK);
   epaper.update();
   
   Serial.println("Bitmap displayed successfully");
