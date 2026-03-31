@@ -22,7 +22,6 @@
     writecommand(0x01); //PWRR
     writedata(0x07);
 
-    
     writecommand(0x03); //POFS
     writedata(0x10);
     writedata(0x54);
