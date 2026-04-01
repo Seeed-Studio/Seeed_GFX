@@ -15,6 +15,44 @@
 
 #include "TFT_eSPI.h"
 
+static char *tft_ltoa(long value, char *buffer, int base)
+{
+  if (base < 2 || base > 36) {
+    buffer[0] = '\0';
+    return buffer;
+  }
+
+  char *write = buffer;
+  unsigned long magnitude;
+
+  if (value < 0 && base == 10) {
+    *write++ = '-';
+    magnitude = (unsigned long)(-(value + 1)) + 1;
+  }
+  else {
+    magnitude = (unsigned long)value;
+  }
+
+  char *digits = write;
+
+  do {
+    unsigned long remainder = magnitude % (unsigned long)base;
+    *write++ = (remainder < 10) ? (char)('0' + remainder) : (char)('A' + remainder - 10);
+    magnitude /= (unsigned long)base;
+  } while (magnitude != 0);
+
+  *write = '\0';
+
+  char *tail = write - 1;
+  while (digits < tail) {
+    char temp = *digits;
+    *digits++ = *tail;
+    *tail-- = temp;
+  }
+
+  return buffer;
+}
+
 #if defined (ESP32)
   #if defined(CONFIG_IDF_TARGET_ESP32S3)
     #include "Processors/TFT_eSPI_ESP32_S3.c" // Tested with SPI and 8-bit parallel
@@ -6074,7 +6112,7 @@ int16_t TFT_eSPI::drawNumber(long long_num, int32_t poX, int32_t poY)
 {
   isDigits = true; // Eliminate jiggle in monospaced fonts
   char str[12];
-  ltoa(long_num, str, 10);
+  tft_ltoa(long_num, str, 10);
   return drawString(str, poX, poY, textfont);
 }
 
@@ -6082,7 +6120,7 @@ int16_t TFT_eSPI::drawNumber(long long_num, int32_t poX, int32_t poY, uint8_t fo
 {
   isDigits = true; // Eliminate jiggle in monospaced fonts
   char str[12];
-  ltoa(long_num, str, 10);
+  tft_ltoa(long_num, str, 10);
   return drawString(str, poX, poY, font);
 }
 
@@ -6138,7 +6176,7 @@ int16_t TFT_eSPI::drawFloat(float floatNumber, uint8_t dp, int32_t poX, int32_t 
   uint32_t temp = (uint32_t)floatNumber;
 
   // Put integer part into array
-  ltoa(temp, str + ptr, 10);
+  tft_ltoa(temp, str + ptr, 10);
 
   // Find out where the null is to get the digit count loaded
   while ((uint8_t)str[ptr] != 0) ptr++; // Move the pointer along
@@ -6158,7 +6196,7 @@ int16_t TFT_eSPI::drawFloat(float floatNumber, uint8_t dp, int32_t poX, int32_t 
     i++;
     floatNumber *= 10;       // for the next decimal
     temp = floatNumber;      // get the decimal
-    ltoa(temp, str + ptr, 10);
+    tft_ltoa(temp, str + ptr, 10);
     ptr++; digits++;         // Increment pointer and digits count
     floatNumber -= temp;     // Remove that digit
   }
