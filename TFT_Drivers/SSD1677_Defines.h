@@ -18,9 +18,9 @@
 #define TFT_HEIGHT EPD_HEIGHT
 #endif
 
-#define USE_MUTIGRAY_EPAPER//new
+#define USE_MUTIGRAY_EPAPER
 #define USE_PARTIAL_EPAPER
-#define GRAY_LEVEL4 4//new
+#define GRAY_LEVEL4 4
 #define EPD_COLOR_DEPTH 1
 
 #define EPD_NOP 0xFF
