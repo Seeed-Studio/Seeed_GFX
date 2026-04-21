@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 Seeed GFX Library - Online Configuration Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #8FC31F;
+            --primary-gradient: linear-gradient(135deg, #8FC31F 0%, #004966 100%);
+            --secondary-color: #004966;
+            --accent-color: #8FC31F;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e5e7eb;
+            --shadow: 0 10px 25px -5px rgba(0, 73, 102, 0.15), 0 4px 6px -2px rgba(0, 73, 102, 0.08);
+            --shadow-lg: 0 25px 50px -12px rgba(0, 73, 102, 0.25);
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--background);
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(143, 195, 31, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(0, 73, 102, 0.1) 0%, transparent 50%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        h1 {
+            color: var(--text-primary);
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin: 2rem 0;
+            letter-spacing: -0.025em;
+        }
+
+        h2 {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 2rem 0 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h2::before {
+            content: '';
+            width: 4px;
+            height: 1.5rem;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+
+        h3 {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            font-weight: 500;
+            margin: 1.5rem 0 0.75rem 0;
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .container:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-top: 1rem;
+        }
+
+        .company-logo {
+            max-height: 80px;
+            height: auto;
+            max-width: 200px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 8px rgba(0, 73, 102, 0.15));
+            transition: var(--transition);
+        }
+
+        .company-logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 4px 12px rgba(0, 73, 102, 0.25));
+        }
+        .selection-group {
+            margin-bottom: 2rem;
+        }
+
+        select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: var(--border-radius);
+            border: 2px solid var(--border-color);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            color: var(--text-primary);
+            transition: var(--transition);
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            font-family: inherit;
+        }
+
+        select:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(143, 195, 31, 0.15);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(143, 195, 31, 0.1);
+        }
+
+        select:disabled {
+            background: #f9fafb;
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .code-container {
+            position: relative;
+            margin-top: 2rem;
+        }
+
+        pre {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: #e2e8f0;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            min-height: 80px;
+            position: relative;
+            border: 1px solid #475569;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .copy-btn svg {
+            width: 1rem;
+            height: 1rem;
+            position: absolute;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        .copy-icon {
+            fill: #e2e8f0;
+            opacity: 1;
+        }
+
+        .check-icon {
+            fill: var(--secondary-color);
+            opacity: 0;
+        }
+
+        .epaper-options {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid var(--secondary-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-top: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .epaper-options::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-color);
+        }
+
+        .epaper-options label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--secondary-color);
+            transition: var(--transition);
+        }
+
+        .epaper-options label:hover {
+            color: #003344;
+        }
+
+        .epaper-options input[type="radio"] {
+            margin-right: 0.75rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: var(--accent-color);
+        }
+        .lang-switcher {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            padding: 0.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            z-index: 1000;
+        }
+
+        .lang-switcher a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 1.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: var(--transition);
+            display: inline-block;
+        }
+
+        .lang-switcher a:hover {
+            color: var(--primary-color);
+            background: rgba(143, 195, 31, 0.1);
+        }
+
+        .lang-switcher a.active {
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 600;
+        }
+
+        .final-instruction {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin: 1rem 0;
+            padding: 1rem;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .final-instruction code {
+            background: rgba(143, 195, 31, 0.1);
+            color: var(--primary-color);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        .final-instruction-img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 1rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+                padding-top: 4rem; /* 为固定的语言切换器留出空间 */
+            }
+
+            .container {
+                padding: 2rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .lang-switcher {
+                position: fixed;
+                top: 1rem;
+                right: 1rem;
+                left: 1rem;
+                display: flex;
+                justify-content: center;
+                z-index: 1000;
+            }
+
+            select {
+                font-size: 1rem;
+            }
+
+            .company-logo {
+                max-height: 60px;
+                max-width: 150px;
+            }
+
+            .logo-container {
+                margin-bottom: 1.5rem;
+                padding-top: 0.5rem;
+            }
+        }
+
+        /* 加载动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* 选择框聚焦效果 */
+        .selection-group {
+            position: relative;
+        }
+
+        .selection-group::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+        }
+
+        .selection-group:focus-within::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lang-switcher">
+        <a id="lang-en" onclick="switchLanguage('en')" class="active">English</a> |
+        <a id="lang-zh" onclick="switchLanguage('zh')">中文</a>
+    </div>
+
+    <div class="container">
+        <div class="logo-container">
+            <img src="seeed_logo.png" alt="Seeed Studio" class="company-logo">
+        </div>
+        <h1 data-lang-key="main_title">Online Configuration Generator</h1>
+
+        <h2 data-lang-key="step1_title">Step 1: Select Your Target Hardware</h2>
+        
+        <div class="selection-group">
+            <h3 data-lang-key="select_title_hardware">🔧 Select Integrated Devices or DIY displays</h3>
+            <select id="hardwareSelector" onchange="handleSelectionChange(this)">
+            </select>
+        </div>
+
+        <div class="selection-group">
+            <h3 data-lang-key="select_title_mono_epaper">🖥️ OR Select Display Component</h3>
+            <select id="monoEPaperSelector" onchange="handleSelectionChange(this)">
+            </select>
+        </div>
+        
+        <div id="ePaperOptions" style="display: none;">
+            <h2 data-lang-key="step2_title">Step 2: (ePaper Only) Select Your Driver Board Type</h2>
+            <div class="epaper-options">
+                <label>
+                    <input type="radio" name="driverBoard" value="driver" onchange="generateConfig()" checked>
+                    <span data-lang-key="epaper_option_driver">Seeed ePaper Driver Board</span>
+                </label>
+                <label>
+                    <input type="radio" name="driverBoard" value="breakout" onchange="generateConfig()">
+                    <span data-lang-key="epaper_option_breakout">Seeed ePaper Breakout Board</span>
+                </label>
+                <label>
+                    <input type="radio" name="driverBoard" value="monitor_ee02" onchange="generateConfig()">
+                    <span data-lang-key="epaper_option_monitor_ee02">XIAO ePaper Display Board EE02</span>
+                </label>
+                <label>
+                    <input type="radio" name="driverBoard" value="monitor_ee03" onchange="generateConfig()">
+                    <span data-lang-key="epaper_option_monitor_ee03">XIAO ePaper Display Board EE03</span>
+                </label>
+                <label>
+                    <input type="radio" name="driverBoard" value="monitor_ee04" onchange="generateConfig()">
+                    <span data-lang-key="epaper_option_monitor_ee04">XIAO ePaper Display Board EE04</span>
+                </label>
+                <label>
+                    <input type="radio" name="driverBoard" value="monitor_ee05" onchange="generateConfig()">
+                    <span data-lang-key="epaper_option_monitor_ee05">XIAO ePaper Display Board EE05</span>
+                </label>
+                <label>
+                    <input type="radio" name="driverBoard" value="monitor_en04" onchange="generateConfig()">
+                    <span data-lang-key="epaper_option_monitor_en04">XIAO ePaper Display Board EN04</span>
+                </label>
+                <label>
+                    <input type="radio" name="driverBoard" value="monitor_en05" onchange="generateConfig()">
+                    <span data-lang-key="epaper_option_monitor_en05">XIAO ePaper Display Board EN05</span>
+                </label>
+            </div>
+        </div>
+
+        <h2 data-lang-key="step3_title">Final step: Copy the Generated Code</h2>
+        <p class="final-instruction" data-lang-key="final_step_instruction"></p>
+        <img src="thumbprint_step1.png" alt="Instructional image" class="final-instruction-img">
+        <img src="thumbprint_step2.png" alt="Instructional image" class="final-instruction-img">
+        <div class="code-container">
+            <pre><code id="outputCode"></code></pre>
+            <button id="copyButton" class="copy-btn" onclick="copyToClipboard()" title="Copy Code">
+                <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19,2H8C6.9,2,6,2.9,6,4v14h2V4h11V2z M16,6H5C3.9,6,3,6.9,3,8v12c0,1.1,0.9,2,2,2h11c1.1,0,2-0.9,2-2V8C18,6.9,17.1,6,16,6z M16,20H5V8h11V20z"/></svg>
+                <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                title: "Seeed GFX Library - Online Configuration Generator",
+                main_title: "Seeed GFX Library - Online Configuration Generator",
+                step1_title: "Step 1: Select Your Target Hardware",
+                step2_title: "Step 2: Select Your Driver Board",
+                step3_title: "Final step: Copy the Generated Code",
+                final_step_instruction: "Create a <code>driver.h</code> file and paste the following code into it.",
+                output_placeholder: "// Please select a hardware configuration from one of the dropdown menus above.",
+                select_title_hardware: "🔧 Select Integrated Devices or DIY displays",
+                select_title_mono_epaper: "🖥️ OR Select Display Component",
+                select_placeholder_hardware: "-- Please select the Integrated Devices or DIY displays --",
+                select_placeholder_mono_epaper: "-- Please select Display Component --",
+                epaper_option_driver: "ePaper Driver Board for XIAO",
+                epaper_option_breakout: "ePaper Breakout Board for XIAO",
+                epaper_option_monitor_ee02: "XIAO ePaper Display Board EE02",
+                epaper_option_monitor_ee03: "XIAO ePaper Display Board EE03",
+                epaper_option_monitor_ee05: "XIAO ePaper Display Board EE05",
+                epaper_option_monitor_en04: "XIAO ePaper Display Board EN04",
+                epaper_option_monitor_en05: "XIAO ePaper Display Board EN05",
+            },
+            zh: {
+                title: "Seeed GFX Library - 在线配置生成器 (Online Configuration Generator)",
+                main_title: "Seeed GFX Library - 在线配置生成器",                
+                step1_title: "步骤 1: 选择您的硬件或者DIY设备",
+                step2_title: "步骤 2: 选择您的驱动板类型",
+                step3_title: "最后一步: 复制生成的代码",
+                final_step_instruction: "请创建一个名为 <code>driver.h</code> 的文件，并将以下代码粘贴到其中。",
+                output_placeholder: "// 请从上方的某个下拉菜单中选择一个硬件配置。",
+                select_title_hardware: "🔧 选择集成设备或DIY显示屏",
+                select_title_mono_epaper: "🖥️ 或选择显示组件",
+                select_placeholder_hardware: "-- 请从这里选择您的硬件配置 --",
+                select_placeholder_mono_epaper: "-- 请选择您的通用电子墨水屏规格 --",
+                epaper_option_driver: "ePaper Driver Board for XIAO",
+                epaper_option_breakout: "ePaper Breakout Board for XIAO",
+                epaper_option_monitor_ee02: "XIAO ePaper Display Board EE02",
+                epaper_option_monitor_ee03: "XIAO ePaper Display Board EE03",
+                epaper_option_monitor_ee04: "XIAO ePaper Display Board EE04",
+                epaper_option_monitor_ee05: "XIAO ePaper Display Board EE05",
+                epaper_option_monitor_en04: "XIAO ePaper Display Board EN04",
+                epaper_option_monitor_en05: "XIAO ePaper Display Board EN05",
+            }
+        };
+
+        const optionGroups = {
+            hardware: {
+                selectorId: 'hardwareSelector',
+                placeholderKey: 'select_placeholder_hardware',
+                options: [
+                    { value: "500", text: "Wio Terminal （ILI9341）" },
+                    { value: "501", text: "Round Display for Seeed Studio XIAO （GC9A01)" },
+                    { value: "520", text: "reTerminal E1001 （UC8179）" },
+                    { value: "521", text: "reTerminal E1002 （ED2208）" },
+                    { value: "522", text: "reTerminal E1003 （ED103TC2）" },
+                    { value: "523", text: "reTerminal E1004 （T133A01）" },
+                    { value: "524", text: "reTerminal E1005 （ED1677）" },
+                    { value: "525", text: "reTerminal E1005 BWRY （ED2677）" },
+                    { value: "700", text: "TRMNL 7.5\" (OG) DIY Kit" }
+                ]
+            },
+            monoEPaper: {
+                selectorId: 'monoEPaperSelector',
+                placeholderKey: 'select_placeholder_mono_epaper',
+                options: [
+                    { value: "502", text: "7.5 inch monochrome ePaper Screen （UC8179）" },
+                    { value: "509", text: "7.3 inch six-color ePaper Screen（ED2208）" },
+                    { value: "510", text: "13.3 inch six-color ePaper Screen（T133A01）" },
+                    { value: "511", text: "10.3 inch monochrome ePaper Screen（ED103TC2）" },
+                    { value: "503", text: "5.83 inch monochrome ePaper Screen （UC8179）" },
+                    { value: "506", text: "4.26 inch monochrome ePaper Screen （SSD1677）" },
+                    { value: "507", text: "4.2 inch monochrome ePaper Screen （SSD1683）" },
+                    { value: "514", text: "4.0 inch six-color ePaper Screen（ED2208）" },
+                    { value: "515", text: "3.97 inch monochrome ePaper Screen （SSD1677）" },
+                    { value: "516", text: "3.97 inch BWRY ePaper Screen （SSD2677）" },
+                    { value: "504", text: "2.9 inch monochrome ePaper Screen （SSD1680）" },
+                    { value: "512", text: "2.9 inch BWRY ePaper Screen （JD79667）" },
+                    { value: "508", text: "2.13 inch monochrome ePaper Screen （SSD1680）" },
+                    { value: "513", text: "2.13 inch BWRY ePaper Screen （JD79676）" },
+                    { value: "505", text: "1.54 inch monochrome ePaper Screen （SSD1681）" },
+                    { value: "517", text: "1.54 inch BWRY ePaper Screen （JD79660）" }
+                ]
+            }
+        };
+
+        const allSelectorIds = Object.values(optionGroups).map(group => group.selectorId);
+
+        function populateDropdowns(lang) {
+            const langStrings = translations[lang];
+
+            for (const groupKey in optionGroups) {
+                const group = optionGroups[groupKey];
+                const selector = document.getElementById(group.selectorId);
+                const currentSelectedValue = selector.value;
+                selector.innerHTML = '';
+
+                // Add placeholder option
+                const placeholderOption = document.createElement('option');
+                placeholderOption.value = "";
+                placeholderOption.textContent = langStrings[group.placeholderKey];
+                selector.appendChild(placeholderOption);
+
+                // Add other options
+                group.options.forEach(opt => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = opt.value;
+                    optionElement.textContent = opt.text;
+                    selector.appendChild(optionElement);
+                });
+                selector.value = currentSelectedValue;
+            }
+        }
+
+        function switchLanguage(lang) {
+            document.documentElement.lang = lang;
+            const langStrings = translations[lang];
+
+            document.querySelectorAll('[data-lang-key]').forEach(el => {
+                const key = el.dataset.langKey;
+                if (langStrings[key]) {
+                    el.innerHTML = langStrings[key];
+                }
+            });
+            document.title = langStrings.title;
+            
+            // Update language switcher active state
+            document.querySelectorAll('.lang-switcher a').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.getElementById(`lang-${lang}`).classList.add('active');
+            
+            populateDropdowns(lang);
+            generateConfig(); // Re-generate code in case placeholder text needs to be shown
+        }
+
+        function handleSelectionChange(activeSelector) {
+            // If a selection is made, reset and disable other selectors
+            if (activeSelector.value) {
+                allSelectorIds.forEach(id => {
+                    const selector = document.getElementById(id);
+                    if (selector.id !== activeSelector.id) {
+                        selector.value = "";
+                        selector.disabled = true;
+                    }
+                });
+            } else {
+                // If the placeholder is re-selected, enable all selectors
+                allSelectorIds.forEach(id => {
+                    document.getElementById(id).disabled = false;
+                });
+            }
+
+            const selectedValue = parseInt(activeSelector.value, 10);
+            const ePaperDiv = document.getElementById('ePaperOptions');
+            
+            // The ePaper driver choice is for all e-papers (502-511)
+            const isEpaperWithDriverChoice = (selectedValue >= 502 && selectedValue <= 517);
+
+            if (isEpaperWithDriverChoice) {
+                ePaperDiv.style.display = 'block';
+            } else {
+                ePaperDiv.style.display = 'none';
+                document.querySelector('input[name="driverBoard"][value="driver"]').checked = true;
+            }
+            generateConfig();
+        }
+
+        function generateConfig() {
+            let selectedValue = '';
+            let selectedText = '';
+            let activeSelector = null;
+
+            allSelectorIds.forEach(id => {
+                const selector = document.getElementById(id);
+                if(selector.value) {
+                    selectedValue = selector.value;
+                    selectedText = selector.options[selector.selectedIndex].text;
+                    activeSelector = selector;
+                }
+            });
+            
+            const outputElement = document.getElementById('outputCode');
+            const currentLang = document.documentElement.lang || 'en';
+            const langStrings = translations[currentLang];
+            let outputString = '';
+
+            if (selectedValue && activeSelector) {
+                // Special case: TRMNL 7.5" (OG) DIY Kit maps to 7.5" mono ePaper (502) + XIAO ePaper Display Board
+                if (selectedValue === '700') {
+                    outputElement.textContent = `#define BOARD_SCREEN_COMBO 502 // 7.5 inch monochrome ePaper Screen （UC8179）\n#define USE_XIAO_EPAPER_DISPLAY_BOARD_EE04`;
+                    return;
+                }
+
+                outputString = `#define BOARD_SCREEN_COMBO ${selectedValue} // ${selectedText}`;
+
+                const ePaperDiv = document.getElementById('ePaperOptions');
+                
+                // Logic for all e-papers that have a choice of driver board
+                if (ePaperDiv.style.display === 'block') {
+                    const selectedDriver = document.querySelector('input[name="driverBoard"]:checked').value;
+                    if (selectedDriver === 'driver') {
+                        outputString += '\n#define USE_XIAO_EPAPER_DRIVER_BOARD';
+                    }else if (selectedDriver === 'monitor_ee02') {
+                        outputString += '\n#define USE_XIAO_EPAPER_DISPLAY_BOARD_EE02';
+                    } else if (selectedDriver === 'monitor_ee03') {
+                        outputString += '\n#define USE_XIAO_EPAPER_DISPLAY_BOARD_EE03';
+                    } else if (selectedDriver === 'monitor_ee04') {
+                        outputString += '\n#define USE_XIAO_EPAPER_DISPLAY_BOARD_EE04';
+                    } else if (selectedDriver === 'monitor_ee05') {
+                        outputString += '\n#define USE_XIAO_EPAPER_DISPLAY_BOARD_EE05';
+                    } else if (selectedDriver === 'monitor_en04') {
+                        outputString += '\n#define USE_XIAO_EPAPER_DISPLAY_BOARD_EN04';
+                    } else if (selectedDriver === 'monitor_en05') {
+                        outputString += '\n#define USE_XIAO_EPAPER_DISPLAY_BOARD_EN05';
+                    } else if (selectedDriver === 'breakout') {
+                        outputString += '\n#define USE_XIAO_EPAPER_BREAKOUT_BOARD';
+                    }
+                }
+                outputElement.textContent = outputString;
+            } else {
+                outputElement.textContent = langStrings.output_placeholder;
+            }
+        }
+
+        function copyToClipboard() {
+            const code = document.getElementById('outputCode').textContent;
+            const copyButton = document.getElementById('copyButton');
+            const copyIcon = copyButton.querySelector('.copy-icon');
+            const checkIcon = copyButton.querySelector('.check-icon');
+
+            navigator.clipboard.writeText(code).then(() => {
+                copyIcon.style.opacity = '0';
+                checkIcon.style.opacity = '1';
+
+                setTimeout(() => {
+                    copyIcon.style.opacity = '1';
+                    checkIcon.style.opacity = '0';
+                }, 1500);
+            }).catch(err => {
+                console.error('Copy failed:', err);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            switchLanguage('en'); // Set default language and populate dropdowns
+        });
+    </script>
+
+</body>
+</html>
