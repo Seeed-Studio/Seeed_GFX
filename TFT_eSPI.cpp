@@ -658,7 +658,12 @@ void TFT_eSPI::initFromSleep(uint8_t tc)
 #else
   #if !defined(TFT_PARALLEL_8_BIT) && !defined(RP2040_PIO_INTERFACE)
     #if defined (TFT_MOSI) && !defined (TFT_SPI_OVERLAP) && !defined(ARDUINO_ARCH_RP2040) && !defined (ARDUINO_ARCH_MBED) && !defined (EFR32MG24B220F1536IM48)
+      #if defined(NRF52840_XXAA)
+      spi.setPins(TFT_MISO, TFT_SCLK, TFT_MOSI);
+      spi.begin(); // nRF52 core uses setPins() instead of begin(sck, miso, mosi, ss)
+      #else
       spi.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, -1); // This will set MISO to input
+      #endif
     #else
       spi.begin(); // This will set MISO to input
     #endif
@@ -842,7 +847,12 @@ void TFT_eSPI::init(uint8_t tc)
 #else
   #if !defined(TFT_PARALLEL_8_BIT) && !defined(RP2040_PIO_INTERFACE)
     #if defined (TFT_MOSI) && !defined (TFT_SPI_OVERLAP) && !defined(ARDUINO_ARCH_RP2040) && !defined (ARDUINO_ARCH_MBED) && !defined (EFR32MG24B220F1536IM48)
+      #if defined(NRF52840_XXAA)
+      spi.setPins(TFT_MISO, TFT_SCLK, TFT_MOSI);
+      spi.begin(); // nRF52 core uses setPins() instead of begin(sck, miso, mosi, ss)
+      #else
       spi.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, -1); // This will set MISO to input
+      #endif
     #else
       spi.begin(); // This will set MISO to input
     #endif
@@ -1458,7 +1468,12 @@ static inline void uc8179_spi_restore_after_gpio_read(void)
 {
 #if !defined(TFT_PARALLEL_8_BIT) && !defined(RP2040_PIO_INTERFACE)
   #if defined(TFT_MOSI) && !defined(TFT_SPI_OVERLAP) && !defined(ARDUINO_ARCH_RP2040) && !defined(ARDUINO_ARCH_MBED) && !defined(EFR32MG24B220F1536IM48)
+    #if defined(NRF52840_XXAA)
+    spi.setPins(TFT_MISO, TFT_SCLK, TFT_MOSI);
+    spi.begin();
+    #else
     spi.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, -1);
+    #endif
   #else
     spi.begin();
   #endif
