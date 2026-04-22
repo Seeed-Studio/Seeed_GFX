@@ -280,8 +280,8 @@
         writedata(0x00);                   \
         writedata(0x00);                   \
         writecommand(0x4F);                \
-        writedata(0x00);                   \
-        writedata(0x00);                   \
+        writedata(0x00);  \
+        writedata(0x00);  \
         CHECK_BUSY();                      \
     } while (0)
 
@@ -302,93 +302,105 @@
     {                                                                   \
         EPD_INIT_GRAY();                                                \
         uint16_t i, j, k;                                               \
+        uint16_t row, col, src_row;                                     \
+        uint16_t blocks_per_row = TFT_WIDTH / 8;                        \
         uint8_t temp1, temp2, temp3;                                    \
         /* First pass: Write 0x24 (DTM1, MSB) */                        \
         writecommand(0x24);                                             \
-        for(i = 0; i < (TFT_WIDTH * TFT_HEIGHT) / 8; i++)               \
+        for(row = 0; row < TFT_HEIGHT; row++)                           \
         {                                                               \
-            uint8_t c0 = colors[i * 4 + 0];                             \
-            uint8_t c1 = colors[i * 4 + 1];                             \
-            uint8_t c2 = colors[i * 4 + 2];                             \
-            uint8_t c3 = colors[i * 4 + 3];                             \
-            uint8_t p0 = (c0 >> 4) & 0x03;                              \
-            uint8_t p1 = (c0 >> 0) & 0x03;                              \
-            uint8_t p2 = (c1 >> 4) & 0x03;                              \
-            uint8_t p3 = (c1 >> 0) & 0x03;                              \
-            uint8_t p4 = (c2 >> 4) & 0x03;                              \
-            uint8_t p5 = (c2 >> 0) & 0x03;                              \
-            uint8_t p6 = (c3 >> 4) & 0x03;                              \
-            uint8_t p7 = (c3 >> 0) & 0x03;                              \
-            uint8_t packed_byte0 = (p0 << 6) | (p1 << 4) | (p2 << 2) | p3; \
-            uint8_t packed_byte1 = (p4 << 6) | (p5 << 4) | (p6 << 2) | p7; \
-                                                                        \
-            temp3 = 0;                                                  \
-            for(j = 0; j < 2; j++)                                      \
+            src_row = (TFT_HEIGHT - 1) - row; /* Software Y-Flip */     \
+            for(col = 0; col < blocks_per_row; col++)                   \
             {                                                           \
-                temp1 = (j == 0) ? packed_byte0 : packed_byte1;         \
-                for(k = 0; k < 4; k++)                                  \
+                i = src_row * blocks_per_row + col;                     \
+                uint8_t c0 = colors[i * 4 + 0];                         \
+                uint8_t c1 = colors[i * 4 + 1];                         \
+                uint8_t c2 = colors[i * 4 + 2];                         \
+                uint8_t c3 = colors[i * 4 + 3];                         \
+                uint8_t p0 = (c0 >> 4) & 0x03;                          \
+                uint8_t p1 = (c0 >> 0) & 0x03;                          \
+                uint8_t p2 = (c1 >> 4) & 0x03;                          \
+                uint8_t p3 = (c1 >> 0) & 0x03;                          \
+                uint8_t p4 = (c2 >> 4) & 0x03;                          \
+                uint8_t p5 = (c2 >> 0) & 0x03;                          \
+                uint8_t p6 = (c3 >> 4) & 0x03;                          \
+                uint8_t p7 = (c3 >> 0) & 0x03;                          \
+                uint8_t packed_byte0 = (p0 << 6) | (p1 << 4) | (p2 << 2) | p3; \
+                uint8_t packed_byte1 = (p4 << 6) | (p5 << 4) | (p6 << 2) | p7; \
+                                                                        \
+                temp3 = 0;                                              \
+                for(j = 0; j < 2; j++)                                  \
                 {                                                       \
-                    temp2 = temp1 & 0xC0;                               \
-                    if(temp2 == 0xC0)                                   \
-                        temp3 |= 0x01;                                  \
-                    else if(temp2 == 0x00)                              \
-                        temp3 |= 0x00;                                  \
-                    else if((temp2 >= 0x80) && (temp2 < 0xC0))          \
-                        temp3 |= 0x01;                                  \
-                    else if(temp2 == 0x40)                              \
-                        temp3 |= 0x00;                                  \
-                    if((j == 0 && k <= 3) || (j == 1 && k <= 2))        \
+                    temp1 = (j == 0) ? packed_byte0 : packed_byte1;     \
+                    for(k = 0; k < 4; k++)                              \
                     {                                                   \
-                        temp3 <<= 1;                                    \
-                        temp1 <<= 2;                                    \
+                        temp2 = temp1 & 0xC0;                           \
+                        if(temp2 == 0x00)                               \
+                            temp3 |= 0x01; /* TFT_GRAY_0 (Black) -> 11 (DTM1=1) */ \
+                        else if(temp2 == 0x40)                          \
+                            temp3 |= 0x01; /* TFT_GRAY_1 (Dark Gray) -> 10 (DTM1=1) */ \
+                        else if(temp2 == 0x80)                          \
+                            temp3 |= 0x00; /* TFT_GRAY_2 (Light Gray) -> 01 (DTM1=0) */ \
+                        else if(temp2 == 0xC0)                          \
+                            temp3 |= 0x00; /* TFT_GRAY_3 (White) -> 00 (DTM1=0) */ \
+                        if((j == 0 && k <= 3) || (j == 1 && k <= 2))    \
+                        {                                               \
+                            temp3 <<= 1;                                \
+                            temp1 <<= 2;                                \
+                        }                                               \
                     }                                                   \
                 }                                                       \
+                writedata(temp3);                                       \
             }                                                           \
-            writedata(temp3);                                           \
         }                                                               \
                                                                         \
         /* Second pass: Write 0x26 (DTM2, LSB) */                       \
         writecommand(0x26);                                             \
-        for(i = 0; i < (TFT_WIDTH * TFT_HEIGHT) / 8; i++)               \
+        for(row = 0; row < TFT_HEIGHT; row++)                           \
         {                                                               \
-            uint8_t c0 = colors[i * 4 + 0];                             \
-            uint8_t c1 = colors[i * 4 + 1];                             \
-            uint8_t c2 = colors[i * 4 + 2];                             \
-            uint8_t c3 = colors[i * 4 + 3];                             \
-            uint8_t p0 = (c0 >> 4) & 0x03;                              \
-            uint8_t p1 = (c0 >> 0) & 0x03;                              \
-            uint8_t p2 = (c1 >> 4) & 0x03;                              \
-            uint8_t p3 = (c1 >> 0) & 0x03;                              \
-            uint8_t p4 = (c2 >> 4) & 0x03;                              \
-            uint8_t p5 = (c2 >> 0) & 0x03;                              \
-            uint8_t p6 = (c3 >> 4) & 0x03;                              \
-            uint8_t p7 = (c3 >> 0) & 0x03;                              \
-            uint8_t packed_byte0 = (p0 << 6) | (p1 << 4) | (p2 << 2) | p3; \
-            uint8_t packed_byte1 = (p4 << 6) | (p5 << 4) | (p6 << 2) | p7; \
-                                                                        \
-            temp3 = 0;                                                  \
-            for(j = 0; j < 2; j++)                                      \
+            src_row = (TFT_HEIGHT - 1) - row; /* Software Y-Flip */     \
+            for(col = 0; col < blocks_per_row; col++)                   \
             {                                                           \
-                temp1 = (j == 0) ? packed_byte0 : packed_byte1;         \
-                for(k = 0; k < 4; k++)                                  \
+                i = src_row * blocks_per_row + col;                     \
+                uint8_t c0 = colors[i * 4 + 0];                         \
+                uint8_t c1 = colors[i * 4 + 1];                         \
+                uint8_t c2 = colors[i * 4 + 2];                         \
+                uint8_t c3 = colors[i * 4 + 3];                         \
+                uint8_t p0 = (c0 >> 4) & 0x03;                          \
+                uint8_t p1 = (c0 >> 0) & 0x03;                          \
+                uint8_t p2 = (c1 >> 4) & 0x03;                          \
+                uint8_t p3 = (c1 >> 0) & 0x03;                          \
+                uint8_t p4 = (c2 >> 4) & 0x03;                          \
+                uint8_t p5 = (c2 >> 0) & 0x03;                          \
+                uint8_t p6 = (c3 >> 4) & 0x03;                          \
+                uint8_t p7 = (c3 >> 0) & 0x03;                          \
+                uint8_t packed_byte0 = (p0 << 6) | (p1 << 4) | (p2 << 2) | p3; \
+                uint8_t packed_byte1 = (p4 << 6) | (p5 << 4) | (p6 << 2) | p7; \
+                                                                        \
+                temp3 = 0;                                              \
+                for(j = 0; j < 2; j++)                                  \
                 {                                                       \
-                    temp2 = temp1 & 0xC0;                               \
-                    if(temp2 == 0xC0)                                   \
-                        temp3 |= 0x01;                                  \
-                    else if(temp2 == 0x00)                              \
-                        temp3 |= 0x00;                                  \
-                    else if((temp2 >= 0x80) && (temp2 < 0xC0))          \
-                        temp3 |= 0x00;                                  \
-                    else if(temp2 == 0x40)                              \
-                        temp3 |= 0x01;                                  \
-                    if((j == 0 && k <= 3) || (j == 1 && k <= 2))        \
+                    temp1 = (j == 0) ? packed_byte0 : packed_byte1;     \
+                    for(k = 0; k < 4; k++)                              \
                     {                                                   \
-                        temp3 <<= 1;                                    \
-                        temp1 <<= 2;                                    \
+                        temp2 = temp1 & 0xC0;                           \
+                        if(temp2 == 0x00)                               \
+                            temp3 |= 0x01; /* TFT_GRAY_0 (Black) -> 11 (DTM2=1) */ \
+                        else if(temp2 == 0x40)                          \
+                            temp3 |= 0x00; /* TFT_GRAY_1 (Dark Gray) -> 10 (DTM2=0) */ \
+                        else if(temp2 == 0x80)                          \
+                            temp3 |= 0x01; /* TFT_GRAY_2 (Light Gray) -> 01 (DTM2=1) */ \
+                        else if(temp2 == 0xC0)                          \
+                            temp3 |= 0x00; /* TFT_GRAY_3 (White) -> 00 (DTM2=0) */ \
+                        if((j == 0 && k <= 3) || (j == 1 && k <= 2))    \
+                        {                                               \
+                            temp3 <<= 1;                                \
+                            temp1 <<= 2;                                \
+                        }                                               \
                     }                                                   \
                 }                                                       \
+                writedata(temp3);                                       \
             }                                                           \
-            writedata(temp3);                                           \
         }                                                               \
     } while (0)
 
