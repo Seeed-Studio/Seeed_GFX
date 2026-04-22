@@ -1,4 +1,41 @@
 .vscode
+.history
+*.swp
+*~
+
+# Compilation outputs
+*.o
+*.a
+*.d
+*.elf
+*.bin
+*.hex
+*.map
+*.lst
+
+# IDE workspace files
+*.code-workspace
+.history/
+
+# Arduino build folders
+build/
+bin/
+obj/
+ipch/
+
+# Keil MDK outputs (if applicable)
+*.bak
+*.dep
+*.uvgui.*
+*.uvguix.*
+*.htm
+*.lnp
+*.sct
+*.axf
+*.build_log.htm
+*.scvd
+Listings/
+Objects/
 
 # Windows image file caches
 Thumbs.db

@@ -302,17 +302,16 @@
     {                                                                   \
         EPD_INIT_GRAY();                                                \
         uint16_t i, j, k;                                               \
-        uint16_t row, col, src_row;                                     \
+        uint16_t row, col;                                              \
         uint16_t blocks_per_row = TFT_WIDTH / 8;                        \
         uint8_t temp1, temp2, temp3;                                    \
         /* First pass: Write 0x24 (DTM1, MSB) */                        \
         writecommand(0x24);                                             \
         for(row = 0; row < TFT_HEIGHT; row++)                           \
         {                                                               \
-            src_row = (TFT_HEIGHT - 1) - row; /* Software Y-Flip */     \
             for(col = 0; col < blocks_per_row; col++)                   \
             {                                                           \
-                i = src_row * blocks_per_row + col;                     \
+                i = row * blocks_per_row + col;                         \
                 uint8_t c0 = colors[i * 4 + 0];                         \
                 uint8_t c1 = colors[i * 4 + 1];                         \
                 uint8_t c2 = colors[i * 4 + 2];                         \
@@ -358,10 +357,9 @@
         writecommand(0x26);                                             \
         for(row = 0; row < TFT_HEIGHT; row++)                           \
         {                                                               \
-            src_row = (TFT_HEIGHT - 1) - row; /* Software Y-Flip */     \
             for(col = 0; col < blocks_per_row; col++)                   \
             {                                                           \
-                i = src_row * blocks_per_row + col;                     \
+                i = row * blocks_per_row + col;                         \
                 uint8_t c0 = colors[i * 4 + 0];                         \
                 uint8_t c1 = colors[i * 4 + 1];                         \
                 uint8_t c2 = colors[i * 4 + 2];                         \
