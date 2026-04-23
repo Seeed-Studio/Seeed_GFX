@@ -1052,6 +1052,17 @@ protected:
   uint8_t r6, g6, b6; // RGB buffer for SSD1963
 #endif
 
+#if defined(UC8179_DRIVER)
+  void uc8179ProbeOtpSupport(void);
+  void uc8179ReadTemperatureRaw(uint8_t *temp1, uint8_t *temp2);
+  void uc8179ReadOtpUserData(uint16_t read_len, uint16_t data_offset, uint8_t *buf, uint8_t buf_len);
+
+  bool _uc8179_has_checked_otp;
+  bool _uc8179_use_otp_lut;
+  uint8_t _uc8179_temp_raw_int;
+  uint8_t _uc8179_temp_raw_frac;
+#endif
+
 #ifdef LOAD_GFXFF
   GFXfont *gfxFont;
 #endif

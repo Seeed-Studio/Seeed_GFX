@@ -1,4 +1,4 @@
-EPaper::EPaper() : TFT_eSprite(this), _sleep(false), _entemp(true), _temp(16.00), _humi(50.00)
+EPaper::EPaper() : TFT_eSprite(this), _sleep(true), _entemp(true), _temp(16.00), _humi(50.00)
 {
     setColorDepth(EPD_COLOR_DEPTH);
     createSprite(_width, _height, 1);
@@ -17,7 +17,6 @@ void EPaper::begin(uint8_t wake)
     else
     {
         init();
-        EPD_WAKEUP();
     } 
 //     fillSprite(1);
 // #ifdef EPD_HORIZONTAL_MIRROR

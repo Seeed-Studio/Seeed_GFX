@@ -41,6 +41,135 @@
 
 #define TFT_INIT_DELAY 0
 
+
+
+const unsigned char LUT_VCOM[]={ 						
+0x26,	0x0F,	0x18,	0x18,	0x14,	0x01,	
+0x00,	0x0A,	0x00,	0x00,	0x00,	0x01,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+						
+						
+						
+};				
+const unsigned char LUT_WW[]={ 						
+0x55,	0x06,	0x0C,	0x17,	0x02,	0x01,	
+0x2A,	0x02,	0x1C,	0x02,	0x0D,	0x01,	
+0x80,	0x02,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+						
+						
+						
+};						
+						
+const unsigned char LUT_KW[]={ 						
+0x55,	0x06,	0x0C,	0x17,	0x02,	0x01,	
+0x2A,	0x02,	0x1C,	0x02,	0x0D,	0x01,	
+0x80,	0x02,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+						
+						
+						
+};						
+const unsigned char LUT_WK[]={ 						
+0xAA,	0x06,	0x0C,	0x17,	0x02,	0x01,	
+0x15,	0x02,	0x1C,	0x02,	0x0D,	0x01,	
+0x40,	0x02,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+						
+						
+						
+};						
+const unsigned char LUT_KK[]={ 						
+0xAA,	0x06,	0x0C,	0x17,	0x02,	0x01,	
+0x15,	0x02,	0x1C,	0x02,	0x0D,	0x01,	
+0x40,	0x02,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+};						
+const unsigned char CMD_USER[]={						
+0X17,	0X3F,	0X3F,	0X09,	0X06,	0X16	
+};						
+
+
+
+const unsigned char LUT_VCOM_GRAY[]={ 
+0x00,0x00,0x06,0x08,0x07,0x01,
+0x00,0x06,0x0A,0x0B,0x0A,0x01,
+0x00,0x03,0x03,0x00,0x00,0x03,
+0x00,0x05,0x09,0x06,0x06,0x01,
+0x00,0x02,0x02,0x0A,0x0A,0x01,
+0x00,0x0A,0x11,0x06,0x07,0x01,
+0x00,0x02,0x01,0x02,0x01,0x01,
+
+
+
+};
+const unsigned char LUT_WW_GRAY[]={ 
+0x15,0x00,0x06,0x08,0x07,0x01,
+0x54,0x06,0x0A,0x0B,0x0A,0x01,
+0x90,0x03,0x03,0x00,0x00,0x03,
+0x2A,0x05,0x09,0x06,0x06,0x01,
+0xAA,0x02,0x02,0x0A,0x0A,0x01,
+0x00,0x0A,0x11,0x06,0x07,0x01,
+0x28,0x02,0x01,0x02,0x01,0x01,
+
+
+
+};
+
+const unsigned char LUT_KW_GRAY[]={ 
+0x2A,0x00,0x06,0x08,0x07,0x01,
+0x59,0x06,0x0A,0x0B,0x0A,0x01,
+0x90,0x03,0x03,0x00,0x00,0x03,
+0x5A,0x05,0x09,0x06,0x06,0x01,
+0xA8,0x02,0x02,0x0A,0x0A,0x01,
+0x45,0x0A,0x11,0x06,0x07,0x01,
+0xA8,0x02,0x01,0x02,0x01,0x01,
+
+
+
+};
+const unsigned char LUT_WK_GRAY[]={ 
+0x16,0x00,0x06,0x08,0x07,0x01,
+0xA0,0x06,0x0A,0x0B,0x0A,0x01,
+0x90,0x03,0x03,0x00,0x00,0x03,
+0x99,0x05,0x09,0x06,0x06,0x01,
+0xA0,0x02,0x02,0x0A,0x0A,0x01,
+0x40,0x0A,0x11,0x06,0x07,0x01,
+0x20,0x02,0x01,0x02,0x01,0x01,
+
+
+
+};
+const unsigned char LUT_KK_GRAY[]={ 
+0x26,0x00,0x06,0x08,0x07,0x01,
+0x6A,0x06,0x0A,0x0B,0x0A,0x01,
+0x90,0x03,0x03,0x00,0x00,0x03,
+0x65,0x05,0x09,0x06,0x06,0x01,
+0x50,0x02,0x02,0x0A,0x0A,0x01,
+0x10,0x0A,0x11,0x06,0x07,0x01,
+0x10,0x02,0x01,0x02,0x01,0x01,
+};
+const unsigned char CMD_USER_GRAY[]={
+0X17,0X3F,0X3F,0X07,0X06,0X12,
+};
+
+
 #ifdef TFT_BUSY
 #define CHECK_BUSY()               \
     do                             \
@@ -52,6 +181,110 @@
 #else
 #define CHECK_BUSY()
 #endif
+
+#define UC8179_USE_INTERNAL_OTP() (_uc8179_use_otp_lut)
+
+#define UC8179_INIT_GRAY_OTP()         \
+    do                                 \
+    {                                  \
+        writecommand(0x01);            \
+        writedata(0x07);               \
+        writedata(0x07);               \
+        writedata(0x3F);               \
+        writedata(0x3F);               \
+        writecommand(0x06);            \
+        writedata(0x27);               \
+        writedata(0x27);               \
+        writedata(0x18);               \
+        writedata(0x17);               \
+        writecommand(0x04);            \
+        delay(100);                    \
+        CHECK_BUSY();                  \
+        writecommand(0x00);            \
+        writedata(0x1F);               \
+        writecommand(0x61);            \
+        writedata(EPD_WIDTH >> 8);     \
+        writedata(EPD_WIDTH & 0xFF);   \
+        writedata(EPD_HEIGHT >> 8);    \
+        writedata(EPD_HEIGHT & 0xFF);  \
+        writecommand(0x50);            \
+        writedata(0x10);               \
+        writedata(0x07);               \
+        writecommand(0xE0);            \
+        writedata(0x02);               \
+        writecommand(0xE5);            \
+        writedata(0x5F);               \
+    } while (0)
+
+#define EPD_WRITE_LUT()                 \
+    do                                  \
+    {                                   \
+        uint16_t count;                 \
+        CHECK_BUSY();                   \
+        writecommand(0x20);             \
+        for (count = 0; count < 42; count++) \
+        {                               \
+            writedata(LUT_VCOM[count]); \
+        }                               \
+        CHECK_BUSY();                   \
+        writecommand(0x21);             \
+        for (count = 0; count < 42; count++) \
+        {                               \
+            writedata(LUT_WW[count]);   \
+        }                               \
+        CHECK_BUSY();                   \
+        writecommand(0x22);             \
+        for (count = 0; count < 42; count++) \
+        {                               \
+            writedata(LUT_KW[count]);   \
+        }                               \
+        CHECK_BUSY();                   \
+        writecommand(0x23);             \
+        for (count = 0; count < 42; count++) \
+        {                               \
+            writedata(LUT_WK[count]);   \
+        }                               \
+        writecommand(0x24);             \
+        for (count = 0; count < 42; count++) \
+        {                               \
+            writedata(LUT_KK[count]);   \
+        }                               \
+    } while (0)
+
+#define EPD_WRITE_LUT_GRAY()                 \
+    do                                  \
+    {                                   \
+        uint16_t count;                 \
+        CHECK_BUSY();                   \
+        writecommand(0x20);             \
+        for (count = 0; count < 42; count++) \
+        {                               \
+            writedata(LUT_VCOM_GRAY[count]); \
+        }                               \
+        CHECK_BUSY();                   \
+        writecommand(0x21);             \
+        for (count = 0; count < 42; count++) \
+        {                               \
+            writedata(LUT_WW_GRAY[count]);   \
+        }                               \
+        CHECK_BUSY();                   \
+        writecommand(0x22);             \
+        for (count = 0; count < 42; count++) \
+        {                               \
+            writedata(LUT_KW_GRAY[count]);   \
+        }                               \
+        CHECK_BUSY();                   \
+        writecommand(0x23);             \
+        for (count = 0; count < 42; count++) \
+        {                               \
+            writedata(LUT_WK_GRAY[count]);   \
+        }                               \
+        writecommand(0x24);             \
+        for (count = 0; count < 42; count++) \
+        {                               \
+            writedata(LUT_KK_GRAY[count]);   \
+        }                               \
+    } while (0)
 
 #define EPD_UPDATE()        \
     do                      \
@@ -106,60 +339,84 @@
 #define EPD_INIT_FAST()     \
     do                      \
     {                       \
-        writecommand(0x01);      \
-        writedata(0x07);         \
-        writedata(0x07);         \
-        writedata(0x3f);         \
-        writedata(0x3f);         \
-        writecommand(0x06);      \
-        writedata(0x17);         \
-        writedata(0x17);         \
-        writedata(0x28);         \
-        writedata(0x17);         \
-        writecommand(0x04);      \
-        delay(100);              \
-        CHECK_BUSY();            \
-        writecommand(0x00);      \
-        writedata(0x1F);         \
-        writecommand(0x61);      \
-        writedata(EPD_WIDTH >> 8); \
+        writecommand(0x01);         \
+        writedata(0x07);            \
+        writedata(CMD_USER[0]);     \
+        writedata(CMD_USER[1]);     \
+        writedata(CMD_USER[2]);     \
+        writedata(CMD_USER[3]);     \
+        writecommand(0x30);         \
+        writedata(CMD_USER[4]);     \
+        writecommand(0x82);         \
+        writedata(CMD_USER[5]);     \
+        writecommand(0x06);         \
+        writedata(0x17);            \
+        writedata(0x17);            \
+        writedata(0x28);            \
+        writedata(0x17);            \
+        writecommand(0x04);         \
+        delay(100);                 \
+        CHECK_BUSY();               \
+        writecommand(0x00);         \
+        writedata(0x3F);            \
+        writecommand(0x61);         \
+        writedata(EPD_WIDTH >> 8);  \
         writedata(EPD_WIDTH & 0xFF); \
         writedata(EPD_HEIGHT >> 8); \
         writedata(EPD_HEIGHT & 0xFF); \
-        writecommand(0x50);      \
-        writedata(0x10);         \
-        writedata(0x07);         \
-        writecommand(0xE0); \
-        writedata(0x02);    \
-        writecommand(0xE5); \
-        writedata(0x55);    \
+        writecommand(0x50);         \
+        writedata(0x10);            \
+        writedata(0x07);            \
+        EPD_WRITE_LUT();            \
     } while (0)
 
 #define EPD_INIT_GRAY()     \
     do                      \
     {                       \
-        digitalWrite(TFT_RST, LOW);  \
-        delay(10);                   \
-        digitalWrite(TFT_RST, HIGH); \
-        delay(10);                   \
-        CHECK_BUSY();                \
-        writecommand(0X00); \
-        writedata(0x1F);    \
-        writecommand(0X50); \
-        writedata(0x10);    \
-        writedata(0x07);    \
-        writecommand(0x04); \
-        delay(10);         \
-        CHECK_BUSY();       \
-        writecommand(0x06); \
-        writedata(0x27);    \
-        writedata(0x27);    \
-        writedata(0x28);    \
-        writedata(0x17);    \
-        writecommand(0xE0); \
-        writedata(0x02);    \
-        writecommand(0xE5); \
-        writedata(0x5F);    \
+        if (!_uc8179_has_checked_otp)   \
+        {                               \
+            uc8179ProbeOtpSupport();    \
+        }                               \
+        if (UC8179_USE_INTERNAL_OTP())  \
+        {                               \
+            UC8179_INIT_GRAY_OTP();     \
+        }                               \
+        else                            \
+        {                               \
+            writecommand(0x01);         \
+            writedata(0x07);            \
+            writedata(CMD_USER_GRAY[0]); \
+            writedata(CMD_USER_GRAY[1]); \
+            writedata(CMD_USER_GRAY[2]); \
+            writedata(CMD_USER_GRAY[3]); \
+            writecommand(0x30);         \
+            writedata(CMD_USER_GRAY[4]); \
+            writecommand(0x82);         \
+            writedata(CMD_USER_GRAY[5]); \
+            writecommand(0x06);         \
+            writedata(0x27);            \
+            writedata(0x27);            \
+            writedata(0x28);            \
+            writedata(0x17);            \
+            writecommand(0x04);         \
+            delay(100);                 \
+            CHECK_BUSY();               \
+            writecommand(0x00);         \
+            writedata(0x3F);            \
+            writecommand(0xE3);         \
+            writedata(0x88);            \
+            writecommand(0x50);         \
+            writedata(0x10);            \
+            writedata(0x07);            \
+            writecommand(0x52);         \
+            writedata(0x00);            \
+            writecommand(0x61);         \
+            writedata(EPD_WIDTH >> 8);  \
+            writedata(EPD_WIDTH & 0xFF); \
+            writedata(EPD_HEIGHT >> 8); \
+            writedata(EPD_HEIGHT & 0xFF); \
+            EPD_WRITE_LUT_GRAY();       \
+        }                               \
     } while (0)
     
 #define EPD_INIT_PARTIAL()           \
@@ -187,7 +444,17 @@
         EPD_INIT_FAST();             \
     } while (0)
 
-#define EPD_WAKEUP_GRAY EPD_WAKEUP
+#define EPD_WAKEUP_GRAY()              \
+    do                               \
+    {                                \
+        digitalWrite(TFT_RST, LOW);  \
+        delay(10);                   \
+        digitalWrite(TFT_RST, HIGH); \
+        delay(10);                   \
+        CHECK_BUSY();                \
+        EPD_INIT_GRAY();             \
+    } while (0)
+
 
 #define EPD_WAKEUP_PARTIAL()        \
     do                              \
@@ -252,7 +519,6 @@
 #define EPD_PUSH_NEW_GRAY_COLORS(w, h, colors)                       \
     do                                                                  \
     {                                                                   \
-        EPD_INIT_GRAY();                                                \
         uint16_t i, j, k;                                               \
         uint8_t temp1, temp2, temp3;                                    \
         writecommand(0x10);                                             \
@@ -298,7 +564,7 @@
                     }                                                   \
                 }                                                       \
             }                                                           \
-            writedata(~temp3);                                          \
+            writedata(temp3);                                          \
         }                                                               \
                                                                         \
         writecommand(0x13);                                             \
@@ -341,7 +607,7 @@
                     }                                                   \
                 }                                                       \
             }                                                           \
-            writedata(~temp3);                                          \
+            writedata(temp3);                                          \
         }                                                               \
     } while (0)
 
