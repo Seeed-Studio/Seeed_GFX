@@ -311,19 +311,19 @@
         {                                                               \
             for(col = 0; col < blocks_per_row; col++)                   \
             {                                                           \
-                i = row * blocks_per_row + col;                         \
-                uint8_t c0 = colors[i * 4 + 0];                         \
-                uint8_t c1 = colors[i * 4 + 1];                         \
-                uint8_t c2 = colors[i * 4 + 2];                         \
-                uint8_t c3 = colors[i * 4 + 3];                         \
-                uint8_t p0 = (c0 >> 4) & 0x03;                          \
-                uint8_t p1 = (c0 >> 0) & 0x03;                          \
-                uint8_t p2 = (c1 >> 4) & 0x03;                          \
-                uint8_t p3 = (c1 >> 0) & 0x03;                          \
-                uint8_t p4 = (c2 >> 4) & 0x03;                          \
-                uint8_t p5 = (c2 >> 0) & 0x03;                          \
-                uint8_t p6 = (c3 >> 4) & 0x03;                          \
-                uint8_t p7 = (c3 >> 0) & 0x03;                          \
+                i = row * blocks_per_row + (blocks_per_row - 1 - col);  \
+                uint8_t c0 = colors[i * 4 + 3];                         \
+                uint8_t c1 = colors[i * 4 + 2];                         \
+                uint8_t c2 = colors[i * 4 + 1];                         \
+                uint8_t c3 = colors[i * 4 + 0];                         \
+                uint8_t p0 = (c0 >> 0) & 0x03;                          \
+                uint8_t p1 = (c0 >> 4) & 0x03;                          \
+                uint8_t p2 = (c1 >> 0) & 0x03;                          \
+                uint8_t p3 = (c1 >> 4) & 0x03;                          \
+                uint8_t p4 = (c2 >> 0) & 0x03;                          \
+                uint8_t p5 = (c2 >> 4) & 0x03;                          \
+                uint8_t p6 = (c3 >> 0) & 0x03;                          \
+                uint8_t p7 = (c3 >> 4) & 0x03;                          \
                 uint8_t packed_byte0 = (p0 << 6) | (p1 << 4) | (p2 << 2) | p3; \
                 uint8_t packed_byte1 = (p4 << 6) | (p5 << 4) | (p6 << 2) | p7; \
                                                                         \
@@ -359,19 +359,19 @@
         {                                                               \
             for(col = 0; col < blocks_per_row; col++)                   \
             {                                                           \
-                i = row * blocks_per_row + col;                         \
-                uint8_t c0 = colors[i * 4 + 0];                         \
-                uint8_t c1 = colors[i * 4 + 1];                         \
-                uint8_t c2 = colors[i * 4 + 2];                         \
-                uint8_t c3 = colors[i * 4 + 3];                         \
-                uint8_t p0 = (c0 >> 4) & 0x03;                          \
-                uint8_t p1 = (c0 >> 0) & 0x03;                          \
-                uint8_t p2 = (c1 >> 4) & 0x03;                          \
-                uint8_t p3 = (c1 >> 0) & 0x03;                          \
-                uint8_t p4 = (c2 >> 4) & 0x03;                          \
-                uint8_t p5 = (c2 >> 0) & 0x03;                          \
-                uint8_t p6 = (c3 >> 4) & 0x03;                          \
-                uint8_t p7 = (c3 >> 0) & 0x03;                          \
+                i = row * blocks_per_row + (blocks_per_row - 1 - col);  \
+                uint8_t c0 = colors[i * 4 + 3];                         \
+                uint8_t c1 = colors[i * 4 + 2];                         \
+                uint8_t c2 = colors[i * 4 + 1];                         \
+                uint8_t c3 = colors[i * 4 + 0];                         \
+                uint8_t p0 = (c0 >> 0) & 0x03;                          \
+                uint8_t p1 = (c0 >> 4) & 0x03;                          \
+                uint8_t p2 = (c1 >> 0) & 0x03;                          \
+                uint8_t p3 = (c1 >> 4) & 0x03;                          \
+                uint8_t p4 = (c2 >> 0) & 0x03;                          \
+                uint8_t p5 = (c2 >> 4) & 0x03;                          \
+                uint8_t p6 = (c3 >> 0) & 0x03;                          \
+                uint8_t p7 = (c3 >> 4) & 0x03;                          \
                 uint8_t packed_byte0 = (p0 << 6) | (p1 << 4) | (p2 << 2) | p3; \
                 uint8_t packed_byte1 = (p4 << 6) | (p5 << 4) | (p6 << 2) | p7; \
                                                                         \

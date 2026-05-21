@@ -3,8 +3,8 @@
  * 
  * Image specifications:
  * - Size: 1200x1600 pixels
- * - Format: RGB565 (16-bit color)
- * - Supported colors: White, Black, Yellow, Green, Blue, Red
+ * - Format: 4bpp (4-bit per pixel color)
+ * - Supported colors: 0x0 = White, 0x2 = Green, 0x6 = Red, 0xB = Yellow ,0xD = blue, 0xF = Black
  */
 
 #ifndef _IMAGE_H_

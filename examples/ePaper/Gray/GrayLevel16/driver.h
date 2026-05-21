@@ -1,0 +1,1 @@
+#define BOARD_SCREEN_COMBO 522 // reTerminal E1003 (ED103TC2)
