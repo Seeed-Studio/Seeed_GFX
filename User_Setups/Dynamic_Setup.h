@@ -205,8 +205,9 @@
 #include <User_Setups/Setup70d_ILI9488_S3_Parallel.h>
 #elif BOARD_SCREEN_COMBO == 74 // Remapped from 71
 #include <User_Setups/Setup71_ESP32_S2_ST7789.h>
-#elif BOARD_SCREEN_COMBO == 75 // Remapped from 72
-#include <User_Setups/Setup72_ESP32_ST7789_172x320.h>
+#elif BOARD_SCREEN_COMBO == 75
+#define ENABLE_TFT_BOARD_PIN_SETUPS
+#include <User_Setups/Setup75_Seeed_XIAO_TFT_ST7789_172x320.h>
 
 #elif BOARD_SCREEN_COMBO == 100
 #include <User_Setups/Setup100_RP2040_ILI9488_parallel.h>
