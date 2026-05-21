@@ -70,7 +70,7 @@ static constexpr int    PIN_DBG_TX   = 43;
 //                    RGBA images are alpha-composited over white).
 // The actual format is sniffed from magic bytes -- a misleading extension is
 // auto-corrected and a warning is printed.
-static const char* IMAGE_PATH = "/pic2.jpg";
+static const char* IMAGE_PATH = "/img/demo.jpg";
 
 // ----- dither ----------------------------------------------------------------
 // Dithering algorithm. Same options as online_img2bitmap_.html. Pick one:
