@@ -5,7 +5,7 @@
  * which gives 4 shades (black, dark gray, light gray, white) via initGrayMode(4).
  *
  * Pipeline mirrors online_img2bitmap_.html with screen=gray4:
- *   SD JPG/BMP -> RGB888 -> luma + gamma + Floyd-Steinberg gray4 dither
+ *   SD JPG/BMP/PNG -> RGB888 -> luma + gamma + Floyd-Steinberg gray4 dither
  *               -> 4bpp packed -> pushImage into the 4bpp Gray4 sprite.
  *
  * Hardware: reTerminal E1001 (XIAO ESP32-S3 + 7.5" UC8179 BW e-paper).
@@ -66,6 +66,10 @@ static constexpr int    PIN_DBG_TX   = 43;
 // Supported formats:
 //   .jpg / .jpeg -- baseline JFIF (8-bit, YCbCr or grayscale)
 //   .bmp         -- 24-bit BGR uncompressed, or 4-bit indexed (BI_RGB)
+//   .png         -- any standard PNG (decoded via the bundled pngle library;
+//                    RGBA images are alpha-composited over white).
+// The actual format is sniffed from magic bytes -- a misleading extension is
+// auto-corrected and a warning is printed.
 static const char* IMAGE_PATH = "/pic2.jpg";
 
 // ----- dither ----------------------------------------------------------------
@@ -384,9 +388,10 @@ void setup() {
   RgbImage img;
   if (!load_image_from_sd(IMAGE_PATH, /*target_w=*/0, /*target_h=*/0, &img)) {
     LOG.println(TAG " load failed -- aborting");
-    LOG.println(TAG "   common JPEG issues:");
+    LOG.println(TAG "   common issues:");
     LOG.println(TAG "    - source resolution too large (decodes to > 8 MB RGB888)");
-    LOG.println(TAG "    - non-baseline JPEG (progressive / 4:1:1 / CMYK not supported)");
+    LOG.println(TAG "    - JPEG: non-baseline (progressive / 4:1:1 / CMYK not supported)");
+    LOG.println(TAG "    - PNG : OOM at IHDR allocation (try a smaller image / FIT_CONTAIN)");
     return;
   }
   LOG.printf(TAG " image decoded: %dx%d  (%lu kB in PSRAM)\n",

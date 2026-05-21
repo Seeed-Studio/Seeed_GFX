@@ -2,15 +2,25 @@
 // for reTerminal_local (Arduino/src/jpeg_decode.cpp) -- baseline JFIF only, no PMG/EXIF
 // helpers, no DRI restart-marker handling beyond skipping them in the bitstream.
 //
-// We intentionally keep the JPEG decoder in a single translation unit (anonymous
-// namespace) so each example folder is self-contained -- no shared library files between
-// the four examples.
+// PNG support is provided by pngle (MIT, https://github.com/kikuchan/pngle) which is
+// vendored next to this file (pngle.{h,c}) together with its zlib/inflate backend
+// (miniz.{h,c}). pngle streams the PNG line-by-line and calls our pngle_on_draw
+// callback for each pixel, which we composite over white into an RGB888 buffer.
+//
+// We intentionally keep all three decoders in a single sketch folder (BMP + JPEG
+// in this translation unit's anonymous namespace, PNG via the bundled pngle .c files)
+// so each example folder is self-contained -- no shared library files between examples
+// and no Arduino library installs required.
 #include "image_loader.h"
 
 #include <FS.h>
 #include <SD.h>
 #include <cmath>
 #include <cstring>
+
+extern "C" {
+#include "pngle.h"
+}
 
 // Uncomment to dump every JPEG marker (APP/DHT/DQT/...) the parser walks past.
 // Off by default -- only useful when debugging a JPEG that fails to decode.
@@ -579,6 +589,107 @@ static bool decode_jpeg(File& f, RgbImage* out) {
   return true;
 }
 
+// =====================================================================================
+// PNG (via pngle, MIT license, bundled in this folder as pngle.{h,c} + miniz.{h,c}).
+// We allocate one RGB888 output buffer up-front in the init callback and stream the
+// decoder line-by-line; RGBA inputs are alpha-composited over a white background since
+// the e-paper panel is opaque.
+// =====================================================================================
+struct PngCtx {
+  RgbImage* out;
+  bool      oom;
+};
+
+static void pngle_on_init(pngle_t* p, uint32_t w, uint32_t h) {
+  PngCtx* ctx = (PngCtx*)pngle_get_user_data(p);
+  ctx->out->width  = (int)w;
+  ctx->out->height = (int)h;
+  const size_t n = (size_t)w * h * 3;
+  Serial1.printf("[png]   IHDR %ux%u, allocating RGB888 buffer: %lu kB\n",
+                 (unsigned)w, (unsigned)h, (unsigned long)(n / 1024));
+  uint8_t* buf = (uint8_t*)ps_malloc(n);
+  if (!buf) buf = (uint8_t*)malloc(n);
+  if (!buf) {
+    ctx->oom = true;
+    Serial1.printf("[png]   OOM: need %lu kB but couldn't allocate\n",
+                   (unsigned long)(n / 1024));
+    return;
+  }
+  // Pre-fill with white so any out-of-bounds draw_cb or aborted decode still produces
+  // a coherent image (rather than leaving the buffer uninitialized).
+  memset(buf, 0xFF, n);
+  ctx->out->pixels = buf;
+}
+
+static void pngle_on_draw(pngle_t* p, uint32_t x, uint32_t y,
+                          uint32_t w, uint32_t h, const uint8_t rgba[4]) {
+  PngCtx* ctx = (PngCtx*)pngle_get_user_data(p);
+  if (ctx->oom || !ctx->out->pixels) return;
+  // Composite over white when there's transparency.
+  uint8_t r = rgba[0], g = rgba[1], b = rgba[2];
+  if (rgba[3] != 0xFF) {
+    const uint16_t a = rgba[3];
+    const uint16_t ia = 255 - a;
+    r = (uint8_t)((r * a + 255 * ia) / 255);
+    g = (uint8_t)((g * a + 255 * ia) / 255);
+    b = (uint8_t)((b * a + 255 * ia) / 255);
+  }
+  // pngle may call us with w,h>1 for interlaced PNGs (Adam7 sub-pass replicates).
+  const int W = ctx->out->width;
+  const int H = ctx->out->height;
+  for (uint32_t dy = 0; dy < h; ++dy) {
+    const int py = (int)(y + dy);
+    if (py >= H) break;
+    for (uint32_t dx = 0; dx < w; ++dx) {
+      const int px = (int)(x + dx);
+      if (px >= W) break;
+      uint8_t* dst = ctx->out->pixels + ((size_t)py * W + px) * 3;
+      dst[0] = r; dst[1] = g; dst[2] = b;
+    }
+  }
+}
+
+static bool decode_png(File& f, RgbImage* out) {
+  pngle_t* png = pngle_new();
+  if (!png) { Serial1.println("[png] pngle_new failed"); return false; }
+
+  PngCtx ctx{ out, false };
+  pngle_set_user_data(png, &ctx);
+  pngle_set_init_callback(png, pngle_on_init);
+  pngle_set_draw_callback(png, pngle_on_draw);
+
+  constexpr size_t CHUNK = 4096;
+  uint8_t buf[CHUNK];
+  bool err = false;
+  while (f.available()) {
+    const int n = f.read(buf, CHUNK);
+    if (n <= 0) break;
+    int remaining = n;
+    uint8_t* p = buf;
+    while (remaining > 0) {
+      const int eaten = pngle_feed(png, p, remaining);
+      if (eaten < 0) {
+        Serial1.printf("[png] decode error: %s\n", pngle_error(png));
+        err = true;
+        break;
+      }
+      if (eaten == 0) break;  // need more data
+      p         += eaten;
+      remaining -= eaten;
+    }
+    if (err) break;
+  }
+
+  const bool ok = !err && !ctx.oom && out->pixels != nullptr;
+  pngle_destroy(png);
+  if (!ok) {
+    if (out->pixels) { free(out->pixels); out->pixels = nullptr; }
+    out->width = out->height = 0;
+    return false;
+  }
+  return true;
+}
+
 static bool ends_with_ci(const char* s, const char* suf) {
   const size_t ls = strlen(s), lf = strlen(suf);
   if (lf > ls) return false;
@@ -648,24 +759,39 @@ bool load_image_from_sd(const char* path, int target_w, int target_h, RgbImage* 
   File f = SD.open(path, FILE_READ);
   if (!f) { Serial1.printf("[img] open failed: %s\n", path); return false; }
 
-  // Sniff the actual file format by reading the first 4 bytes -- many users get
+  // Sniff the actual file format by reading the first 8 bytes -- many users get
   // tripped by files whose extension lies (e.g. a JPEG saved as .bmp by a web tool).
   // We override the extension-based decision when the magic disagrees.
-  uint8_t sniff[4] = {0, 0, 0, 0};
-  const size_t n = f.read(sniff, 4);
+  uint8_t sniff[8] = {0};
+  const size_t n = f.read(sniff, 8);
   f.seek(0);
-  enum { FMT_UNKNOWN, FMT_JPEG, FMT_BMP } fmt = FMT_UNKNOWN;
-  if (n >= 2 && sniff[0] == 0xFF && sniff[1] == 0xD8)      fmt = FMT_JPEG;   // JPEG SOI
-  else if (n >= 2 && sniff[0] == 'B' && sniff[1] == 'M')   fmt = FMT_BMP;    // BM
+  enum { FMT_UNKNOWN, FMT_JPEG, FMT_BMP, FMT_PNG } fmt = FMT_UNKNOWN;
+  if (n >= 2 && sniff[0] == 0xFF && sniff[1] == 0xD8) {
+    fmt = FMT_JPEG;   // JPEG SOI
+  } else if (n >= 2 && sniff[0] == 'B' && sniff[1] == 'M') {
+    fmt = FMT_BMP;    // 'BM'
+  } else if (n >= 8 && sniff[0] == 0x89 && sniff[1] == 'P' && sniff[2] == 'N' &&
+             sniff[3] == 'G' && sniff[4] == 0x0D && sniff[5] == 0x0A &&
+             sniff[6] == 0x1A && sniff[7] == 0x0A) {
+    fmt = FMT_PNG;    // 89 PNG \r\n 1a \n
+  }
 
   const bool ext_jpeg = ends_with_ci(path, ".jpg") || ends_with_ci(path, ".jpeg");
   const bool ext_bmp  = ends_with_ci(path, ".bmp");
+  const bool ext_png  = ends_with_ci(path, ".png");
+  const char* fmt_name = (fmt == FMT_JPEG) ? "JPEG"
+                       : (fmt == FMT_BMP)  ? "BMP"
+                       : (fmt == FMT_PNG)  ? "PNG"
+                       : "UNKNOWN";
 
-  if ((ext_jpeg && fmt == FMT_BMP) || (ext_bmp && fmt == FMT_JPEG)) {
+  const bool ext_disagrees =
+      (ext_jpeg && fmt != FMT_JPEG && fmt != FMT_UNKNOWN) ||
+      (ext_bmp  && fmt != FMT_BMP  && fmt != FMT_UNKNOWN) ||
+      (ext_png  && fmt != FMT_PNG  && fmt != FMT_UNKNOWN);
+  if (ext_disagrees) {
     Serial1.printf("[img] WARNING: file extension says %s but magic bytes are %02X %02X (-> %s). Using magic.\n",
-                   ext_jpeg ? "JPEG" : "BMP",
-                   sniff[0], sniff[1],
-                   fmt == FMT_JPEG ? "JPEG" : "BMP");
+                   ext_jpeg ? "JPEG" : ext_bmp ? "BMP" : "PNG",
+                   sniff[0], sniff[1], fmt_name);
   }
 
   bool ok = false;
@@ -673,8 +799,10 @@ bool load_image_from_sd(const char* path, int target_w, int target_h, RgbImage* 
     ok = decode_jpeg(f, out);
   } else if (fmt == FMT_BMP || (fmt == FMT_UNKNOWN && ext_bmp)) {
     ok = decode_bmp(f, out);
+  } else if (fmt == FMT_PNG || (fmt == FMT_UNKNOWN && ext_png)) {
+    ok = decode_png(f, out);
   } else {
-    Serial1.printf("[img] unsupported format: ext=%s magic=%02X %02X %02X %02X (only JPEG and BMP are supported)\n",
+    Serial1.printf("[img] unsupported format: ext=%s magic=%02X %02X %02X %02X (only JPEG / BMP / PNG are supported)\n",
                    path, sniff[0], sniff[1], sniff[2], sniff[3]);
   }
   f.close();

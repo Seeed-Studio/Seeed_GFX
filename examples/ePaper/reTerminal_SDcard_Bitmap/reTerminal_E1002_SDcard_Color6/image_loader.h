@@ -6,6 +6,13 @@
 //                             4-bit indexed BMP is exactly what the online_img2bitmap_
 //                             tool emits, so SD-prep <-> on-device display can stay
 //                             byte-for-byte consistent.
+//   - PNG   (.png)           all standard PNG types via the bundled pngle library
+//                             (pngle.{h,c} + miniz.{h,c} in this folder). RGBA images
+//                             are alpha-composited over a white background.
+//
+// The actual format is detected by magic bytes, so a file with a misleading
+// extension (e.g. a JPEG saved as `.bmp`) is still decoded correctly and a
+// warning is printed to Serial1.
 //
 // Output is always RGB888 in PSRAM, optionally resized to a target resolution with
 // nearest-neighbor (good enough for e-paper, which is itself heavily quantized).
