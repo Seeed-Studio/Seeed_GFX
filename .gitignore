@@ -1,5 +1,7 @@
 .vscode
 .history
+.trash/
+__pycache__/
 *.swp
 *~
 
