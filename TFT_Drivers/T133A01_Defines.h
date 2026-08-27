@@ -67,7 +67,7 @@ const unsigned char POF_V[1] = {
 	0x00
 };
 const unsigned char DRF_V[1] = {
-	0x01
+	0x00
 };
 const unsigned char CDI_V[1] = {
 	0x37
@@ -90,6 +90,10 @@ const unsigned char CCSET_V_LOCK[1] = {
 
 const unsigned char PWS_V[1] = {
 	0x22
+};
+
+const unsigned char PLL_V[1] = {
+	0x08
 };
 
 const unsigned char DCDC_V[3] = {
@@ -180,43 +184,38 @@ const unsigned char rb1DataBuf[1]={
         delay(20);                  \
         CHECK_BUSY();                \
         writecommanddata(0x74,r74DataBuf,sizeof(r74DataBuf));          \
-        digitalWrite(TFT_CS1, LOW);  delay(10);                  \
+        digitalWrite(TFT_CS1, LOW);                             \
         writecommanddata(0xF0,rf0DataBuf,sizeof(rf0DataBuf));          \
-        digitalWrite(TFT_CS1, HIGH); delay(10);                \
+        digitalWrite(TFT_CS1, HIGH);                            \
         digitalWrite(TFT_CS1, LOW);                             \
         writecommanddata(R00_PSR,PSR_V,sizeof(PSR_V));          \
-        digitalWrite(TFT_CS1, HIGH); delay(10);                  \
+        digitalWrite(TFT_CS1, HIGH);                            \
+        digitalWrite(TFT_CS1, LOW);                             \
+        writecommanddata(R30_PLL,PLL_V,sizeof(PLL_V));          \
+        digitalWrite(TFT_CS1, HIGH);                            \
         writecommanddata(RA5_DCDC,DCDC_V,sizeof(DCDC_V));          \
-        delay(10);                  \
         digitalWrite(TFT_CS1, LOW);                             \
         writecommanddata(R50_CDI,CDI_V,sizeof(CDI_V));          \
-        digitalWrite(TFT_CS1, HIGH); delay(10);                  \
+        digitalWrite(TFT_CS1, HIGH);                            \
         digitalWrite(TFT_CS1, LOW);                             \
         writecommanddata(0x60,r60DataBuf,sizeof(r60DataBuf));          \
-        digitalWrite(TFT_CS1, HIGH); delay(10);                  \
+        digitalWrite(TFT_CS1, HIGH);                            \
         digitalWrite(TFT_CS1, LOW);                             \
         writecommanddata(0x86,r86DataBuf,sizeof(r86DataBuf));          \
-        digitalWrite(TFT_CS1, HIGH); delay(10);                  \
+        digitalWrite(TFT_CS1, HIGH);                            \
         digitalWrite(TFT_CS1, LOW);                             \
         writecommanddata(RE3_PWS,PWS_V,sizeof(PWS_V));          \
-        digitalWrite(TFT_CS1, HIGH); delay(10);                  \
+        digitalWrite(TFT_CS1, HIGH);                            \
         digitalWrite(TFT_CS1, LOW);                             \
         writecommanddata(R61_TRES,TRES_V,sizeof(TRES_V));          \
-        digitalWrite(TFT_CS1, HIGH); delay(10);                  \
+        digitalWrite(TFT_CS1, HIGH);                            \
         writecommanddata(R01_PWR,PWR_V,sizeof(PWR_V));          \
-        delay(10);                  \
         writecommanddata(0xB6,rb6DataBuf,sizeof(rb6DataBuf));          \
-        delay(10);                  \
         writecommanddata(R06_BTST_P,BTST_P_V,sizeof(BTST_P_V));          \
-        delay(10);                  \
         writecommanddata(0xB7,rb7DataBuf,sizeof(rb7DataBuf));          \
-        delay(10);                  \
         writecommanddata(R05_BTST_N,BTST_N_V,sizeof(BTST_N_V));          \
-        delay(10);                  \
         writecommanddata(0xB0,rb0DataBuf,sizeof(rb0DataBuf));          \
-        delay(10);                  \
         writecommanddata(0xB1,rb1DataBuf,sizeof(rb1DataBuf));          \
-        delay(10);                  \
     } while (0)
 
 #define EPD_WAKEUP()    EPD_INIT()  
