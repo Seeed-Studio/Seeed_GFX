@@ -334,6 +334,10 @@
 #define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #define USE_COLORFULL_EPAPER
 #include <User_Setups/Setup517_Seeed_XIAO_EPaper_1incn54_BWRY.h>
+#elif BOARD_SCREEN_COMBO == 518
+#define USE_COLORFULL_EPAPER
+#define ENABLE_EPAPER_BOARD_PIN_SETUPS
+#include <User_Setups/Setup518_Seeed_XIAO_EPaper_7inch09_colorful.h>    // Setup file for Seeed XIAO with 7.09inch colorful ePaper
 #elif BOARD_SCREEN_COMBO == 520
 #define ENABLE_EPAPER_BOARD_PIN_SETUPS
 #include <User_Setups/Setup520_Seeed_reTerminal_E1001.h>
