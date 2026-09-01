@@ -786,7 +786,10 @@ void TFT_eSPI::initFromSleep(uint8_t tc)
     #include "TFT_Drivers/ED103TC2_Init_Wake.h" 
 
 #elif defined (T133A01_DRIVER)
-    #include "TFT_Drivers/T133A01_Init.h" 
+    #include "TFT_Drivers/T133A01_Init.h"
+
+#elif defined (GDEB0709E01_DRIVER)
+    #include "TFT_Drivers/GDEB0709E01_Init.h"
 
 #elif defined (JD79667_DRIVER)
      #include "TFT_Drivers/JD79667_Init.h"  
@@ -1002,7 +1005,10 @@ void TFT_eSPI::init(uint8_t tc)
     #include "TFT_Drivers/ED103TC2_Init.h" 
 
 #elif defined (T133A01_DRIVER)
-    #include "TFT_Drivers/T133A01_Init.h" 
+    #include "TFT_Drivers/T133A01_Init.h"
+
+#elif defined (GDEB0709E01_DRIVER)
+    #include "TFT_Drivers/GDEB0709E01_Init.h"
 
 #elif defined (JD79667_DRIVER)
      #include "TFT_Drivers/JD79667_Init.h"  
@@ -1138,7 +1144,10 @@ void TFT_eSPI::setRotation(uint8_t m)
     #include "TFT_Drivers/ED2208_Rotation.h"
 
 #elif defined (T133A01_DRIVER)
-     #include "TFT_Drivers/ED2208_Rotation.h"   
+     #include "TFT_Drivers/ED2208_Rotation.h"
+
+#elif defined (GDEB0709E01_DRIVER)
+     #include "TFT_Drivers/GDEB0709E01_Rotation.h"
 
 #elif defined (ED103TC2_DRIVER)
      #include "TFT_Drivers/ED103TC2_Rotation.h"    

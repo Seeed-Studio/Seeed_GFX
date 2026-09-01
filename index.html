@@ -540,6 +540,7 @@
                     { value: "502", text: "7.5 inch monochrome ePaper Screen （UC8179）" },
                     { value: "509", text: "7.3 inch six-color ePaper Screen（ED2208）" },
                     { value: "510", text: "13.3 inch six-color ePaper Screen（T133A01）" },
+                    { value: "518", text: "7.09 inch six-color ePaper Screen（GDEB0709E01）" },
                     { value: "511", text: "10.3 inch monochrome ePaper Screen（ED103TC2）" },
                     { value: "503", text: "5.83 inch monochrome ePaper Screen （UC8179）" },
                     { value: "506", text: "4.26 inch monochrome ePaper Screen （SSD1677）" },
@@ -627,8 +628,8 @@
             const selectedValue = parseInt(activeSelector.value, 10);
             const ePaperDiv = document.getElementById('ePaperOptions');
             
-            // The ePaper driver choice is for all e-papers (502-511)
-            const isEpaperWithDriverChoice = (selectedValue >= 502 && selectedValue <= 517);
+            // The ePaper driver choice is for all e-papers (502-518)
+            const isEpaperWithDriverChoice = (selectedValue >= 502 && selectedValue <= 518);
 
             if (isEpaperWithDriverChoice) {
                 ePaperDiv.style.display = 'block';
