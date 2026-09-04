@@ -105,7 +105,14 @@ void EPaper::updataPartial(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
 
     uint16_t align_px = 8;
 #ifdef TCON_ENABLE
-    align_px = 16;
+    if (_grayLevel) {
+        align_px = 16;
+    } else {
+        // We need to right align by 32 bit, as data will be written from right to left in 1-bit mode
+        // and 32 bit alignment is required
+        bx = _width - bx - bw;
+        align_px = 32;
+    }
     wake();
     _sleep = false;
 #else
@@ -121,6 +128,15 @@ void EPaper::updataPartial(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
     uint16_t stride = _width >> 3;           
     uint16_t win_bytes_per_row = w_aligned >> 3;
 
+#ifdef TCON_ENABLE
+    if (!_grayLevel) {
+        // Revese the coordinate swap performed above for right alignment
+        size_t saved_x0 = x0;
+        x0 = _width - x1;
+        x1 = _width - saved_x0;
+    }
+#endif
+
     const uint8_t* src0 = _img8 + (yy * stride) + (x0 >> 3);
 
     size_t win_size = (size_t)win_bytes_per_row * hh;
@@ -133,7 +149,6 @@ void EPaper::updataPartial(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
                src0  + row * stride,
                win_bytes_per_row);
     }
-
 
 
     #ifdef EPD_HORIZONTAL_MIRROR
