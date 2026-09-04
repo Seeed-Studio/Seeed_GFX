@@ -1,3 +1,18 @@
+> [!NOTE]
+> **Migrating to Seeed_GFX2**
+>
+> This library is Seeed's previous-generation graphics library, forked from [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI). We recommend choosing **[Seeed_GFX2](https://github.com/Seeed-Studio/Seeed_GFX2)** — our fully optimized next-generation graphics library: most drawing code carries over directly, and compatibility wrappers make migration easy.
+>
+> **What's new in Seeed_GFX2**
+> - **Product-first configuration** — select your product from the built-in catalog instead of hand-editing `User_Setup.h`
+> - **Lower memory usage** — packed 1/2/4-bit-per-pixel frame buffers for ePaper
+> - **Cleaner architecture** — layered *Board → Bus → Driver → Panel*, easier to extend and maintain
+> - **Reliable error handling** — `GfxResult` return types instead of silent failures
+> - **Built-in UI & touch** — optional retained-mode UI layer and explicit touch controller support
+> - **Broader coverage** — more processors supported (ESP32-S2, nRF52840 Plus, nRF54L15…), plus official profiles for reTerminal / SenseCAP products
+>
+> Seeed_GFX keeps receiving basic maintenance, but new features now land in Seeed_GFX2.
+
 # Seeed GFX
 
 A professional graphics library for Seeed hardware platforms, forked from [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI) with significant enhancements to support Seeed's development boards and display modules.
